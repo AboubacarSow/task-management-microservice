@@ -17,4 +17,18 @@ public class ProjectTests
         project.Name.Should().Be(name);
         
     } 
+
+    [Fact]
+    public void CreateProject_WithEmptyName_ShouldThrowException()
+    {
+        //Arrang
+        var name=string.Empty;
+
+        //Act
+        Action action  = ()=> new Project(name);
+
+        //Assert
+       action.Should().Throw<ArgumentException>()
+       .WithMessage("Project name can not be empty");
+    }
 }

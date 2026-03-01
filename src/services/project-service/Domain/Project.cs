@@ -6,6 +6,8 @@ public class Project
 
     public Project(string name)
     {
+        if(string.IsNullOrEmpty(name))
+            throw new ArgumentException("Project name can not be empty");
         Name = name;
     }
 }
