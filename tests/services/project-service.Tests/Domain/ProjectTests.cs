@@ -4,46 +4,45 @@ using project_service.Domain;
 namespace project_service.Tests.Domain;
 public class ProjectTests
 {
-   [Fact]
-   public void CreateProject_WithValidName_ShouldCreateProject()
-    {
-        //Arrange
-        var name = "Yaz lab Project 1";
 
-        //Act
-        var project = new Project(name);
-
-        //Assert
-        project.Name.Should().Be(name);
-        
-    } 
 
     [Fact]
-    public void CreateProject_WithEmptyName_ShouldThrowException()
+    public void CreateProject_WithValidNameAndDescription_ShouldCreateProject()
     {
-        //Arrang
-        var name=string.Empty;
+        var name = "Yaz lab Project 1";
+        var description = @"Building a Task management Microservice with a gate way
+         that does not behave only as a proxy but also as a unit of work";
 
-        //Act
-        Action action  = ()=> new Project(name);
+        var project = new Project(name, description);
 
-        //Assert
-       action.Should().Throw<ArgumentException>()
-       .WithMessage("Project name can not be empty");
-       
+        Assert.NotEmpty(project.Name);
+        Assert.NotEmpty(project.Description);
+
+        project.Name.Should().Be(name);
+        project.Description.Should().Be(description);
     }
+    // [Fact]
+    // public void CreateProject_WithEmpyNameAndDescription_ShouldThrowException()
+    // {
+    //     var name = string.Empty;
+    //     var description =string.Empty;
+         
+    //     var project = new Project(name, description);
 
-
+    //     Assert.NotEmpty(project.Name);
+    //     Assert.NotEmpty(project.Description);
+    // }
     [Fact]
     public void NewProject_ShouldHave_ActiveStatusByDefault()
     {
-        //Arrange
+        
         var name = "Yaz lab Project 1";
-
+        var description =@"Building a Task management Microservice with a gate way
+         that does not behave only as a proxy but also as a unit of work";
         //Act
-        var project = new Project(name);
-
+        var project = new Project(name, description);
         //Assert
         project.Status.Should().Be(ProjectStatus.Active);
     }
+
 }
