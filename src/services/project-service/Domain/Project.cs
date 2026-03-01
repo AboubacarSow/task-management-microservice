@@ -2,9 +2,10 @@ namespace project_service.Domain;
 
 public class Project
 {
-    public readonly string Name;
+    public string Name{get;}
 
     public Project(string name)
     {
+        Name = name;
     }
 }
