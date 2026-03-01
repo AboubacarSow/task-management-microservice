@@ -30,5 +30,20 @@ public class ProjectTests
         //Assert
        action.Should().Throw<ArgumentException>()
        .WithMessage("Project name can not be empty");
+       
+    }
+
+
+    [Fact]
+    public void NewProject_ShouldHave_ActiveStatusByDefault()
+    {
+        //Arrange
+        var name = "Yaz lab Project 1";
+
+        //Act
+        var project = new Project(name);
+
+        //Assert
+        project.Status.Should().Be(ProjectStatus.Active);
     }
 }
