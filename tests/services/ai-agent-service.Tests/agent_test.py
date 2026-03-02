@@ -34,3 +34,10 @@ def test_suggest_tasks():
     assert isinstance(response, list)
     assert all(isinstance(item, str) for item in response)
     assert len(response) > 0
+    
+def test_refine_project_name():
+    agent = Agent()
+    project_name = "AI integration in hospitals"
+    response = agent.refine_project_name(project_name)
+    assert isinstance(response, str)
+    assert len(response) > 0
