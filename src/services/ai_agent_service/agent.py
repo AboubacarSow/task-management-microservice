@@ -55,6 +55,9 @@ class Agent:
             
         return response.tasks
     
+    def refine_project_name(self, project_name):
+        return "Implementing AI models in healthcare"
+    
 if __name__ == "__main__":
     a = Agent()
     response =a.generate_description("AI in healthcare")
