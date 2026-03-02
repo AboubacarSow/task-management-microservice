@@ -55,8 +55,20 @@ class Agent:
             
         return response.tasks
     
-    def refine_project_name(self, project_name):
-        return "Implementing AI models in healthcare"
+    def refine_project_name(self, project_name: str) -> str:
+        prompt = ChatPromptTemplate.from_messages([
+            ("system",
+            """You are a professional text refiner agent.
+            Your task is to refine the provided Project Name.
+            Only output the refined name — do NOT include explanations, punctuation, or extra text.
+            """),
+            ("human",
+            """Project Name: {project_name}""")
+        ])
+        
+        refine_project_name_chain = prompt | self.llm
+        response = refine_project_name_chain.invoke({"project_name":project_name})
+        return response.content
     
 if __name__ == "__main__":
     a = Agent()
@@ -64,3 +76,5 @@ if __name__ == "__main__":
     print(response)
     response = a.suggest_tasks("AI in healthcare", "the radiology project")
     print(response)
+    response = a.refine_project_name("AI in healthcare radiology works")
+    print("Refined name: ", response)
