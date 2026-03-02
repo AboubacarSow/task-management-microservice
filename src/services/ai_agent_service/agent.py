@@ -20,6 +20,10 @@ class Agent:
         response = generate_description_chain.invoke(project_name)
         return response.content
     
+    def suggest_tasks(self, project_name, project_description=None):
+        return [ "Prapare the dataset", "Analyse the dataset"]
+    
+    
 if __name__ == "__main__":
     a = Agent()
     response =a.generate_description("AI in healthcare")
