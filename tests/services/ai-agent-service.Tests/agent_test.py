@@ -1,5 +1,11 @@
 import pytest
-from services.ai_agent_services import Agent
+import sys
+import os
+
+# Add the src folder to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../src')))
+
+from services.ai_agent_service import Agent
 
 
 def test_generate_description():
