@@ -1,5 +1,5 @@
 import pytest
-from services.ai_agent_services.agent import Agent
+from services.ai_agent_services import Agent
 
 
 def test_generate_description():
