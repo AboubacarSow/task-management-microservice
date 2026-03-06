@@ -1,7 +1,7 @@
 using FluentAssertions;
-using project_service.Domain;
+using project_service.Projects.Models;
 
-namespace project_service.Tests.Domain;
+namespace project_service.Tests.Projects.Models;
 public class ProjectTests
 {
     public readonly Guid UserId = Guid.NewGuid();
@@ -110,7 +110,7 @@ public class ProjectTests
         //Act
         Action action = ()=> project.SetDueDate(expectingDate);
 
-        //Asssert
+        //Assert
         action.Should()
             .Throw<ArgumentException>()
             .WithMessage("Due date must be in the future.");

@@ -1,4 +1,4 @@
-namespace project_service.Domain;
+namespace project_service.Projects.Models;
 
 public class Project
 {
