@@ -1,19 +1,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using project_service.Commons;
 using project_service.Tasks.Exceptions;
 
 namespace project_service.Tasks.Models;
 
-public class Task
+public sealed class Task :BaseEntity
 {
-    public string Name{get;}
     public Guid ProjectId{get;private set;}
-    public Guid Id { get; }
-    public DateTime CreatedAt { get; }
-    public DateTime LastUpdatedAt { get; private set; }
     public Guid? AssignedToUser { get;private set; }
     public TaskStatus Status { get; private set; }
-    public string? Description{get;private set;}
-    public DateTime DueAt { get;private set; }
     public string? Note { get; private set; }
     public TaskPriority Priority { get; private set; }
     public Guid CreatedByUser { get; }

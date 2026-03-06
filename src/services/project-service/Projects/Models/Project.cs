@@ -1,16 +1,12 @@
+using project_service.Commons;
+
 namespace project_service.Projects.Models;
 
-public class Project
+public sealed class Project :BaseEntity
 {
 
-    public string Name { get; }
-    public string? Description { get;}
     public ProjectStatus Status { get; }
-    public Guid Id { get; }
-    public  DateTime CreatedAt{get;}
     public Guid CreatedByUser { get;}
-    public DateTime LastUpdatedAt { get;private set; }
-    public DateTime? DueAt { get;private set; }
 
     public Project(string name,Guid userId, string? description =null)
     {
@@ -37,5 +33,12 @@ public class Project
             throw new ArgumentException("Due date must be in the future.");
         DueAt = date;
         LastUpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Description cannot be empty or null");
+        Description = description;
     }
 }
