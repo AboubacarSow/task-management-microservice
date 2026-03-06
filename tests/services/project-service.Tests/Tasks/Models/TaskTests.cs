@@ -414,6 +414,17 @@ public class TaskTests
     }
 
     [Fact]
+    public void Block_WithEmptyNote_ShouldThrowException()
+    {
+         AssignTask();
+        _task.StartWork();
+        var action = ()=>_task.Block("");
+
+        action.Should().Throw<ArgumentException>().
+        WithMessage("While Blocking task, note message cannot be null or empty");
+    }
+
+    [Fact]
     public void Block_Should_UpdatedLastUpdatedAt(){
         AssignTask();
         _task.StartWork();

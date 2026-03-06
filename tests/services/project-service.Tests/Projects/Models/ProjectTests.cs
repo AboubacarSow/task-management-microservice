@@ -138,7 +138,15 @@ public class ProjectTests
     public void CreateProject_ShouldStoreCreator()
     {
         var project = new Project(Name, UserId);
-        project.CreatedBy.Should().Be(UserId);
+        project.CreatedByUser.Should().Be(UserId);
+    }
+    [Fact]
+    public void CreateProject_WithEmptyCreatedBy_ShouldThrowException()
+    {
+        var action = ()=>new Project(Name,Guid.Empty);
+
+        action.Should().Throw<ArgumentException>()
+        .WithMessage("Project cannot be created without its [CreateByUser] specified");
     }
 
  

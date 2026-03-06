@@ -113,6 +113,8 @@ public class Task
     {
         if (Status != TaskStatus.InProgress)
             throw new TaskInvalidOperationException("Cannot perform this operation.Task is not in progress");
+        if(string.IsNullOrWhiteSpace(note))
+            throw new ArgumentException("While Blocking task, note message cannot be null or empty");
         Status = TaskStatus.Pause;
         Touch();
     }
