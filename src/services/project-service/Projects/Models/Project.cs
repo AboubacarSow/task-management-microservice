@@ -8,7 +8,7 @@ public class Project
     public ProjectStatus Status { get; }
     public Guid Id { get; }
     public  DateTime CreatedAt{get;}
-    public Guid CreatedBy { get;}
+    public Guid CreatedByUser { get;}
     public DateTime LastUpdatedAt { get;private set; }
     public DateTime? DueAt { get;private set; }
 
@@ -16,6 +16,8 @@ public class Project
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Project name can not be empty");
+        if(userId.Equals(Guid.Empty)) 
+            throw new ArgumentException("Project cannot be created without its [CreateByUser] specified");
 
         if (description is not null && string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Project description can not be empty");
@@ -23,7 +25,7 @@ public class Project
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
         LastUpdatedAt = CreatedAt;
-        CreatedBy = userId;
+        CreatedByUser = userId;
         Name = name;
         Description = description;
         Status = ProjectStatus.Active;
