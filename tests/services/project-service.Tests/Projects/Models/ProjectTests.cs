@@ -148,6 +148,29 @@ public class ProjectTests
         action.Should().Throw<ArgumentException>()
         .WithMessage("Project cannot be created without its [CreateByUser] specified");
     }
+    [Fact]
+    public void Should_SetDescription()
+    {
+        var project = new Project(Name,UserId);
+
+        //Act
+        project.SetDescription(Description);
+
+        project.Description.Should().Be(Description);
+    }
+
+    [Fact]
+    public void SetDescription_WithEmptyDescription_ShouldThrowException()
+    {
+        var project = new Project(Name,UserId);
+
+        var action = ()=>project.SetDescription(string.Empty);
+
+        action.Should().Throw<ArgumentException>()
+        .WithMessage("Description cannot be empty or null");
+    }
+
+    
 
  
 }
