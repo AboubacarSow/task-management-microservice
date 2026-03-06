@@ -4,3 +4,5 @@ public class TaskDomainException(string message): Exception(message)
 {
     
 }
+
+public class TaskInvalidOperationException(string message) : InvalidOperationException(message) { }
