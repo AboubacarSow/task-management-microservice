@@ -22,7 +22,7 @@ public class ProjectTests
     {
         var name = string.Empty;
 
-        Action action  = () => new Project(name,UserId);
+        Action action = () => new Project(name, UserId);
 
         action.Should().Throw<ArgumentException>()
         .WithMessage("Project name can not be empty");

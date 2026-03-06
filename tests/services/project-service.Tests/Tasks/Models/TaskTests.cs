@@ -1,5 +1,6 @@
 using FluentAssertions;
 using project_service.Tasks.Exceptions;
+using project_service.Tasks.Models;
 using Task = project_service.Tasks.Models.Task;
 using TaskStatus = project_service.Tasks.Models.TaskStatus;
 
@@ -11,22 +12,49 @@ public class TaskTests
 
     private readonly string _name = "Task Test";
     private readonly Guid _projectId=Guid.NewGuid();
+    private readonly Guid _userId=Guid.NewGuid();
     private readonly Guid _emptyProjectId = Guid.Empty;
-    private readonly Task _task = new("Old Test",Guid.NewGuid());
+    private readonly Task _task = new("Old Test",Guid.NewGuid(), Guid.NewGuid());
     [Fact]
     public void CreateTask_WithValidName_ShouldCreateTask()
     {
-        var task = new Task(_name,_projectId);
+        var task = new Task(_name,_projectId, _userId);
 
         task.Should().NotBeNull();
         task.Name.Should().Be(_name);
     }
+    [Fact]
+    public void CreateTask_ShouldStoreCreatedByUser()
+    {
+        var task = new Task(_name,_projectId, _userId);
 
+        task.CreatedByUser.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public void CreateTask_OnAfter_CreatedByUser_ShouldNotBeNull()
+    {
+        var task = new Task(_name,_projectId, _userId);
+
+        Assert.NotEqual(task.CreatedByUser, Guid.Empty);
+        task.CreatedByUser.Should().Be(_userId);
+    }
+    [Fact]
+    public void CreateTask_WithoutCreatedByUser_ShouldThrowException()
+    {
+
+        var createAction = () => new Task(_name, _projectId, Guid.Empty);
+
+        createAction.Should().Throw<ArgumentException>()
+        .WithMessage("Task cannot be created without its user author specified");
+
+
+    }
     [Fact]
     public void CreateProject_WithEmptyName_ShouldThrowException()
     {
         var emptyName = "";
-        var createAction = ()=>new Task(emptyName,_projectId);
+        var createAction = ()=>new Task(emptyName,_projectId, _userId);
 
         createAction.Should().Throw<ArgumentException>()
         .WithMessage("Task name cannot be null or empty");
@@ -37,7 +65,7 @@ public class TaskTests
     public void CreateTask_WithoutProjectId_ShouldThrowException()
     {
 
-        var createAction =()=> new Task(_name,_emptyProjectId);
+        var createAction =()=> new Task(_name,_emptyProjectId, _userId);
 
         createAction.Should().Throw<ArgumentException>()
         .WithMessage("Task cannot be created without its project specified");
@@ -48,7 +76,7 @@ public class TaskTests
     [Fact]
     public void CreateTask_OnAfter_ProjectId_ShouldNotBeNull()
     {
-        var task = new Task(_name,_projectId);
+        var task = new Task(_name,_projectId, _userId);
 
         Assert.NotEqual(task.ProjectId, _emptyProjectId);
         task.ProjectId.Should().Be(_projectId);
@@ -57,7 +85,7 @@ public class TaskTests
     [Fact]
     public void NewTask_ShouldHaveGeneratedId()
     {
-        var task = new Task(_name,_projectId);
+        var task = new Task(_name,_projectId, _userId);
 
         Assert.NotEqual(Guid.Empty,task.Id);
     }
@@ -66,7 +94,7 @@ public class TaskTests
     public void CreateTask_ShouldStoreCreatedAtDate()
     {
         var before = DateTime.UtcNow;
-        var task = new Task(_name,_projectId);
+        var task = new Task(_name,_projectId, _userId);
         var after = DateTime.UtcNow;
 
         task.CreatedAt.Should().BeOnOrAfter(before);
@@ -76,7 +104,7 @@ public class TaskTests
     [Fact] 
     public void LastUpdatedAtOnCreation_ShouldBeEqualToCreatedAt()
     {
-        var task = new Task(_name,_projectId);
+        var task = new Task(_name,_projectId, _userId);
 
         task.LastUpdatedAt.Should().Be(task.CreatedAt);
     }
@@ -122,14 +150,26 @@ public class TaskTests
     }
 
     [Fact]
+    public void DefaultPriorityOnCreation_ShouldBeMedium()
+    {
+        Assert.Equal(TaskPriority.Medium,_task.Priority);
+    }
+
+    [Fact]
     public void StartWork_ShouldChangeStatus_ToInProgress()
     {
+        //Arrane
+        AssignTask();
+        //Act
         _task.StartWork();
+
         _task.Status.Should().Be(TaskStatus.InProgress);
     }
     [Fact]
     public void StartWork_ShouldUpdateLastUpdatedAt()
     {
+        //Arrange
+        AssignTask();
 
         var previewsDate = _task.LastUpdatedAt;
         var before = DateTime.UtcNow;
@@ -141,6 +181,13 @@ public class TaskTests
         _task.LastUpdatedAt.Should().NotBe(previewsDate);
         Assert.True(_task.LastUpdatedAt > previewsDate);
 
+    }
+    [Fact]
+    public void StartWork_WhenNot_NotAssigned_ShouldThrowException()
+    {
+         var action = _task.StartWork;
+         action.Should().Throw<TaskInvalidOperationException>()
+         .WithMessage("Task must be assigned first to be started");
     }
     [Fact]
     public void AfterSetDescription_ShouldNotBeNull()
@@ -163,14 +210,46 @@ public class TaskTests
     }
 
     [Fact]
-    public void Should_CompleteTask()
+    public void CompleteTask_ShouldChangeStatus_ToCompleted()
     {
-        _task.CompleteTask();
+        //Arrange
+        AssignTask();
+        _task.StartWork();
+        var note= "Finished successfully";
+
+        //Act
+        _task.CompleteTask(note);
 
         _task.Status.Should().Be(TaskStatus.Completed);
+        Assert.Equal(note, _task.Note);
 
     }
-    
+    [Fact]
+    public void Should_CompleteTask_UpdateLastUpdatedAt()
+    {
+         AssignTask();
+        _task.StartWork();
+         var previewsDate = _task.LastUpdatedAt;
+        //Act
+          var before = DateTime.UtcNow;
+        _task.CompleteTask();
+        var after = DateTime.UtcNow;
+
+        //Assert
+        _task.LastUpdatedAt.Should().BeOnOrAfter(before);
+        _task.LastUpdatedAt.Should().BeOnOrBefore(after);
+        _task.LastUpdatedAt.Should().NotBe(previewsDate);
+        Assert.True(_task.LastUpdatedAt > previewsDate);
+
+    }
+    [Fact]
+    public void CompleteTask_WhenNot_InProgress_ShouldThrowException()
+    {
+        var action = ()=> _task.CompleteTask();
+
+        action.Should().Throw<TaskInvalidOperationException>()
+        .WithMessage("Cannot mark as completed a task not in Progress");
+    }
     [Fact]
     public void UnAssign_ShouldSetAssignedUser_ToNull()
     {
@@ -200,11 +279,11 @@ public class TaskTests
     [Fact]
     public void UnAssigning_OnCompletedTask_ShouldThrowDomainException()
     {
-        _task.CompleteTask();
+        CompleteTaskTest();
 
         var action  = _task.UnAssign;
 
-        action.Should().Throw<TaskDomainException>()
+        action.Should().Throw<TaskInvalidOperationException>()
             .WithMessage("Cannot unassign on completed task");
 
     }
@@ -277,10 +356,93 @@ public class TaskTests
             .Throw<ArgumentException>()
             .WithMessage("DueAt date must be in future.");
     }
+    
+    [Fact]
+
+    public void Cancel_ShouldChangeStatusTo_Cancelled()
+    {
+        _task.Cancel();
+
+        Assert.Equal(TaskStatus.Cancelled,_task.Status);
+    }
+    [Fact]
+    public void Cancel_OnCompletedTask_ShouldThrowException()
+    {
+        //Arrange
+        CompleteTaskTest();
+
+        //Act
+        var action = _task.Cancel;
+
+        action.Should().Throw<TaskInvalidOperationException>()
+            .WithMessage("Cannot cancel a completed Task");
+
+    }
+
+    [Fact]
+    public void Cancel_ShouldUpdate_LastUpdatedAt()
+    {
+         var previewsDate = _task.LastUpdatedAt;
+        //Act
+          var before = DateTime.UtcNow;
+        _task.Cancel();
+        var after = DateTime.UtcNow;
+
+        //Assert
+        _task.LastUpdatedAt.Should().BeOnOrAfter(before);
+        _task.LastUpdatedAt.Should().BeOnOrBefore(after);
+        _task.LastUpdatedAt.Should().NotBe(previewsDate);
+        Assert.True(_task.LastUpdatedAt > previewsDate);
+    }
+    [Fact]
+    public void Block_ShouldChangeStatus_ToPause(){
+        //Arrrage
+        AssignTask();
+        _task.StartWork();
+        _task.Block("Due to some reason");
+
+        Assert.Equal(TaskStatus.Pause,_task.Status);
+    }
+    [Fact]
+    public void Block_WhenNot_InProgress_ShouldThrowException()
+    {
+     
+        var action  = ()=>_task.Block("Due to some reason");
+
+        action.Should().Throw<TaskInvalidOperationException>()
+            .WithMessage("Cannot perform this operation.Task is not in progress");
+    }
+
+    [Fact]
+    public void Block_Should_UpdatedLastUpdatedAt(){
+        AssignTask();
+        _task.StartWork();
+         var previewsDate = _task.LastUpdatedAt;
+        //Act
+          var before = DateTime.UtcNow;
+        _task.Block("For some reason, I paused this task");
+        var after = DateTime.UtcNow;
+
+        //Assert
+        _task.LastUpdatedAt.Should().BeOnOrAfter(before);
+        _task.LastUpdatedAt.Should().BeOnOrBefore(after);
+        _task.LastUpdatedAt.Should().NotBe(previewsDate);
+        Assert.True(_task.LastUpdatedAt > previewsDate);
+    }
+
+
     private void AssignTask()
     {
         var userToAssignId = Guid.NewGuid();
         _task.AssignTo(userToAssignId);
+    }
+
+    private void CompleteTaskTest()
+    {
+
+        AssignTask();
+        _task.StartWork();
+        _task.CompleteTask();
     }
 
 }
