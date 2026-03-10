@@ -14,6 +14,4 @@ public abstract class BaseEntity
     public DateTime? DueAt { get; protected set; }
     public string? Description { get; protected set; }
 
-
-
 }
