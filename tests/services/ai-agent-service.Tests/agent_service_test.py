@@ -1,0 +1,23 @@
+from fastapi.testclient import TestClient
+from unittest.mock import patch
+import sys
+import os
+
+# Add the src folder to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../src')))
+from services.ai_agent_service import api_instance
+
+client = TestClient(api_instance.app)
+
+def test_generate_description_mocked():
+    
+    with patch.object(api_instance.agent, "generate_description") as mock_generate:
+        mock_generate.return_value = "Mocked description"
+
+        response = client.post("/agent/generate_description", json={"project_name": "Build AI project"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["project_description"] == "Mocked description"
+    assert isinstance(data["project_description"], str)
+    mock_generate.assert_called_once_with("Build AI project")
