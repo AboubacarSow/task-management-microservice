@@ -15,8 +15,7 @@ class AgentApi:
         self.register_routes()
         
     def register_routes(self):
-        @self.app.post("/agent/generate_description")
+        @self.app.post("/api/agent/generate_description")
         def generate_description(request: GenerateDescriptionInput) -> GenerateDescriptionOutput:
             response = self.agent.generate_description(request.project_name)
             return GenerateDescriptionOutput(project_description=response)
-        

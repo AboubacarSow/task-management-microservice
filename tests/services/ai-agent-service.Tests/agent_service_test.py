@@ -14,10 +14,23 @@ def test_generate_description_mocked():
     with patch.object(api_instance.agent, "generate_description") as mock_generate:
         mock_generate.return_value = "Mocked description"
 
-        response = client.post("/agent/generate_description", json={"project_name": "Build AI project"})
+        response = client.post("/api/agent/generate_description", json={"project_name": "Build AI project"})
 
     assert response.status_code == 200
     data = response.json()
     assert data["project_description"] == "Mocked description"
     assert isinstance(data["project_description"], str)
     mock_generate.assert_called_once_with("Build AI project")
+    
+def test_suggest_tasks_mocked():
+    with patch.object(api_instance.agent, "suggest_tasks") as mock_suggest:
+        mock_suggest.return_value = ["Mocked Task1", "Mocked Task2"]
+        
+        response = client.post("/api/agent/suggest_tasks", json={"project_name": "Build AI project", "project_description": "Mocked Description"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["suggested_tasks"] == ["Mocked Task1", "Mocked Task2"]
+    assert isinstance(data["suggested_tasks"], list)
+    assert all(isinstance(item, str) for item in data["suggested_tasks"])
+    mock_suggest.assert_called_once_with("Build AI project","Mocked Description")
+    
