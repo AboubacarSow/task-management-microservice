@@ -18,6 +18,9 @@ class SuggestTasksOutput(BaseModel):
     
 class RefineProjectNameInput(BaseModel):
     project_name: str
+    
+class RefineProjectNameOutput(BaseModel):
+    refined_project_name: str
 
 class AgentApi:
     def __init__(self):
@@ -37,6 +40,6 @@ class AgentApi:
             return {"suggested_tasks": response}
         
         @self.app.post("/api/agent/refine_project_name")
-        def refine_project_name(request: RefineProjectNameInput):
+        def refine_project_name(request: RefineProjectNameInput) -> RefineProjectNameOutput:
             response = self.agent.refine_project_name(request.project_name)
-            return {"refined_project_name":response}
+            return RefineProjectNameOutput(refined_project_name=response)
