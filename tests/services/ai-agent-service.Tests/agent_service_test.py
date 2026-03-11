@@ -34,3 +34,15 @@ def test_suggest_tasks_mocked():
     assert all(isinstance(item, str) for item in data["suggested_tasks"])
     mock_suggest.assert_called_once_with("Build AI project","Mocked Description")
     
+def test_refine_project_name_mocked():
+    with patch.object(api_instance.agent, "refine_project_name") as mock_refine:
+        mock_refine.return_value = "Mocked Refined Name"
+        
+        response = client.post("/api/agent/refine_project_name", json={"project_name": "Build AI project"})
+        
+    assert response.status_code == 200
+    data = response.json()
+    assert data["refined_project_name"] == "Mocked Refined Name"
+    assert isinstance(data["refined_project_name"],str)
+    mock_refine.assert_called_once_with("Build AI project")
+    
