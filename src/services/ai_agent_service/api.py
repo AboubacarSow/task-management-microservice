@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from .agent import Agent
 
 class GenerateDescriptionInput(BaseModel):
@@ -12,6 +12,9 @@ class GenerateDescriptionOutput(BaseModel):
 class SuggestTasksInput(BaseModel):
     project_name: str
     project_description: Optional[str] = None
+    
+class SuggestTasksOutput(BaseModel):
+    suggested_tasks: List[str]
 
 class AgentApi:
     def __init__(self):
@@ -26,6 +29,6 @@ class AgentApi:
             return GenerateDescriptionOutput(project_description=response)
 
         @self.app.post("/api/agent/suggest_tasks")
-        def suggest_tasks(request: SuggestTasksInput):
+        def suggest_tasks(request: SuggestTasksInput) -> SuggestTasksOutput:
             response = self.agent.suggest_tasks(request.project_name,request.project_description)
             return {"suggested_tasks": response}
