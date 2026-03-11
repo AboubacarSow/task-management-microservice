@@ -5,6 +5,9 @@ from .agent import Agent
 class GenerateDescriptionInput(BaseModel):
     project_name: str
 
+class GenerateDescriptionOutput(BaseModel):
+    project_description: str
+
 class AgentApi:
     def __init__(self):
         self.app = FastAPI()
@@ -13,7 +16,7 @@ class AgentApi:
         
     def register_routes(self):
         @self.app.post("/agent/generate_description")
-        def generate_description(request: GenerateDescriptionInput):
+        def generate_description(request: GenerateDescriptionInput) -> GenerateDescriptionOutput:
             response = self.agent.generate_description(request.project_name)
-            return {"project_description":response}
+            return GenerateDescriptionOutput(project_description=response)
         
