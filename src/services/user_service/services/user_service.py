@@ -15,9 +15,13 @@ class UserService:
         user = self.user_repository.get_user(user_id)
         
         if not user:
-            raise ValueError("User with this id does not exsits")
+            raise ValueError("User with this id does not exsit")
         
         return user
     
     def update_user(self, user_id: str, data: dict):
-        return self.user_repository.update_user(user_id, data)
+        user = self.user_repository.update_user(user_id, data)
+        if not user:
+            raise ValueError("User with this id does not exsit")
+        
+        return user
