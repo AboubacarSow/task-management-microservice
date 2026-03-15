@@ -12,4 +12,9 @@ class UserService:
         return self.user_repository.add_user(user)
     
     def get_user(self, user_id: str):
-        return self.user_repository.get_user(user_id)
+        user = self.user_repository.get_user(user_id)
+        
+        if not user:
+            raise ValueError("User with this id does not exsits")
+        
+        return user
