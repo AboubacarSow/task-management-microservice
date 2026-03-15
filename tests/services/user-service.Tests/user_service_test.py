@@ -34,6 +34,12 @@ class FakeUserRepository:
 
     def delete_user(self, user_id: str):
         return self.users.pop(user_id, None)
+    
+    def get_user_by_email(self, email: str):
+        for user in self.users.values():
+            if user.email == email:
+                return user
+        return None
 
 
 def test_register_user():
@@ -51,3 +57,26 @@ def test_register_user():
 
     assert result.email == "ali@test.com"
     assert len(repo.users) == 1
+    
+def test_duplicate_email():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    user1 = User(
+        first_name="Ali",
+        last_name="Khan",
+        email="ali@test.com",
+        password="123456"
+    )
+
+    user2 = User(
+        first_name="Ahmet",
+        last_name="Yilmaz",
+        email="ali@test.com",   # same email
+        password="abcdef"
+    )
+
+    service.add_user(user1)
+
+    with pytest.raises(ValueError, match="User with this email already exists"):
+        service.add_user(user2)
