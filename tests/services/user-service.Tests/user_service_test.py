@@ -80,3 +80,25 @@ def test_duplicate_email():
 
     with pytest.raises(ValueError, match="User with this email already exists"):
         service.add_user(user2)
+        
+def test_get_user():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    user_id = str(uuid.uuid4())
+
+    user = User(
+        id=user_id,
+        first_name="Ali",
+        last_name="Khan",
+        email="ali@test.com",
+        password="123456"
+    )
+
+    service.add_user(user)
+
+    retrieved_user = service.get_user(user_id)
+
+    assert isinstance(retrieved_user, User)
+    assert retrieved_user.id == user_id
+    
