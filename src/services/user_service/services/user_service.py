@@ -4,4 +4,9 @@ class UserService:
         self.user_repository = user_repository
 
     def add_user(self, user: User):
+        existing_user = self.user_repository.get_user_by_email(user.email)
+
+        if existing_user:
+            raise ValueError("User with this email already exists")
+
         return self.user_repository.add_user(user)
