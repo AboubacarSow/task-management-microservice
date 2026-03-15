@@ -102,3 +102,9 @@ def test_get_user():
     assert isinstance(retrieved_user, User)
     assert retrieved_user.id == user_id
     
+def test_get_user_not_found():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    with pytest.raises(ValueError, match="User with this id does not exsits"):
+        service.get_user("non-existing-id")
