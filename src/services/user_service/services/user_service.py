@@ -10,3 +10,6 @@ class UserService:
             raise ValueError("User with this email already exists")
 
         return self.user_repository.add_user(user)
+    
+    def get_user(self, user_id: str):
+        return self.user_repository.get_user(user_id)
