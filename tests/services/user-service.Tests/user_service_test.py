@@ -106,7 +106,7 @@ def test_get_user_not_found():
     repo = FakeUserRepository()
     service = UserService(repo)
 
-    with pytest.raises(ValueError, match="User with this id does not exsits"):
+    with pytest.raises(ValueError, match="User with this id does not exsit"):
         service.get_user("non-existing-id")
         
 def test_update_user():
@@ -136,3 +136,16 @@ def test_update_user():
     assert updated_user.id == user_id
     assert updated_user.first_name == "Ahmet"
     assert updated_user.last_name == "Yilmaz"
+    
+def test_update_user_not_found():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    user_id = str(uuid.uuid4())
+    user_dict = {
+        "first_name": "Ahmet",
+        "last_name": "Yilmaz"
+    }
+    
+    with pytest.raises(ValueError, match="User with this id does not exsit"):
+        service.update_user(user_id, user_dict)
