@@ -18,3 +18,6 @@ class UserService:
             raise ValueError("User with this id does not exsits")
         
         return user
+    
+    def update_user(self, user_id: str, data: dict):
+        return self.user_repository.update_user(user_id, data)
