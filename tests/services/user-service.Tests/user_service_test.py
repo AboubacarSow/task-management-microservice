@@ -149,3 +149,25 @@ def test_update_user_not_found():
     
     with pytest.raises(ValueError, match="User with this id does not exsit"):
         service.update_user(user_id, user_dict)
+        
+def test_delete_user():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    user_id = str(uuid.uuid4())
+
+    user = User(
+        id=user_id,
+        first_name="Ali",
+        last_name="Khan",
+        email="ali@test.com",
+        password="123456"
+    )
+
+    service.add_user(user)
+
+    deleted_user = service.delete_user(user_id)
+
+    assert isinstance(deleted_user, User)
+    assert deleted_user.id == user_id
+    assert repo.get_user(user_id) is None
