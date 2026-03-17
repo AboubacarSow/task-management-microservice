@@ -12,6 +12,6 @@ public abstract class BaseEntity
     public DateTime CreatedAt{ get; protected set; }
     public DateTime LastUpdatedAt { get; protected set; }
     public DateTime? DueAt { get; protected set; }
-    public string? Description { get; protected set; }
+    public string? Description { get; protected set;}
 
 }
