@@ -4,9 +4,10 @@ namespace project_service.Extensions;
 
 public static class ApplicatinBuilderExtensions
 {
-    public static async Task<IApplicationBuilder> CreateTaskIndexes(this IApplicationBuilder app)
+    public static async Task<IApplicationBuilder> CreateTaskIndexesAync(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
+
         var taskCollection = scope.ServiceProvider
             .GetRequiredService<IMongoCollection<Task>>();
 
