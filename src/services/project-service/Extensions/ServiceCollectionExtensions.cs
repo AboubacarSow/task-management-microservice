@@ -7,7 +7,7 @@ namespace project_service.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCollections(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection AddCollections(this IServiceCollection services)
     {
         services.AddSingleton<IMongoCollection<Project>>(scope =>
         {
