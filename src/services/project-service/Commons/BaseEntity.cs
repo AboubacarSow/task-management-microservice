@@ -6,7 +6,7 @@ namespace project_service.Commons;
 public abstract class BaseEntity
 {
     [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid Id { get; protected set; }
     public string Name { get; protected set; }
     public DateTime CreatedAt{ get; protected set; }

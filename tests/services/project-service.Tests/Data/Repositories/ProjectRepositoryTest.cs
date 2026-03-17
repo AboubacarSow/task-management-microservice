@@ -15,10 +15,10 @@ public class ProjectRepositoryTest(DatabaseFixture fixture)
     public async Task AddAsync_Then_GetById_ShouldReturnSameProject()
     {
         //Arrange
-        var project = new Project("Software Development", Guid.NewGuid());
+        var userId= Guid.NewGuid(); 
+        var project = new Project("Software Development", userId);
         var projectRepository = FakeRepositories.GetProjectRepository
             (_databaseFixture.GetProjectCollection());
-
 
         //Act
         await projectRepository.AddAsync(project);

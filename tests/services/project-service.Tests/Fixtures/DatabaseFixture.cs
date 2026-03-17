@@ -1,3 +1,6 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using project_service.Data.Repositories;
 using project_service.Projects.Models;
@@ -12,6 +15,9 @@ public class DatabaseFixture
 
     public DatabaseFixture()
     {
+        BsonSerializer.RegisterSerializer(
+        new GuidSerializer(GuidRepresentation.Standard));
+        
         var client = new MongoClient("mongodb://localhost:27017");
         Database = client.GetDatabase("TaskManagementDbTest");
         Database.DropCollection("Test-Projects");
