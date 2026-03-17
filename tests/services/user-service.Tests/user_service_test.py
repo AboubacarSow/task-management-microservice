@@ -171,3 +171,12 @@ def test_delete_user():
     assert isinstance(deleted_user, User)
     assert deleted_user.id == user_id
     assert repo.get_user(user_id) is None
+    
+def test_delete_user_id_not_found():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+
+    user_id = str(uuid.uuid4())
+    
+    with pytest.raises(ValueError, match="User with this id does not exsit"):
+        service.delete_user(user_id)
