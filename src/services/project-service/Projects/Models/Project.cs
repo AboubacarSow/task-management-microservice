@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using project_service.Commons;
 
 namespace project_service.Projects.Models;
@@ -5,8 +7,9 @@ namespace project_service.Projects.Models;
 public sealed class Project :BaseEntity
 {
 
-    public ProjectStatus Status { get; }
-    public Guid CreatedByUser { get;}
+    public ProjectStatus Status { get; private set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
+    public Guid CreatedByUser { get;private set;}
 
     public Project(string name,Guid userId, string? description =null)
     {

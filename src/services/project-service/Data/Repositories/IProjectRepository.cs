@@ -9,19 +9,17 @@ public interface IProjectRepository
     Task<Project> GetByIdAsync(Guid id);
 }
 
-public class ProjectRepository : IProjectRepository
+public class ProjectRepository(IMongoCollection<Project> collection) : IProjectRepository
 {
-    public ProjectRepository(IMongoCollection<Project> mongoCollection)
+    private readonly IMongoCollection<Project> _collection = collection;
+
+    public async Task AddAsync(Project project)
     {
+        await _collection.InsertOneAsync(project);
     }
 
-    public Task AddAsync(Project project)
+    public async Task<Project> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<Project> GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
+        return await _collection.Find(p=>p.Id==id).FirstOrDefaultAsync();
     }
 }
