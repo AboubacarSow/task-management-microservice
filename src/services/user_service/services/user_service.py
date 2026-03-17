@@ -27,4 +27,9 @@ class UserService:
         return user
     
     def delete_user(self, user_id: str):
-        return self.user_repository.delete_user(user_id)
+        user = self.user_repository.delete_user(user_id)
+        
+        if not user:
+            raise ValueError("User with this id does not exsit")
+        
+        return user
