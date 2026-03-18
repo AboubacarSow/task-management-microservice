@@ -75,6 +75,32 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         result.Should().OnlyContain(t => t.CreatedByUser == user2);
 
     }
+
+
+    [Fact]
+    public async System.Threading.Tasks.Task EditAsync_ShouldUpdateTaskFields()
+    {
+        var taskRepository = FakeRepositories.GetTaskRepository
+            (_databaseFixture.GetTaskCollection());
+
+        var task = new Task("Software Development", Guid.NewGuid(),Guid.NewGuid());
+        await taskRepository.AddAsync(task);
+
+        var oldTask = await taskRepository.GetByIdAsync(task.Id)!;
+        oldTask.SetDescription("This task is about implement the gateway using ocelot");
+        oldTask.SetDueAt(DateTime.UtcNow.AddDays(6));
+        await taskRepository.EditAsync(oldTask);
+
+        var editedTask = await taskRepository.GetByIdAsync(task.Id);
+
+        editedTask.Should().NotBeNull();
+        editedTask.Id.Should().Be(task.Id);
+        editedTask.CreatedAt.Should().BeCloseTo(task.CreatedAt, TimeSpan.FromMilliseconds(1));
+        editedTask.Description.Should().Be(oldTask.Description);
+        editedTask.DueAt.Should().BeCloseTo((DateTime)oldTask.DueAt!, TimeSpan.FromMilliseconds(1));
+        editedTask.LastUpdatedAt.Should().BeCloseTo((DateTime)oldTask.LastUpdatedAt!, TimeSpan.FromMilliseconds(1));
+
+    }
 }
 
 

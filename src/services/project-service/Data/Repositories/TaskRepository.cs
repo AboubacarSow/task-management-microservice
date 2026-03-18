@@ -27,4 +27,10 @@ public class TaskRepository(IMongoCollection<Task> collection) : ITaskRepository
     public Task<List<Task>> GetAllByUserIdAsync(Guid userId)
     => _collection.Find(t => t.CreatedByUser == userId)
                           .ToListAsync();
+
+    public async System.Threading.Tasks.Task EditAsync(Task task)
+    {
+        await _collection.ReplaceOneAsync(t=>t.Id==task.Id,
+        task);
+    }
 }

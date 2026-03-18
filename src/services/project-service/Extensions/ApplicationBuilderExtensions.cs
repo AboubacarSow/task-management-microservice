@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using Task = project_service.Tasks.Models.Task;
+using project_service.Projects.Models;
 namespace project_service.Extensions;
 
 public static class ApplicatinBuilderExtensions
@@ -14,12 +15,31 @@ public static class ApplicatinBuilderExtensions
         var indexes = new List<CreateIndexModel<Task>>
         {
             new (Builders<Task>.IndexKeys.Ascending(t=>t.ProjectId)),
+            new (Builders<Task>.IndexKeys.Ascending(t=>t.CreatedByUser)),
             new (Builders<Task>.IndexKeys.Ascending(t=>t.ProjectId)
             .Descending(t=>t.CreatedAt))
 
         };
 
         await taskCollection.Indexes.CreateManyAsync(indexes);
+        return app;
+    }
+
+    public static async Task<IApplicationBuilder> CreateProjectIndexesAync(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+
+        var projectCollection = scope.ServiceProvider
+        .GetRequiredService<IMongoCollection<Project>>();
+
+        var indexes = new List<CreateIndexModel<Project>>{
+            new (Builders<Project>.IndexKeys.Ascending(p=>p.CreatedByUser)),
+            new (Builders<Project>.IndexKeys.Ascending(p=>p.CreatedByUser)
+            .Descending(p=>p.CreatedAt))
+        };
+
+        await projectCollection.Indexes.CreateManyAsync(indexes);
+
         return app;
     }
 }

@@ -5,6 +5,7 @@ namespace project_service.Data.Repositories;
 public interface ITaskRepository
 {
     System.Threading.Tasks.Task AddAsync(Task task);
+    System.Threading.Tasks.Task EditAsync(Task oldTask);
     Task<List<Task>> GetAllByProjectId(Guid projectId);
     Task<List<Task>> GetAllByUserIdAsync(Guid userId);
     System.Threading.Tasks.Task<Task?> GetByIdAsync(Guid id);

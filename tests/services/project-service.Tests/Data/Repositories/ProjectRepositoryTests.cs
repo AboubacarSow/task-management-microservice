@@ -88,7 +88,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
         var project = new Project("Software Development", Guid.NewGuid());
         await projectRepository.AddAsync(project);
 
-        var prt = await projectRepository.GetByIdAsync(project.Id);
+        var prt = await projectRepository.GetByIdAsync(project.Id)!;
 
         prt.SetDescription("Building a lightweight http server in Go");
         prt.SetDueDate(DateTime.UtcNow.AddDays(5));
