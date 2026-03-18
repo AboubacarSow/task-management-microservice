@@ -32,4 +32,29 @@ public class ProjectRepositoryTest(DatabaseFixture fixture)
         result.CreatedByUser.Should().Be(project.CreatedByUser);
         
     }
+
+    [Fact]
+    public async Task GetAllByUserId_ShouldReturnOnlyProjectsForGivenUser()
+    {
+        //Arrange
+        var projectRepository = FakeRepositories.GetProjectRepository
+            (_databaseFixture.GetProjectCollection());
+
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+
+        var projects = FakeProjectData.GetProjectsForMultipleUsers(user1, user2);   
+
+        foreach(var  project in projects)
+            await projectRepository.AddAsync(project);
+
+        //Act
+        var result = await projectRepository.GetAllByUserId(user2);
+
+        result.Should().NotBeNull();
+
+        result.Should().HaveCount(2);
+        result.Should().OnlyContain(p=>p.CreatedByUser == user2);
+        
+    }
 }
