@@ -11,7 +11,7 @@ public sealed class Task :BaseEntity
     public TaskStatus Status { get; private set; }
     public string? Note { get; private set; }
     public TaskPriority Priority { get; private set; }
-    public Guid CreatedByUser { get; }
+    public Guid CreatedByUser { get; private set; }
 
     public Task(string name, Guid projectId, Guid userId)
     {
@@ -69,13 +69,13 @@ public sealed class Task :BaseEntity
         if(Status == TaskStatus.Completed)
             throw new TaskInvalidOperationException("Cannot unassign on completed task");
         AssignedToUser=null;
-        Touch();
         if (Status == TaskStatus.InProgress)
         {
             Status = TaskStatus.Pause;
             return;
         }
         Status = TaskStatus.ToDo;
+        Touch();
     }
 
     private void Touch()
@@ -94,6 +94,7 @@ public sealed class Task :BaseEntity
         if(date <= DateTime.UtcNow)
             throw new ArgumentException("DueAt date must be in future.");
         DueAt = date;
+        Touch();
     }
 
     public void Cancel()

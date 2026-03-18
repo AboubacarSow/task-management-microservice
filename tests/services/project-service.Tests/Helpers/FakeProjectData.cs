@@ -17,3 +17,4 @@ public static class FakeProjectData
             new ("User2 - Project B", user2)
         ];
 }
+

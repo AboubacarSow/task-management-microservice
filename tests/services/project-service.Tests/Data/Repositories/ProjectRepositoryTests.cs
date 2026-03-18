@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace project_service.Tests.Data.Repositories;
 
 [Collection("MongoDb")]
-public class ProjectRepositoryTest(DatabaseFixture fixture)
+public class ProjectRepositoryTests(DatabaseFixture fixture)
 {
     private readonly DatabaseFixture _databaseFixture = fixture;
 
@@ -106,3 +106,5 @@ public class ProjectRepositoryTest(DatabaseFixture fixture)
 
     }
 }
+
+
