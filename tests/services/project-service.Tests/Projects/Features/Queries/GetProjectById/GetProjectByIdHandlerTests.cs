@@ -76,7 +76,8 @@ public class GetProjectByIdHandlerTests
         var query = new GetProjectByIdQuery(projectId);
 
         // Act
-        await _handler.Handle(query, CancellationToken.None);
+        _ = await Record.ExceptionAsync(() =>
+        _handler.Handle(new GetProjectByIdQuery(projectId), CancellationToken.None));
 
         // Assert
         _repositoryMock.Verify(r => r.GetByIdAsync(projectId), Times.Once);

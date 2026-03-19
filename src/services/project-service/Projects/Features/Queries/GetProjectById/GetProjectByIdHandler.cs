@@ -41,15 +41,5 @@ public class GetProjectByIdHandler:IRequestHandler<GetProjectByIdQuery,ProjectDt
         _logger.LogInformation("Project with ID {ProjectId} retrieved successfully", project.Id);
         var dto = project.Adapt<ProjectDto>();
         return dto;
-        //return new ProjectDto(
-        //    project.Id,
-        //    project.Name,
-        //    project.CreatedAt,
-        //    project.LastUpdatedAt,
-        //    project.DueAt,
-        //    project.Description,
-        //    project.Status,
-        //    project.CreatedByUser
-        //);
     }
 }
