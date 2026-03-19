@@ -90,3 +90,23 @@ def test_add_new_user_duplicate_email():
 
     assert "detail" in data2
     assert data2["detail"] == "User with this email already exists"
+    
+def test_get_user():
+
+    response1 = client.post("/api/users/", json={
+        "first_name": "Ali",
+        "last_name": "Veli",
+        "email": "ali@test2.com",
+        "password": "123456"
+    })
+
+
+    data1 = response1.json()
+    assert response1.status_code == 200
+    assert "id" in data1
+    user_id = data1["id"]
+    response2 = client.get(f"/api/users/{user_id}")
+    data2 = response2.json()
+    assert response2.status_code == 200
+    assert data1["id"] == data2["id"]
+    assert data2["email"] == "ali@test2.com"
