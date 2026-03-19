@@ -30,5 +30,7 @@ class UserRouter:
             
         @self.router.put("/{user_id}")
         def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(self.get_user_service))-> UserUpdated:
-            return service.update_user(user_id,data.model_dump(exclude_unset=True))
-            
+            try:
+                return service.update_user(user_id,data.model_dump(exclude_unset=True))
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
