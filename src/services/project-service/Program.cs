@@ -1,3 +1,4 @@
+using Carter;
 using project_service.Data.Utilities;
 using project_service.Extensions;
 
@@ -14,7 +15,9 @@ builder.Services.ConfigureServices();
 var app = builder.Build();
 
 await app.CreateTaskIndexesAync();
+await app.CreateProjectIndexesAync();
 
+app.MapCarter();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -26,5 +29,7 @@ app.UseHttpsRedirection();
 
 
 app.Run();
+
+public partial class Program { }
 
 

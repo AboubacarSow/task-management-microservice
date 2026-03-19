@@ -1,3 +1,6 @@
+using Carter;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using project_service.Data.Repositories;
@@ -27,6 +30,13 @@ public static class ServiceCollectionExtensions
             var database = client.GetDatabase(settings.Database);
             return database.GetCollection<Task>(settings.TaskCollection);
         });
+
+        services.AddValidatorsFromAssembly(typeof(AsssemblyReference).Assembly);
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(typeof(AsssemblyReference).Assembly);
+        });
+        services.AddCarter();
         return services;
     }
 
