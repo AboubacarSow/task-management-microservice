@@ -12,9 +12,7 @@ public class GetProjectByIdEndpoint : ICarterModule
             var query = new GetProjectByIdQuery(id);
             var result = await sender.Send(query);
 
-            return result is null
-                ? Results.NotFound()
-                : Results.Ok(result);
+            return Results.Ok(result);
 
         }).RequireAuthorization();
     }

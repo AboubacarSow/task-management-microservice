@@ -83,7 +83,7 @@ public class GetProjectByIdEndpointTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
-    public async Task GET_Project_Should_Return_Correct_Body_When_Project_ExistsAsync()
+    public async Task GET_Project_Should_Return_Correct_Body_When_Project_Exists()
     {
         // Arrange
         var projectId = Guid.NewGuid();
@@ -119,7 +119,7 @@ public class GetProjectByIdEndpointTests : IClassFixture<WebApplicationFactory<P
         var projectId = Guid.NewGuid();
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectByIdQuery>(),
-            It.IsAny<CancellationToken>()))
+            It.IsAny<CancellationToken>()))!
             .ReturnsAsync((ProjectDto?)null);
 
         var response = await GetProjectAsync(projectId);
