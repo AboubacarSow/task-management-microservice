@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using project_service.Data.Utilities;
 using project_service.Extensions;
 using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,21 @@ builder.Host.UseSerilog((context, configuration) =>
         //To configure minimally serilog, we need to provide these two parameters
         configuration.ReadFrom
                 .Configuration(context.Configuration);
+
+        // Only add Elasticsearch outside of Test environment
+        if (!context.HostingEnvironment.IsEnvironment("Test"))
+        {
+            configuration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(
+                new Uri(context.Configuration["Elasticsearch:Uri"]!))
+            {
+                IndexFormat = "taskmanagement-logs-{0:yyyy-MM}",
+                AutoRegisterTemplate = true,
+                NumberOfReplicas = 1,
+                NumberOfShards=2,
+                BatchAction=ElasticOpType.Create,
+                BatchPostingLimit=50
+            });
+        }
     });
 
 builder.Services.AddOpenApi();

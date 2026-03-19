@@ -24,18 +24,6 @@
           "rollOnFileSizeLimit": true,
           "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
         }
-      },
-      {
-        "Name": "Elasticsearch",
-        "Args": {
-          "nodeUris": "${Elasticseach:Uri}",
-          "indexFormat": "taskmanagement-logs-{0:yyyy-MM}",
-          "autoRegisterTemplate": true,
-          "numberOfReplicas": 1,
-          "numberOfShards": 2,
-          "batchAction": "Create",
-          "batchPostingLimit": 50
-        }
       }
     ],
     "Enrich": [
