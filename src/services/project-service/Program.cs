@@ -8,7 +8,8 @@ builder.Services.AddOpenApi();
 
 
 builder.Services
-       .Configure<DatabaseSettings>(builder.Configuration.GetSection(nameof(DatabaseSettings)));
+       .Configure<DatabaseSettings>(builder.Configuration
+       .GetSection(nameof(DatabaseSettings)));
 builder.Services.AddCollections();
 builder.Services.ConfigureServices();
 
@@ -26,6 +27,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.Run();

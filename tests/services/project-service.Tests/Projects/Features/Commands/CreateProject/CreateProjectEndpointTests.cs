@@ -1,5 +1,6 @@
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -8,8 +9,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
 using project_service.Data.Repositories;
+using project_service.Data.Utilities;
 using project_service.Projects.Features.Commands.CreateProject;
+using project_service.Tests.Helpers;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -27,9 +31,23 @@ public class CreateProjectEndpointTests : IClassFixture<WebApplicationFactory<Pr
             builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(_senderMock.Object);
+
+                services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, FakeAuthHandler>("Test", _ => { });
+
+                services.AddAuthorization();
+
+                services.AddHttpContextAccessor();
+                services.AddScoped<IUserContext, HttpUserContext>();
             });
         });
-        _client = _webApplicationFactory.CreateClient();
+        _client = _webApplicationFactory.CreateClient
+            (new WebApplicationFactoryClientOptions  
+            {
+                AllowAutoRedirect =false
+            });
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+
     }
 
     [Fact]
@@ -91,5 +109,36 @@ public class CreateProjectEndpointTests : IClassFixture<WebApplicationFactory<Pr
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
- 
+    [Fact]
+    public async Task POST_Projects_Should_Send_Correct_CommandAsync()
+    {
+        CreateProjectCommand? capturedCommand = null ;
+        _senderMock.Setup(r => r.Send(It.IsAny<CreateProjectCommand>(),
+           It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Guid>, CancellationToken> ((cm, _) =>
+            {
+                capturedCommand =(CreateProjectCommand) cm;
+            })
+           .ReturnsAsync(Guid.NewGuid());
+
+
+        var request = new
+        {
+            Name = "Building a web scraping",
+            Description = "Building a web application using TDD approach"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/projects", request);
+        //Assert
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        capturedCommand.Should().NotBeNull();
+        capturedCommand.Name.Should().Be(request.Name);
+        capturedCommand.Description.Should().Be(request.Description);
+        capturedCommand.CreatedByUser.Should()
+        .Be(Guid.Parse("11111111-1111-1111-1111-111111111111"));
+    }
+
+
 }
