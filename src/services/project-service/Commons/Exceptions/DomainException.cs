@@ -1,6 +1,6 @@
 namespace project_service.Commons.Exceptions;
 
-public class DomainException : Exception
+public class DomainException(string message) : Exception(message)
 {
 
 }
