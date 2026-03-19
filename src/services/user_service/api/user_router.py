@@ -37,4 +37,7 @@ class UserRouter:
             
         @self.router.delete("/{user_id}")
         def delete_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserDeleted:
-            return service.delete_user(user_id)
+            try:
+                return service.delete_user(user_id)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
