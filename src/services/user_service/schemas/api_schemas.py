@@ -29,3 +29,9 @@ class UserUpdated(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    
+class UserDeleted(BaseModel):
+    id: str
+    first_name: str
+    last_name: str
+    email: EmailStr
