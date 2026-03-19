@@ -1,5 +1,5 @@
 from services.user_service.services.user_service import UserService
-from services.user_service.schemas.api_schemas import UserCreate, UserCreatedSuccesfully
+from services.user_service.schemas.api_schemas import UserCreate, UserCreatedSuccesfully, UserGet
 from services.user_service.database.mongo import user_collection
 from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
@@ -20,3 +20,10 @@ class UserRouter:
                 return service.add_user(user)
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=str(e))
+            
+        @self.router.get("/{user_id}")
+        def get_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserGet:
+            user = service.get_user(user_id)
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            return user

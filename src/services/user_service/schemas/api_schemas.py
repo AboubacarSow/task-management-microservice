@@ -12,3 +12,8 @@ class UserCreatedSuccesfully(BaseModel):
     last_name: str
     email: EmailStr
     
+class UserGet(BaseModel):
+    id: str 
+    first_name: str
+    last_name: str
+    email: EmailStr
