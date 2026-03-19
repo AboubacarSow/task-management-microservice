@@ -10,23 +10,20 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        //Beggining of the request
         logger.LogInformation("[START] Handle request={Request} - Response={Response} - RequestData={RequestData}",
            typeof(TRequest).Name, typeof(TResponse).Name, request);
 
         var timer = new Stopwatch();
         timer.Start();
-        //perform the request
-        var response = await next(cancellationToken);//Why do we need to foward here the cancellationToken
+        var response = await next(cancellationToken);
 
         timer.Stop();
         var timeTaken = timer.Elapsed;
-        if (timeTaken.Seconds > 3) // if the request duration is greater than 3 seconds, then log the warnings
+        if (timeTaken.Seconds > 3) 
             logger.LogWarning("[PERFORMANCE] The request {Request} took {TimeTaken} seconds.",
                 typeof(TRequest).Name,
                  timeTaken.Seconds);
 
-        //end of the request
         logger.LogInformation("[END] Handled {Request} with {Response}", typeof(TRequest).Name, typeof(TResponse).Name);
         return response;
     }

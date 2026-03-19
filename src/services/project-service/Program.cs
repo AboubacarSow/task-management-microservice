@@ -2,8 +2,17 @@ using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Data.Utilities;
 using project_service.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("serilog.json");
+builder.Host.UseSerilog((context, configuration) =>
+    {
+        //To configure minimally serilog, we need to provide these two parameters
+        configuration.ReadFrom
+                .Configuration(context.Configuration);
+    });
 
 builder.Services.AddOpenApi();
 

@@ -20,16 +20,18 @@ public class CreateProjectCommandValidator:AbstractValidator<CreateProjectComman
             .WithMessage("CreatedByUser field is required");
     }
 }
-public class CreateProjectHandler(IProjectRepository projectRepository) : IRequestHandler<CreateProjectCommand,Guid>
+public class CreateProjectHandler(IProjectRepository projectRepository,ILogger<CreateProjectHandler> logger) : IRequestHandler<CreateProjectCommand,Guid>
 {
     public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Creating project {ProjectName} for user {UserId}",
+            request.Name, request.CreatedByUser);
         var project = string.IsNullOrWhiteSpace(request.Description)
             ? new Project(request.Name,request.CreatedByUser)
             : new Project(request.Name,request.CreatedByUser,request.Description);
 
         await projectRepository.AddAsync(project);
-
+        logger.LogInformation("Project with Id:{ProjectId} created successfully", project.Id);
         return project.Id;
     }
 
