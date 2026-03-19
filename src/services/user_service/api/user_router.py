@@ -23,7 +23,8 @@ class UserRouter:
             
         @self.router.get("/{user_id}")
         def get_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserGet:
-            user = service.get_user(user_id)
-            if not user:
-                raise HTTPException(status_code=404, detail="User not found")
-            return user
+            try:
+                return service.get_user(user_id)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
+            

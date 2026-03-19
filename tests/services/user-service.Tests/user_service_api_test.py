@@ -110,3 +110,12 @@ def test_get_user():
     assert response2.status_code == 200
     assert data1["id"] == data2["id"]
     assert data2["email"] == "ali@test2.com"
+    
+def test_get_user_not_exist():
+    user_id = str(uuid.uuid4())
+    response = client.get(f"/api/users/{user_id}")
+    
+    data = response.json()
+    assert response.status_code == 404
+    assert "detail" in data
+    assert data["detail"] == "User with this id does not exsit"
