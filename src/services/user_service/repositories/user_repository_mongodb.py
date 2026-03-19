@@ -8,11 +8,16 @@ class MongoUserRepository(UserRepositoryInterface):
     def __init__(self, collection):
         self.collection = collection
 
-    def add_user(self, user: User):
+    def add_user(self, user) -> User:
         user_dict = user.model_dump(exclude={"id"})
         result = self.collection.insert_one(user_dict)
-        user.id = str(result.inserted_id)
-        return user
+        return User(
+        id=str(result.inserted_id),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        password=user.password
+    )
 
     def get_user(self, user_id: str):
         data = self.collection.find_one({"_id": ObjectId(user_id)})
