@@ -25,7 +25,7 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     {
         _webApplicationFactory = factory.WithWebHostBuilder(builder =>
         {
-            
+
 
             builder.ConfigureTestServices(services =>
             {
@@ -51,16 +51,14 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GET_Projects_Should_Return_200_When_Owner_Has_ProjectsAsync()
     {
-        // Arrange
-        var ownerId = Guid.NewGuid();
-        var projects = FakeProjectData.GetProjectsDto(ownerId);
+        var projects = FakeProjectData.GetProjectsDto(Guid.NewGuid());
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(projects);
 
         // Act
-        var response = await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        var response = await _client.GetAsync("/api/projects/me");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -69,22 +67,20 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GET_Projects_Should_Return_Correct_List_When_Owner_Has_ProjectsAsync()
     {
-        // Arrange
-        var ownerId = Guid.NewGuid();
-        var expectedProjects = FakeProjectData.GetProjectsDto(ownerId);
+        var expectedProjects = FakeProjectData.GetProjectsDto(Guid.NewGuid());
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedProjects);
 
         // Act
-        var response = await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        var response = await _client.GetAsync("/api/projects/me");
         var body = await response.Content.ReadFromJsonAsync<List<ProjectDto>>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         body.Should().NotBeNull();
-        body.Should().HaveCount(2);
+        body.Should().HaveCount(4);
         body![0].Name.Should().Be(expectedProjects[0].Name);
         body![1].Name.Should().Be(expectedProjects[1].Name);
     }
@@ -92,15 +88,12 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GET_Projects_Should_Return_200_With_Empty_List_When_No_Projects_FoundAsync()
     {
-        // Arrange
-        var ownerId = Guid.NewGuid();
-
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<ProjectDto>());
+            .ReturnsAsync([]);
 
         // Act
-        var response = await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        var response = await _client.GetAsync("/api/projects/me");
         var body = await response.Content.ReadFromJsonAsync<List<ProjectDto>>();
 
         // Assert
@@ -112,12 +105,10 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GET_Projects_Should_Return_401_When_UnauthenticatedAsync()
     {
-        // Arrange
         _client.DefaultRequestHeaders.Authorization = null;
-        var ownerId = Guid.NewGuid();
 
         // Act
-        var response = await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        var response = await _client.GetAsync("/api/projects/me");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -126,15 +117,12 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GET_Projects_Should_Use_MediatR_HandlerAsync()
     {
-        // Arrange
-        var ownerId = Guid.NewGuid();
-
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ProjectDto>());
 
         // Act
-        await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        await _client.GetAsync("/api/projects/me");
 
         // Assert
         _senderMock.Verify(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
@@ -142,10 +130,11 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
     }
 
     [Fact]
-    public async Task GET_Projects_Should_Send_Correct_QueryAsync()
+    public async Task GET_Projects_Should_Send_OwnerId_From_UserContextAsync()
     {
         // Arrange
-        var ownerId = Guid.NewGuid();
+        // FakeAuthHandler sets the user ID to this value
+        var expectedOwnerId = Guid.Parse("11111111-1111-1111-1111-111111111111");
         GetProjectsByOwnerIdQuery? capturedQuery = null;
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectsByOwnerIdQuery>(),
@@ -157,10 +146,11 @@ public class GetProjectsByOwnerIdEndpointTests : IClassFixture<WebApplicationFac
             .ReturnsAsync(new List<ProjectDto>());
 
         // Act
-        await _client.GetAsync($"/api/projects/owner/{ownerId}");
+        await _client.GetAsync("/api/projects/me");
 
         // Assert
         capturedQuery.Should().NotBeNull();
-        capturedQuery!.OwnerId.Should().Be(ownerId);
+        capturedQuery!.OwnerId.Should().Be(expectedOwnerId); // comes from IUserContext not route
     }
+
 }
