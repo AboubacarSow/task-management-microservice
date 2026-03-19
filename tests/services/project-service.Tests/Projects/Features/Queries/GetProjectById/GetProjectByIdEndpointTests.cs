@@ -49,8 +49,6 @@ public class GetProjectByIdEndpointTests : IClassFixture<WebApplicationFactory<P
         _client = _webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false,
-            // BaseAddress = new Uri("http://localhost")
-
         });
         _client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Test", "fake");
