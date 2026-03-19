@@ -3,7 +3,13 @@ using MongoDB.Driver.Linq;
 using project_service.Projects.Models;
 
 namespace project_service.Data.Repositories;
-
+public interface IProjectRepository
+{
+    Task AddAsync(Project project);
+    Task EditAsync(Project prt);
+    Task<List<Project>> GetAllByUserId(Guid userId);
+    Task<Project?> GetByIdAsync(Guid id);
+}
 public class ProjectRepository(IMongoCollection<Project> collection) : IProjectRepository
 {
     private readonly IMongoCollection<Project> _collection = collection;
