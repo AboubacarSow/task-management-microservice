@@ -1,0 +1,47 @@
+{
+    "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File","Serilog.Sinks.Elasticsearch"],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.EntityFrameworCore": "Information",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:dd:HH:mm:ss} {Level:u3}] {Message:lj} |{SourceContext} | {NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/TaskManagementSystem-API-.log",
+          "rollingInterval": "Day",
+          "rollOnFileSizeLimit": true,
+          "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
+        }
+      },
+      {
+        "Name": "Elasticsearch",
+        "Args": {
+          "nodeUris": "${Elasticseach:Uri}",
+          "indexFormat": "taskmanagement-logs-{0:yyyy-MM}",
+          "autoRegisterTemplate": true,
+          "numberOfReplicas": 1,
+          "numberOfShards": 2,
+          "batchAction": "Create",
+          "batchPostingLimit": 50
+        }
+      }
+    ],
+    "Enrich": [
+      "FromLogContext",
+      "WithMachineName",
+      "WithEnvironmentName"
+    ]
+  }
+}

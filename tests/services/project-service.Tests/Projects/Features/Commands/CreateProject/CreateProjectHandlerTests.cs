@@ -5,7 +5,7 @@ using project_service.Data.Repositories;
 using project_service.Projects.Features.Commands.CreateProject;
 using project_service.Projects.Models;
 
-namespace project_service.Tests.Projects.Featues.Commands.CreateProject;
+namespace project_service.Tests.Projects.Features.Commands.CreateProject;
 
 
 public class CreateProjectHandlerTests

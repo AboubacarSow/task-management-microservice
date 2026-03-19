@@ -7,3 +7,24 @@ public class DatabaseSettings
     public string ProjectCollection { get; set; }
     public string TaskCollection { get; set; }
 }
+public interface IUserContext
+{
+    Guid GetUserId();
+}
+public class HttpUserContext : IUserContext
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public HttpUserContext(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public Guid GetUserId()
+    {
+        var user = _httpContextAccessor.HttpContext?.User;
+        var id = user?.FindFirst("sub")?.Value;
+
+        return Guid.Parse(id!);
+    }
+}

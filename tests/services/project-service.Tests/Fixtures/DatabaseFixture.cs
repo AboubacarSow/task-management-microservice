@@ -50,3 +50,28 @@ public class DatabaseDbCollection: ICollectionFixture<DatabaseFixture>
 {
 
 }
+//public class ProgramFixure
+//{
+//    public static WebApplication CreateTestApp()
+//    {
+//        var builder = WebApplication.CreateBuilder();        
+//        // Test authentication scheme
+//        builder.Services.AddAuthentication(options =>
+//        {
+//            options.DefaultAuthenticateScheme = "Test";
+//            options.DefaultChallengeScheme = "Test";
+//        })
+//        .AddScheme<AuthenticationSchemeOptions, FakeAuthHandler>("Test", _ => { });
+
+//        builder.Services.AddAuthorization();
+//        builder.Services.AddHttpContextAccessor();
+//        builder.Services.AddScoped<IUserContext, HttpUserContext>();
+
+//        var app = builder.Build();
+//        app.UseAuthentication();
+//        app.UseAuthorization();
+
+//        app.MapCarter();
+//        return app;
+//    }
+//}
