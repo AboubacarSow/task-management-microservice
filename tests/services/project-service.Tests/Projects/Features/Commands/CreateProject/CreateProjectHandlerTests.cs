@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using project_service.Data.Repositories;
 using project_service.Projects.Features.Commands.CreateProject;
@@ -10,13 +11,14 @@ namespace project_service.Tests.Projects.Features.Commands.CreateProject;
 
 public class CreateProjectHandlerTests
 {
-    private readonly Mock<IProjectRepository> _projectRepositoryMock;
+    private readonly Mock<IProjectRepository> _projectRepositoryMock =new();
+    private readonly Mock<ILogger<CreateProjectHandler>> _loggerMock=new();
     private readonly CreateProjectHandler _createCommandHandler;
 
     public CreateProjectHandlerTests()
     {
-        _projectRepositoryMock = new Mock<IProjectRepository>();
-        _createCommandHandler = new CreateProjectHandler(_projectRepositoryMock.Object);
+        _createCommandHandler = new CreateProjectHandler(_projectRepositoryMock.Object,
+                                                        _loggerMock.Object);
     }
 
     [Fact]
