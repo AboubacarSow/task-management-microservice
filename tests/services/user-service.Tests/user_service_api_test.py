@@ -163,3 +163,24 @@ def test_update_user_not_exsit():
     assert response.status_code == 404
     assert "detail" in data
     assert data["detail"] == "User with this id does not exsit"
+    
+def test_delete_user():
+    response1 = client.post("/api/users/", json={
+        "first_name": "Ali",
+        "last_name": "Veli",
+        "email": "ali@tes1.com",
+        "password": "123456"
+    })
+    data1 = response1.json()
+    
+    assert response1.status_code == 200
+    assert "id" in data1
+    
+    user_id = data1["id"]
+    
+    response2 = client.delete(f"/api/users/{user_id}")
+    
+    data2 = response2.json()
+    assert response2.status_code == 200
+    assert "id" in data2
+    assert data2["id"] == user_id
