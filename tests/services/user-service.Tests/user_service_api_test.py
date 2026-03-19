@@ -184,3 +184,13 @@ def test_delete_user():
     assert response2.status_code == 200
     assert "id" in data2
     assert data2["id"] == user_id
+    
+def test_delete_user_not_exist():
+    user_id = str(uuid.uuid4())
+    
+    response = client.delete(f"/api/users/{user_id}")
+    
+    data = response.json()
+    assert response.status_code == 404
+    assert "detail" in data
+    assert data["detail"] == "User with this id does not exsit"
