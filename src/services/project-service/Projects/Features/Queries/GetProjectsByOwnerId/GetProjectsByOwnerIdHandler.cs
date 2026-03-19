@@ -3,6 +3,7 @@ using Mapster;
 using MediatR;
 using project_service.Data.Repositories;
 using project_service.Projects.Dtos;
+using project_service.Projects.Models;
 using System.Collections;
 
 namespace project_service.Projects.Features.Queries.GetProjectsByOwnerId;
