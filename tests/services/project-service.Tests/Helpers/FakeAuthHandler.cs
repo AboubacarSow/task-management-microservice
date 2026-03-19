@@ -14,6 +14,10 @@ public class FakeAuthHandler(
 {
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if (!Request.Headers.ContainsKey("Authorization"))
+        {
+            return Task.FromResult(AuthenticateResult.NoResult());
+        }
         var claims = new[]
         {
             new Claim("sub", "11111111-1111-1111-1111-111111111111")

@@ -3,15 +3,17 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using project_service.Commons.Behaviors;
 using project_service.Data.Repositories;
 using project_service.Data.Utilities;
+using project_service.Middlewares;
 using project_service.Projects.Models;
 using Task = project_service.Tasks.Models.Task;
 namespace project_service.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCollections(this IServiceCollection services)
+    public static IServiceCollection AddDatabaseCollections(this IServiceCollection services)
     {
         services.AddSingleton<IMongoCollection<Project>>(scope =>
         {
@@ -34,6 +36,8 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssembly(typeof(AsssemblyReference).Assembly);
         services.AddMediatR(configuration =>
         {
+            configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            configuration.AddOpenBehavior(typeof(LoggingBehavior<,>));
             configuration.RegisterServicesFromAssembly(typeof(AsssemblyReference).Assembly);
         });
         services.AddCarter();
@@ -44,6 +48,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IProjectRepository,ProjectRepository>();
         services.AddScoped<ITaskRepository,TaskRepository>();
+        services.AddProblemDetails();
+        services.AddExceptionHandler<CustomExceptionHandler>();
         return services;
     }
 }
