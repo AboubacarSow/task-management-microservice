@@ -150,3 +150,16 @@ def test_update_user():
     assert "email" in data2
     assert data2["email"] == "data@updated.com"
     
+def test_update_user_not_exsit():
+    user_id = str(uuid.uuid4())
+    
+    response = client.put(f"/api/users/{user_id}", json={
+        "first_name":"Updated",
+        "email":"data@updated.com"
+    })
+    
+    data = response.json()
+    
+    assert response.status_code == 404
+    assert "detail" in data
+    assert data["detail"] == "User with this id does not exsit"
