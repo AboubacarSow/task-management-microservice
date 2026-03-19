@@ -119,3 +119,34 @@ def test_get_user_not_exist():
     assert response.status_code == 404
     assert "detail" in data
     assert data["detail"] == "User with this id does not exsit"
+    
+def test_update_user():
+    response1 = client.post("/api/users/", json={
+        "first_name": "Ali",
+        "last_name": "Veli",
+        "email": "ali@tes.com",
+        "password": "123456"
+    })
+    data1 = response1.json()
+    
+    assert response1.status_code == 200
+    assert "id" in data1
+    
+    user_id = data1["id"]
+    
+    response2 = client.put(f"/api/users/{user_id}", json={
+        "first_name":"Updated",
+        "email":"data@updated.com"
+    })
+    
+    data2 = response2.json()
+    
+    assert response2.status_code == 200
+    assert "id" in data2
+    assert "first_name" in data2
+    assert data2["first_name"] == "Updated"
+    assert "last_name" in  data2
+    assert data2["last_name"] == "Veli"
+    assert "email" in data2
+    assert data2["email"] == "data@updated.com"
+    
