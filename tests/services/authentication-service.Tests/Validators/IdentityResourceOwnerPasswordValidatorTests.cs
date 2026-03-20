@@ -1,5 +1,6 @@
 using System.Net;
 using authentication_service.Tests.Helpers;
+using authentication_service.Validators;
 using Duende.IdentityServer.Extensions;
 using FluentAssertions;
 using Moq;
@@ -17,7 +18,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
         _handlerMock = new Mock<HttpMessageHandler>();
         _httpClient = new HttpClient(_handlerMock.Object)
         {
-            BaseAddress = new Uri("http://localhost:8000")
+            BaseAddress = new Uri("http://user-service:8000")
         };
     }
 
