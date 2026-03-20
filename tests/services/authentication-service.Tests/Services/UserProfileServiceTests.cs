@@ -1,4 +1,5 @@
 using System.Net;
+using authentication_service.Services;
 using authentication_service.Tests.Helpers;
 using FluentAssertions;
 using Moq;
@@ -22,13 +23,13 @@ public class UserProfileServiceTests
     }
 
     [Fact]
-    public async Task GetProfileDataAsync_ValidUser_SetsEmailClaim()
+    public async Task GetProfileAsync_ValidUser_SetsEmailClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileDataAsync(context);
+        await service.GetProfileAsync(context);
 
         context.IssuedClaims
             .Should()
@@ -36,27 +37,26 @@ public class UserProfileServiceTests
     }
 
     [Fact]
-    public async Task GetProfileDataAsync_ValidUser_SetsUsernameClaim()
+    public async Task GetProfileAsync_ValidUser_SetsUsernameClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        
-        await service.GetProfileDataAsync(context);
+        await service.GetProfileAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "preferred_username" && c.Value == "johndoe");
     }
 
     [Fact]
-    public async Task GetProfileDataAsync_ValidUser_SetsGivenNameClaim()
+    public async Task GetProfileAsync_ValidUser_SetsGivenNameClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK, _handlerMock, PayloadHelper.ValidUserPayload());
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileDataAsync(context);
+        await service.GetProfileAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "given_name" && c.Value == "John");
@@ -69,28 +69,30 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileDataAsync(context);
+        await service.GetProfileAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "family_name" && c.Value == "Doe");
     }
 
     [Fact]
-    public async Task GetProfileDataAsync_UserNotFound_NoClaimsIssued()
+    public async Task GetProfileAsync_UserNotFound_NoClaimsIssued()
     {
+        // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.NotFound,_handlerMock);
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileDataAsync(context);
+        // Act
+        await service.GetProfileAsync(context);
 
-        
         context.IssuedClaims.Should().BeEmpty();
     }
 
     [Fact]
-    public async Task GetProfileDataAsync_FastApiDown_NoClaimsIssued()
+    public async Task GetProfileAsync_ApiDown_NoClaimsIssued()
     {
+        // Arrange
         _handlerMock
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -102,21 +104,25 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileDataAsync(context);
+        // Act
+        await service.GetProfileAsync(context);
 
-        
+        // Assert
         context.IssuedClaims.Should().BeEmpty();
     }
 
     [Fact]
     public async Task IsActiveAsync_ActiveUser_SetsIsActiveTrue()
     {
+        // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock);
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildIsActiveContext();
 
+        // Act
         await service.IsActiveAsync(context);
 
+        // Assert
         context.IsActive.Should().BeTrue();
     }
 
@@ -129,6 +135,7 @@ public class UserProfileServiceTests
 
         await service.IsActiveAsync(context);
 
+        
         context.IsActive.Should().BeFalse();
     }
 
