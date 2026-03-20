@@ -2,73 +2,148 @@ using System.Security.Claims;
 using authentication_service.Dtos;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
+using Serilog.Context;
 
 namespace authentication_service.Services;
 
-public class UserProfileService(HttpClient http, ILogger<UserProfileService> logger)
+public class UserProfileService(HttpClient http, ILogger<UserProfileService> logger,
+    IHttpContextAccessor httpContextAccessor)
 {
     private readonly HttpClient _http = http;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILogger<UserProfileService> _logger=logger;
 
     public async Task GetProfileAsync(ProfileDataRequestContext context)
     {
         var sub = context.Subject.GetSubjectId();
-        try
+        var correlationId = GetCorrelationId();
+        using (LogContext.PushProperty("CorrelationId", correlationId))
         {
-            var response = await _http.GetAsync($"/api/users/{sub}");
 
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                _logger.LogWarning(
-                "UserService returned {StatusCode} for user {UserId}",
-                response.StatusCode,
-                sub
+                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{sub}");
+                request.Headers.Add("X-Correlation-ID", correlationId);
+
+                var response = await _http.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "USER_PROFILE_FETCH_FAILED {UserId} {StatusCode} {Service} {CorrelationId}",
+                        sub,
+                        response.StatusCode,
+                        "IdentityService",
+                        correlationId
+                    );
+                    return;
+                }
+
+                var user = await response.Content.ReadFromJsonAsync<UserDto>();
+
+                if (user is null)
+                {
+                        _logger.LogWarning("USER_PROFILE_NULL_RESPONSE {UserId} {Service} {CorrelationId}",
+                            sub,
+                            "IdentityService",
+                            correlationId
+                        );
+                    return;
+                }
+
+                context.IssuedClaims.AddRange(
+                [
+                    new Claim("email",              user.Email),
+                    new Claim("preferred_username", user.Username),
+                    new Claim("given_name",         user.FirstName),
+                    new Claim("family_name",        user.LastName)
+                ]);
+            }
+            
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "USER_SERVICE_UNAVAILABLE {UserId} {Service} {CorrelationId}",
+                    sub,
+                    "IdentityService",
+                    correlationId
                 );
-                return;
             }
-
-            var user = await response.Content.ReadFromJsonAsync<UserDto>();
-
-            if (user is null)
+            catch (System.Text.Json.JsonException ex)
             {
-                 _logger.LogWarning("UserService returned null for user {UserId}", sub);
-                return;
+                _logger.LogError(
+                    ex,
+                    "USER_PROFILE_DESERIALIZATION_FAILED {UserId} {Service} {CorrelationId}",
+                    sub,
+                    "IdentityService",
+                    correlationId
+                );
             }
-
-            context.IssuedClaims.AddRange(
-            [
-                new Claim("email",              user.Email),
-                new Claim("preferred_username", user.Username),
-                new Claim("given_name",         user.FirstName),
-                new Claim("family_name",        user.LastName)
-            ]);
-        }
-        
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "UserService unreachable for user {UserId}", sub);
-        }
-        catch (System.Text.Json.JsonException ex)
-        {
-            _logger.LogError(ex, "Failed to deserialize user data for user {UserId}", sub);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Unexpected error in GetProfileAsync for user {UserId}", sub);
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "UNEXPECTED_ERROR_IN_GETPROFILE {UserId} {Service} {CorrelationId}",
+                    sub,
+                    "IdentityService",
+                    correlationId
+                );
+            }
         }
     }
 
     public async Task IsActiveAsync(IsActiveContext context)
     {
-        try
+        var sub = context.Subject.GetSubjectId();
+        var correlationId = GetCorrelationId();
+
+        using (LogContext.PushProperty("CorrelationId", correlationId))
         {
-            var sub = context.Subject.GetSubjectId();
-            var response = await _http.GetAsync($"/api/users/{sub}/active");
-            context.IsActive = response.IsSuccessStatusCode;
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{sub}/active");
+                request.Headers.Add("X-Correlation-ID", correlationId);
+
+                var response = await _http.SendAsync(request);
+                context.IsActive = response.IsSuccessStatusCode;
+
+                if (!context.IsActive)
+                {
+                    _logger.LogWarning(
+                        "USER_ISACTIVE_FAILED {UserId} {StatusCode} {Service}",
+                        sub,
+                        response.StatusCode,
+                        "IdentityService"
+                    );
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                context.IsActive = false;
+                _logger.LogError(
+                    ex,
+                    "USER_SERVICE_UNAVAILABLE_ISACTIVE {UserId} {Service}",
+                    sub,
+                    "IdentityService"
+                );
+            }
+            catch (Exception ex)
+            {
+                context.IsActive = false;
+                _logger.LogError(
+                    ex,
+                    "UNEXPECTED_ERROR_IN_ISACTIVE {UserId} {Service}",
+                    sub,
+                    "IdentityService"
+                );
+            }
         }
-        catch (HttpRequestException)
-        {
-            context.IsActive = false;
-        }
+    }
+
+    private string GetCorrelationId()
+    {
+        return _httpContextAccessor.HttpContext?.Request.Headers["X-Correlation-ID"].FirstOrDefault()
+               ?? Guid.NewGuid().ToString(); 
     }
 }

@@ -1,9 +1,10 @@
-using System.Globalization;
-using System.Text;
-using Duende.IdentityServer.Licensing;
 using authentication_service;
+using authentication_service.Services;
+using Duende.IdentityServer.Licensing;
 using Serilog;
 using shared.Behaviors;
+using System.Globalization;
+using System.Text;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -17,6 +18,12 @@ try
 
     builder.Configuration.AddJsonFile("serilog.json");
     builder.Host.UseCustomSerilog();
+    // Program.cs
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddHttpClient<UserProfileService>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["UserService:BaseUrl"]!);
+    });
 
     var app = builder
         .ConfigureLogging()
