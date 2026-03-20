@@ -3,6 +3,7 @@ using System.Text;
 using Duende.IdentityServer.Licensing;
 using authentication_service;
 using Serilog;
+using shared.Behaviors;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -13,6 +14,9 @@ Log.Information("Starting up");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    builder.Configuration.AddJsonFile("serilog.json");
+    builder.Host.UseCustomSerilog();
 
     var app = builder
         .ConfigureLogging()
