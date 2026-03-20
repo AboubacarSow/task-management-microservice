@@ -25,7 +25,5 @@ public class ResponseHelper
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
-    }
-
-    
+    } 
 }
