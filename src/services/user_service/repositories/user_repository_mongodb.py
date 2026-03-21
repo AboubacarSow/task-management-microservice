@@ -1,6 +1,7 @@
 from bson import ObjectId
 from services.user_service.models.user_model import User
 from services.user_service.repositories.user_repository_interface import UserRepositoryInterface
+from datetime import datetime
 
 
 class MongoUserRepository(UserRepositoryInterface):
@@ -16,7 +17,10 @@ class MongoUserRepository(UserRepositoryInterface):
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
-        password=user.password
+        password=user.password,
+        created_at=user.created_at,
+        updated_at=user.updated_at,
+        is_active=user.is_active
     )
 
     def get_user(self, user_id: str):
@@ -30,7 +34,10 @@ class MongoUserRepository(UserRepositoryInterface):
             first_name=data["first_name"],
             last_name=data["last_name"],
             email=data["email"],
-            password=data["password"]
+            password=data["password"],
+            created_at=data["created_at"],
+            updated_at=data["updated_at"],
+            is_active=data["is_active"]
         )
 
     def get_user_by_email(self, email: str):
@@ -44,10 +51,14 @@ class MongoUserRepository(UserRepositoryInterface):
             first_name=data["first_name"],
             last_name=data["last_name"],
             email=data["email"],
-            password=data["password"]
+            password=data["password"],
+            created_at=data["created_at"],
+            updated_at=data["updated_at"],
+            is_active=data["is_active"]
         )
 
     def update_user(self, user_id: str, data: dict):
+        data["updated_at"] = datetime.now()
         result = self.collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": data}

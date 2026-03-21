@@ -1,4 +1,5 @@
 from services.user_service.services.user_service import UserService
+from services.user_service.models.user_model import User
 from services.user_service.schemas.api_schemas import UserCreate, UserCreatedSuccesfully, UserGet, UserUpdate, UserUpdated, UserDeleted
 from services.user_service.database.mongo import user_collection
 from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
@@ -17,6 +18,7 @@ class UserRouter:
         @self.router.post("/")
         def create_user(user: UserCreate, service: UserService = Depends(self.get_user_service))-> UserCreatedSuccesfully:
             try:
+                user = User(**user.model_dump())
                 return service.add_user(user)
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=str(e))
