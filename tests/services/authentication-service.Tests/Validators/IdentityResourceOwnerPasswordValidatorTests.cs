@@ -1,8 +1,10 @@
 using System.Net;
 using authentication_service.Tests.Helpers;
 using authentication_service.Validators;
+using Castle.Core.Logging;
 using Duende.IdentityServer.Extensions;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 
@@ -12,6 +14,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
 {
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly HttpClient _httpClient;
+    private readonly Mock<ILogger<IdentityResourceOwnerPasswordValidator>> _loggerMock = new();
 
     public IdentityResourceOwnerPasswordValidatorTests()
     {
@@ -27,7 +30,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient,_loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -41,7 +44,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient,_loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -55,7 +58,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -70,7 +73,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -86,7 +89,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -101,7 +104,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
@@ -116,7 +119,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.Unauthorized,_handlerMock);
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext(password: "wrongpassword");
 
         // Act
@@ -139,7 +142,7 @@ public class IdentityResourceOwnerPasswordValidatorTests
                 ItExpr.IsAny<CancellationToken>())
             .ThrowsAsync(new HttpRequestException("Connection refused"));
 
-        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient);
+        var validator = new IdentityResourceOwnerPasswordValidator(_httpClient, _loggerMock.Object);
         var context = ContextHelper.BuildContext();
 
         // Act
