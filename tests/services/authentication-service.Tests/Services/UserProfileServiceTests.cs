@@ -1,18 +1,20 @@
-using System.Net;
 using authentication_service.Services;
 using authentication_service.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
+using System.Net;
 
 namespace authentication_service.Tests.Services;
-
 
 public class UserProfileServiceTests
 {
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly HttpClient _httpClient;
-
+    private readonly Mock<ILogger<UserProfileService>> _loggerMock = new();
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
     public UserProfileServiceTests()
     {
         _handlerMock = new Mock<HttpMessageHandler>();
@@ -26,7 +28,7 @@ public class UserProfileServiceTests
     public async Task GetProfileAsync_ValidUser_SetsEmailClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient,_loggerMock.Object,_httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         await service.GetProfileDataAsync(context);
@@ -40,7 +42,7 @@ public class UserProfileServiceTests
     public async Task GetProfileAsync_ValidUser_SetsUsernameClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         await service.GetProfileDataAsync(context);
@@ -53,7 +55,7 @@ public class UserProfileServiceTests
     public async Task GetProfileAsync_ValidUser_SetsGivenNameClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK, _handlerMock, PayloadHelper.ValidUserPayload());
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         await service.GetProfileDataAsync(context);
@@ -66,7 +68,7 @@ public class UserProfileServiceTests
     public async Task GetProfileDataAsync_ValidUser_SetsFamilyNameClaim()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock, PayloadHelper.ValidUserPayload());
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         await service.GetProfileDataAsync(context);
@@ -80,7 +82,7 @@ public class UserProfileServiceTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.NotFound,_handlerMock);
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         // Act
@@ -101,7 +103,7 @@ public class UserProfileServiceTests
                 ItExpr.IsAny<CancellationToken>())
             .ThrowsAsync(new HttpRequestException("Connection refused"));
 
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildProfileContext();
 
         // Act
@@ -116,7 +118,7 @@ public class UserProfileServiceTests
     {
         // Arrange
         ResponseHelper.SetupResponse(HttpStatusCode.OK,_handlerMock);
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildIsActiveContext();
 
         // Act
@@ -130,7 +132,7 @@ public class UserProfileServiceTests
     public async Task IsActiveAsync_InactiveUser_SetsIsActiveFalse()
     {
         ResponseHelper.SetupResponse(HttpStatusCode.NotFound,_handlerMock);
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildIsActiveContext();
 
         await service.IsActiveAsync(context);
@@ -150,7 +152,7 @@ public class UserProfileServiceTests
                 ItExpr.IsAny<CancellationToken>())
             .ThrowsAsync(new HttpRequestException("Connection refused"));
 
-        var service = new UserProfileService(_httpClient);
+        var service = new UserProfileService(_httpClient, _loggerMock.Object, _httpContextAccessorMock.Object);
         var context = ContextHelper.BuildIsActiveContext();
 
         await service.IsActiveAsync(context);
