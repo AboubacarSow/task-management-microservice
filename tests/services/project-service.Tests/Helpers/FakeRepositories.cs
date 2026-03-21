@@ -1,7 +1,7 @@
 using MongoDB.Driver;
 using project_service.Data.Repositories;
 using project_service.Projects.Models;
-using Task = project_service.Tasks.Models.Task;
+using TaskItem = project_service.Tasks.Models.TaskItem;
 
 namespace project_service.Tests.Helpers;
 
@@ -12,7 +12,7 @@ public static class FakeRepositories
         return new ProjectRepository(collection);
     }
 
-    public static ITaskRepository GetTaskRepository(IMongoCollection<Task> collection)
+    public static ITaskRepository GetTaskRepository(IMongoCollection<TaskItem> collection)
         => new TaskRepository(collection);
 
 }

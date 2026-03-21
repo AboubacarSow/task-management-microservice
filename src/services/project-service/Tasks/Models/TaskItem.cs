@@ -4,7 +4,7 @@ using project_service.Tasks.Exceptions;
 
 namespace project_service.Tasks.Models;
 
-public sealed class Task :BaseEntity
+public sealed class TaskItem :BaseEntity
 {
     public Guid ProjectId{get;private set;}
     public Guid? AssignedToUser { get;private set; }
@@ -13,14 +13,14 @@ public sealed class Task :BaseEntity
     public TaskPriority Priority { get; private set; }
     public Guid CreatedByUser { get; private set; }
 
-    public Task(string name, Guid projectId, Guid userId)
+    public TaskItem(string name, Guid projectId, Guid userId)
     {
         if(string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Task name cannot be null or empty");
+            throw new ArgumentException("TaskItem name cannot be null or empty");
         if(projectId.Equals(Guid.Empty))
-            throw new ArgumentException("Task cannot be created without its project specified");
+            throw new ArgumentException("TaskItem cannot be created without its project specified");
         if(userId.Equals(Guid.Empty))
-            throw new ArgumentException("Task cannot be created without its user author specified");
+            throw new ArgumentException("TaskItem cannot be created without its user author specified");
         Name = name;
         Id=Guid.NewGuid();
         ProjectId = projectId;
@@ -48,7 +48,7 @@ public sealed class Task :BaseEntity
     public void StartWork()
     {
         if (AssignedToUser == null || AssignedToUser.Equals(Guid.Empty))
-            throw new TaskInvalidOperationException("Task must be assigned first to be Started");
+            throw new TaskInvalidOperationException("TaskItem must be assigned first to be Started");
         Status = TaskStatus.InProgress;
         Touch();
         
@@ -100,7 +100,7 @@ public sealed class Task :BaseEntity
     public void Cancel()
     {
         if (Status == TaskStatus.Completed)
-            throw new TaskInvalidOperationException("Cannot cancel a completed Task");
+            throw new TaskInvalidOperationException("Cannot cancel a completed TaskItem");
         Status = TaskStatus.Cancelled;
         Touch();
     }
@@ -108,7 +108,7 @@ public sealed class Task :BaseEntity
     public void Block(string note)
     {
         if (Status != TaskStatus.InProgress)
-            throw new TaskInvalidOperationException("Cannot perform this operation.Task is not in progress");
+            throw new TaskInvalidOperationException("Cannot perform this operation.TaskItem is not in progress");
         if(string.IsNullOrWhiteSpace(note))
             throw new ArgumentException("While Blocking task, note message cannot be null or empty");
         Status = TaskStatus.Pause;

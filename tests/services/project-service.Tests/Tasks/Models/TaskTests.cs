@@ -1,7 +1,6 @@
 using FluentAssertions;
 using project_service.Tasks.Exceptions;
 using project_service.Tasks.Models;
-using Task = project_service.Tasks.Models.Task;
 using TaskStatus = project_service.Tasks.Models.TaskStatus;
 
 
@@ -10,15 +9,15 @@ namespace project_service.Tests.Tasks.Models;
 public class TaskTests
 {
 
-    private readonly string _name = "Task Test";
+    private readonly string _name = "TaskItem Test";
     private readonly Guid _projectId=Guid.NewGuid();
     private readonly Guid _userId=Guid.NewGuid();
     private readonly Guid _emptyProjectId = Guid.Empty;
-    private readonly Task _task = new("Old Test",Guid.NewGuid(), Guid.NewGuid());
+    private readonly TaskItem _task = new("Old Test",Guid.NewGuid(), Guid.NewGuid());
     [Fact]
     public void CreateTask_WithValidName_ShouldCreateTask()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         task.Should().NotBeNull();
         task.Name.Should().Be(_name);
@@ -26,7 +25,7 @@ public class TaskTests
     [Fact]
     public void CreateTask_ShouldStoreCreatedByUser()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         task.CreatedByUser.Should().NotBe(Guid.Empty);
     }
@@ -34,7 +33,7 @@ public class TaskTests
     [Fact]
     public void CreateTask_OnAfter_CreatedByUser_ShouldNotBeNull()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         Assert.NotEqual(task.CreatedByUser, Guid.Empty);
         task.CreatedByUser.Should().Be(_userId);
@@ -43,10 +42,10 @@ public class TaskTests
     public void CreateTask_WithoutCreatedByUser_ShouldThrowException()
     {
 
-        var createAction = () => new Task(_name, _projectId, Guid.Empty);
+        var createAction = () => new TaskItem(_name, _projectId, Guid.Empty);
 
         createAction.Should().Throw<ArgumentException>()
-        .WithMessage("Task cannot be created without its user author specified");
+        .WithMessage("TaskItem cannot be created without its user author specified");
 
 
     }
@@ -54,10 +53,10 @@ public class TaskTests
     public void CreateProject_WithEmptyName_ShouldThrowException()
     {
         var emptyName = "";
-        var createAction = ()=>new Task(emptyName,_projectId, _userId);
+        var createAction = ()=>new TaskItem(emptyName,_projectId, _userId);
 
         createAction.Should().Throw<ArgumentException>()
-        .WithMessage("Task name cannot be null or empty");
+        .WithMessage("TaskItem name cannot be null or empty");
 
     }
 
@@ -65,10 +64,10 @@ public class TaskTests
     public void CreateTask_WithoutProjectId_ShouldThrowException()
     {
 
-        var createAction =()=> new Task(_name,_emptyProjectId, _userId);
+        var createAction =()=> new TaskItem(_name,_emptyProjectId, _userId);
 
         createAction.Should().Throw<ArgumentException>()
-        .WithMessage("Task cannot be created without its project specified");
+        .WithMessage("TaskItem cannot be created without its project specified");
 
         
     }
@@ -76,7 +75,7 @@ public class TaskTests
     [Fact]
     public void CreateTask_OnAfter_ProjectId_ShouldNotBeNull()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         Assert.NotEqual(task.ProjectId, _emptyProjectId);
         task.ProjectId.Should().Be(_projectId);
@@ -85,7 +84,7 @@ public class TaskTests
     [Fact]
     public void NewTask_ShouldHaveGeneratedId()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         Assert.NotEqual(Guid.Empty,task.Id);
     }
@@ -94,7 +93,7 @@ public class TaskTests
     public void CreateTask_ShouldStoreCreatedAtDate()
     {
         var before = DateTime.UtcNow;
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
         var after = DateTime.UtcNow;
 
         task.CreatedAt.Should().BeOnOrAfter(before);
@@ -104,7 +103,7 @@ public class TaskTests
     [Fact] 
     public void LastUpdatedAtOnCreation_ShouldBeEqualToCreatedAt()
     {
-        var task = new Task(_name,_projectId, _userId);
+        var task = new TaskItem(_name,_projectId, _userId);
 
         task.LastUpdatedAt.Should().Be(task.CreatedAt);
     }
@@ -187,7 +186,7 @@ public class TaskTests
     {
          var action = _task.StartWork;
          action.Should().Throw<TaskInvalidOperationException>()
-         .WithMessage("Task must be assigned first to be started");
+         .WithMessage("TaskItem must be assigned first to be started");
     }
     [Fact]
     public void AfterSetDescription_ShouldNotBeNull()
@@ -375,7 +374,7 @@ public class TaskTests
         var action = _task.Cancel;
 
         action.Should().Throw<TaskInvalidOperationException>()
-            .WithMessage("Cannot cancel a completed Task");
+            .WithMessage("Cannot cancel a completed TaskItem");
 
     }
 
@@ -410,7 +409,7 @@ public class TaskTests
         var action  = ()=>_task.Block("Due to some reason");
 
         action.Should().Throw<TaskInvalidOperationException>()
-            .WithMessage("Cannot perform this operation.Task is not in progress");
+            .WithMessage("Cannot perform this operation.TaskItem is not in progress");
     }
 
     [Fact]

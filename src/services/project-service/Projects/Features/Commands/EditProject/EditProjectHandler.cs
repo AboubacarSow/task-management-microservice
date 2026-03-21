@@ -1,15 +1,17 @@
-using MediatR;
-using project_service.Data.Repositories;
-using project_service.Commons.Exceptions;
-using project_service.Projects.Models;
 using FluentValidation;
+using MediatR;
+using project_service.Commons.Exceptions;
+using project_service.Data.Repositories;
+using project_service.Projects.Models;
 
 namespace project_service.Projects.Features.Commands.EditProject;
 
 
 public record EditProjectCommand(Guid ProjectId,
      Guid UserId, 
-     string? Description, DateTime? DueAt):IRequest;
+     string? Description, DateTime? DueAt): IRequest;
+
+
 
 public class EditProjectCommandValidator : AbstractValidator<EditProjectCommand>
 {
@@ -52,4 +54,5 @@ public class EditProjectHandler(IProjectRepository repository,ILogger<EditProjec
 
     }
 }
+
 

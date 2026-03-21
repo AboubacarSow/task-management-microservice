@@ -1,5 +1,5 @@
 using MongoDB.Driver;
-using Task = project_service.Tasks.Models.Task;
+using TaskItem = project_service.Tasks.Models.TaskItem;
 using project_service.Projects.Models;
 namespace project_service.Extensions;
 
@@ -10,13 +10,13 @@ public static class ApplicatinBuilderExtensions
         using var scope = app.ApplicationServices.CreateScope();
 
         var taskCollection = scope.ServiceProvider
-            .GetRequiredService<IMongoCollection<Task>>();
+            .GetRequiredService<IMongoCollection<TaskItem>>();
 
-        var indexes = new List<CreateIndexModel<Task>>
+        var indexes = new List<CreateIndexModel<TaskItem>>
         {
-            new (Builders<Task>.IndexKeys.Ascending(t=>t.ProjectId)),
-            new (Builders<Task>.IndexKeys.Ascending(t=>t.CreatedByUser)),
-            new (Builders<Task>.IndexKeys.Ascending(t=>t.ProjectId)
+            new (Builders<TaskItem>.IndexKeys.Ascending(t=>t.ProjectId)),
+            new (Builders<TaskItem>.IndexKeys.Ascending(t=>t.CreatedByUser)),
+            new (Builders<TaskItem>.IndexKeys.Ascending(t=>t.ProjectId)
             .Descending(t=>t.CreatedAt))
 
         };
