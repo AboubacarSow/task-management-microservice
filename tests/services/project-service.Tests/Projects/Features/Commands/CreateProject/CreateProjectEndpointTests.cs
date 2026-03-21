@@ -17,7 +17,6 @@ using project_service.Tests.Helpers;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace project_service.Tests.Projects.Features.Commands.CreateProject;
 
