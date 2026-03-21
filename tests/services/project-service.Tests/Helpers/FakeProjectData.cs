@@ -35,5 +35,10 @@ public static class FakeProjectData
                     "details",ProjectStatus.Active,ownerId),
         ];
     }
+
+    public static Project BuildProject(Guid ownerId)
+    => new ("Test project", ownerId,"Initial description");
+
+    
 }
 

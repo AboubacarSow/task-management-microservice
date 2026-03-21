@@ -11,14 +11,9 @@ public interface IUserContext
 {
     Guid GetUserId();
 }
-public class HttpUserContext : IUserContext
+public class HttpUserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public HttpUserContext(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public Guid GetUserId()
     {
