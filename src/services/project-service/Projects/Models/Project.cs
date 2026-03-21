@@ -44,4 +44,52 @@ public sealed class Project :BaseEntity
             throw new ArgumentException("Description cannot be empty or null");
         Description = description;
     }
+
+    public void Complete()
+    {
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*already completed*");
+        if(Status == ProjectStatus.OnHold)
+            throw new InvalidOperationException("*OnHold project cannot be marked as Completed");
+        if(Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived");
+
+        Status= ProjectStatus.Completed;
+        
+    }
+
+    public void PutOnHold()
+    {
+        if(Status == ProjectStatus.OnHold)
+            throw new InvalidOperationException("*already on hold*");
+
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*completed*");
+
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived*");
+
+        Status= ProjectStatus.OnHold;
+    }
+
+    public void Reactivate()
+    {
+        if(Status == ProjectStatus.Active)
+            throw new InvalidOperationException("*already active*");
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*completed*");
+
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived*");
+
+         Status = ProjectStatus.Active;
+        
+    }
+
+    public void Archive()
+    {
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*already archived*");
+        Status = ProjectStatus.Archived;
+    }
 }
