@@ -2,6 +2,7 @@ using MediatR;
 using project_service.Data.Repositories;
 using project_service.Commons.Exceptions;
 using project_service.Projects.Models;
+using FluentValidation;
 
 namespace project_service.Projects.Features.Commands.EditProject;
 
@@ -9,6 +10,18 @@ namespace project_service.Projects.Features.Commands.EditProject;
 public record EditProjectCommand(Guid ProjectId,
      Guid UserId, 
      string? Description, DateTime? DueAt):IRequest;
+
+public class EditProjectCommandValidator : AbstractValidator<EditProjectCommand>
+{
+    public EditProjectCommandValidator(){
+        RuleFor(p=>p.ProjectId)
+        .NotEmpty()
+        .WithMessage("ProjectId is required");
+
+        RuleFor(p=>p.UserId).NotEmpty()
+        .WithMessage("UserId is required");
+    }
+}
 public class EditProjectHandler(IProjectRepository repository,ILogger<EditProjectHandler> logger)
 : IRequestHandler<EditProjectCommand>
 {
