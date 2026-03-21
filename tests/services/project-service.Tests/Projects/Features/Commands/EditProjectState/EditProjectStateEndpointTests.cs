@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using project_service.Commons.Behaviors;
+using project_service.Data.Repositories;
 using project_service.Data.Utilities;
 using project_service.Projects.Features.Commands.EditProjectState;
 using project_service.Projects.Models;
@@ -23,6 +24,7 @@ public class EditProjectStateEndpointTests : IClassFixture<WebApplicationFactory
     private readonly WebApplicationFactory<Program> _webApplicationFactory;
     private readonly HttpClient _client;
     private readonly Mock<ISender> _senderMock = new();
+    private readonly Mock<IProjectRepository> _projectRepositoryMock = new();
 
     private readonly Guid _projectId = Guid.NewGuid();
     private readonly Guid _ownerId = Guid.Parse("11111111-1111-1111-1111-111111111111");
@@ -93,18 +95,24 @@ public class EditProjectStateEndpointTests : IClassFixture<WebApplicationFactory
     }
 
 
+
+
     [Fact]
     public async Task PUT_ProjectState_ShouldReturn400_WhenStatusInvalid()
     {
+        var project = FakeProjectData.BuildProject(_ownerId);
+        _projectRepositoryMock.Setup(r => r.GetByIdAsync(_projectId))
+               .ReturnsAsync(project);
         var factory = _webApplicationFactory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureTestServices(services =>
             {
                 services.RemoveAll<ISender>();
+                services.AddSingleton(_projectRepositoryMock.Object);
                 services.AddMediatR(cfg =>
                 {
                     cfg.RegisterServicesFromAssemblyContaining<EditProjectStateCommand>();
-                    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+                    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 });
                 services.AddValidatorsFromAssemblyContaining<EditProjectStateCommandValidator>();
             });
