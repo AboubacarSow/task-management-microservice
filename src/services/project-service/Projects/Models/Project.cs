@@ -51,11 +51,11 @@ public sealed class Project :BaseEntity
             throw new InvalidOperationException("*already completed*");
         if(Status == ProjectStatus.OnHold)
             throw new InvalidOperationException("*OnHold project cannot be marked as Completed");
+        if(Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived");
 
-        if(Status==ProjectStatus.Active){
-            Status= ProjectStatus.Completed;
-            return;
-        }
+        Status= ProjectStatus.Completed;
+        
     }
 
     public void PutOnHold()
@@ -66,11 +66,9 @@ public sealed class Project :BaseEntity
         if(Status == ProjectStatus.Completed)
             throw new InvalidOperationException("*completed*");
 
-        if(Status == ProjectStatus.Active)
-        {
-            Status= ProjectStatus.OnHold;
-            return;
-        }
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived*");
+
         Status= ProjectStatus.OnHold;
     }
 
@@ -80,29 +78,18 @@ public sealed class Project :BaseEntity
             throw new InvalidOperationException("*already active*");
         if(Status == ProjectStatus.Completed)
             throw new InvalidOperationException("*completed*");
-        if(Status == ProjectStatus.OnHold){
-            Status = ProjectStatus.Active;
-            return;
-        }
+
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*archived*");
+
+         Status = ProjectStatus.Active;
+        
     }
 
     public void Archive()
     {
         if (Status == ProjectStatus.Archived)
             throw new InvalidOperationException("*already archived*");
-        if(Status == ProjectStatus.OnHold){
-            Status = ProjectStatus.Archived;
-            return;
-        }
-
-        if(Status == ProjectStatus.Completed)
-        {
-            Status = ProjectStatus.Archived;
-            return;
-        }
-        if(Status == ProjectStatus.Active){
-            Status = ProjectStatus.Archived;
-            return;
-        }
+        Status = ProjectStatus.Archived;
     }
 }

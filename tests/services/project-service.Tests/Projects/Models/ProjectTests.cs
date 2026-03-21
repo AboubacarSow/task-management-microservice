@@ -185,6 +185,7 @@ public class ProjectTests
         project.Status.Should().Be(ProjectStatus.Completed);
     }
 
+
     [Fact]
     public void Complete_OnHoldProject_ShouldThrowException()
     {
@@ -194,6 +195,16 @@ public class ProjectTests
 
         action.Should().Throw<InvalidOperationException>().
         WithMessage("*OnHold project cannot be marked as Completed");
+    }
+    [Fact]
+    public void Complete_ArchivedProject_ShouldThrowException()
+    {
+        var project = BuildArchivedProject();
+
+        var action = () => project.Complete();
+
+        action.Should().Throw<InvalidOperationException>().
+        WithMessage("*archived");
     }
 
     [Fact]
@@ -216,7 +227,6 @@ public class ProjectTests
         
         var project = BuildActiveProject();
 
-        
         project.PutOnHold();
 
         
@@ -231,6 +241,16 @@ public class ProjectTests
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("*completed*");
+    }
+    [Fact]
+    public void PutOnHold_ArchivedProject_ThrowsInvalidOperationException()
+    {
+        var project = BuildArchivedProject();
+
+        var act = () => project.PutOnHold();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*archived*");
     }
 
     [Fact]
@@ -258,6 +278,17 @@ public class ProjectTests
         project.Reactivate();
 
         project.Status.Should().Be(ProjectStatus.Active);
+    }
+    [Fact]
+    public void Reactivate_ArchivedProject_ThrowsInvalidException()
+    {
+
+        var project = BuildArchivedProject();
+
+        var action = ()=>project.Reactivate();
+
+        action.Should().Throw<InvalidOperationException>()
+            .WithMessage("*archived*");
     }
 
     [Fact]
@@ -351,6 +382,13 @@ public class ProjectTests
     {
         var project = BuildActiveProject();
         project.Complete();
+        return project;
+    }
+
+    private static Project BuildArchivedProject()
+    {
+        var project = BuildActiveProject();
+        project.Archive();
         return project;
     }
  
