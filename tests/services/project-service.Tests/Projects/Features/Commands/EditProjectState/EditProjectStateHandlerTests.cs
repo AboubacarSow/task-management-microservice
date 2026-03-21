@@ -105,14 +105,16 @@ public class EditProjectStateHandlerTests
             .ReturnsAsync(project);
 
         _taskRepoMock
-            .Setup(t => t.AreAllTasksCompletedForProjectIdAsync(_projectId))
+            .Setup(t => t.AreAllTasksCompletedForProjectIdAsync(project.Id))
             .ReturnsAsync(true);
 
         var command = BuildCommand(status: ProjectStatus.Completed);
 
         await _handler.Handle(command, CancellationToken.None);
 
-        project.Status.Should().Be(ProjectStatus.Completed);
+        project.Status
+            .Should().Be(ProjectStatus.Completed);
+        
         _projectRepoMock.Verify(r => r.EditAsync(project), Times.Once);
     }
 
