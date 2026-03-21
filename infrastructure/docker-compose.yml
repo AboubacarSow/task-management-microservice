@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+
+  authentication-service:
+    build:
+      context: .
+      dockerfile: src/services/authentication-service/Dockerfile
+    image: authentication-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - UserService__BaseUrl=http://user-service:8000
+    depends_on:
+      - mongodb
+      - elasticsearch
+    networks:
+      - internal
+
+  project-service:
+    build:
+      context: .
+      dockerfile: src/services/project-service/Dockerfile
+    image: project-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - Elasticsearch__Uri=http://elasticsearch:9200
+    depends_on:
+      - mongodb
+      - elasticsearch
+    networks:
+      - internal
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - internal
+
+  elasticsearch:
+    image: elasticsearch:8.13.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - internal
+
+volumes:
+  mongodb_data:
+  elasticsearch_data:
+
+networks:
+  internal:
+    driver: bridge
