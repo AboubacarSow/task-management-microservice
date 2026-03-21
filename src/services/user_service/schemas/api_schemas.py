@@ -1,5 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from datetime import datetime
 
 class UserCreate(BaseModel):
     first_name: str
@@ -12,12 +13,18 @@ class UserCreatedSuccesfully(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool
     
 class UserGet(BaseModel):
     id: str 
     first_name: str
     last_name: str
     email: EmailStr
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool
     
 class UserUpdate(BaseModel):
     first_name: Optional[str] = None
@@ -29,9 +36,15 @@ class UserUpdated(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool
     
 class UserDeleted(BaseModel):
     id: str
     first_name: str
     last_name: str
     email: EmailStr
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool

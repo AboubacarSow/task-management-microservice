@@ -3,21 +3,21 @@ from abc import ABC, abstractmethod
 class UserRepositoryInterface(ABC):
 
     @abstractmethod
-    def add_user(self, user):
+    async def add_user(self, user):
         pass
 
     @abstractmethod
-    def get_user(self, user_id: str):
+    async def get_user(self, user_id: str):
         pass
 
     @abstractmethod
-    def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict):
         pass
 
     @abstractmethod
-    def delete_user(self, user_id: str):
+    async def delete_user(self, user_id: str):
         pass
     
     @abstractmethod
-    def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: str):
         pass

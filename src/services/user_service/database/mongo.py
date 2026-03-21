@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from dotenv import load_dotenv
 
@@ -14,6 +14,6 @@ USER_COLLECTION = os.getenv("USER_COLLECTION")
 if not MONGO_URL or not DB_NAME or not USER_COLLECTION:
     raise ValueError("Missing environment variables")
 
-client = MongoClient(MONGO_URL)
+client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
 user_collection = db[USER_COLLECTION]
