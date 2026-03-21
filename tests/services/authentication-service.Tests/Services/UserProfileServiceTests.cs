@@ -29,7 +29,7 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         context.IssuedClaims
             .Should()
@@ -43,7 +43,7 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "preferred_username" && c.Value == "johndoe");
@@ -56,7 +56,7 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "given_name" && c.Value == "John");
@@ -69,7 +69,7 @@ public class UserProfileServiceTests
         var service = new UserProfileService(_httpClient);
         var context = ContextHelper.BuildProfileContext();
 
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         context.IssuedClaims
             .Should().Contain(c => c.Type == "family_name" && c.Value == "Doe");
@@ -84,7 +84,7 @@ public class UserProfileServiceTests
         var context = ContextHelper.BuildProfileContext();
 
         // Act
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         context.IssuedClaims.Should().BeEmpty();
     }
@@ -105,7 +105,7 @@ public class UserProfileServiceTests
         var context = ContextHelper.BuildProfileContext();
 
         // Act
-        await service.GetProfileAsync(context);
+        await service.GetProfileDataAsync(context);
 
         // Assert
         context.IssuedClaims.Should().BeEmpty();

@@ -2,18 +2,19 @@ using System.Security.Claims;
 using authentication_service.Dtos;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
 using Serilog.Context;
 
 namespace authentication_service.Services;
 
 public class UserProfileService(HttpClient http, ILogger<UserProfileService> logger,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor) :IProfileService
 {
     private readonly HttpClient _http = http;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILogger<UserProfileService> _logger=logger;
 
-    public async Task GetProfileAsync(ProfileDataRequestContext context)
+    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var sub = context.Subject.GetSubjectId();
         var correlationId = GetCorrelationId();
