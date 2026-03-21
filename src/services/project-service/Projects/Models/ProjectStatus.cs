@@ -2,8 +2,8 @@ namespace project_service.Projects.Models;
 
 public enum ProjectStatus
 {
-    Complete,
+    Completed,
     Active,
     OnHold, 
-    Archieved
+    Archived
 }

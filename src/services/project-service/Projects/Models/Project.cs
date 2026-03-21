@@ -44,4 +44,65 @@ public sealed class Project :BaseEntity
             throw new ArgumentException("Description cannot be empty or null");
         Description = description;
     }
+
+    public void Complete()
+    {
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*already completed*");
+        if(Status == ProjectStatus.OnHold)
+            throw new InvalidOperationException("*OnHold project cannot be marked as Completed");
+
+        if(Status==ProjectStatus.Active){
+            Status= ProjectStatus.Completed;
+            return;
+        }
+    }
+
+    public void PutOnHold()
+    {
+        if(Status == ProjectStatus.OnHold)
+            throw new InvalidOperationException("*already on hold*");
+
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*completed*");
+
+        if(Status == ProjectStatus.Active)
+        {
+            Status= ProjectStatus.OnHold;
+            return;
+        }
+        Status= ProjectStatus.OnHold;
+    }
+
+    public void Reactivate()
+    {
+        if(Status == ProjectStatus.Active)
+            throw new InvalidOperationException("*already active*");
+        if(Status == ProjectStatus.Completed)
+            throw new InvalidOperationException("*completed*");
+        if(Status == ProjectStatus.OnHold){
+            Status = ProjectStatus.Active;
+            return;
+        }
+    }
+
+    public void Archive()
+    {
+        if (Status == ProjectStatus.Archived)
+            throw new InvalidOperationException("*already archived*");
+        if(Status == ProjectStatus.OnHold){
+            Status = ProjectStatus.Archived;
+            return;
+        }
+
+        if(Status == ProjectStatus.Completed)
+        {
+            Status = ProjectStatus.Archived;
+            return;
+        }
+        if(Status == ProjectStatus.Active){
+            Status = ProjectStatus.Archived;
+            return;
+        }
+    }
 }
