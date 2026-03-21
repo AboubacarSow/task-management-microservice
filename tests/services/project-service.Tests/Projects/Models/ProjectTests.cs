@@ -171,6 +171,188 @@ public class ProjectTests
     }
 
 
-  
+
+    //Status Tests
+
+    [Fact]
+    public void Complete_ActiveProject_SetsStatusToCompleted()
+    {
+        var project = BuildActiveProject();
+
+        project.Complete();
+
+        
+        project.Status.Should().Be(ProjectStatus.Completed);
+    }
+
+    [Fact]
+    public void Complete_OnHoldProject_ShouldThrowException()
+    {
+        var project = BuildOnHoldProject();
+
+        var action = () =>project.Complete();
+
+        action.Should().Throw<InvalidOperationException>().
+        WithMessage("*OnHold project cannot be marked as Completed");
+    }
+
+    [Fact]
+    public void Complete_AlreadyCompletedProject_ThrowsInvalidOperationException()
+    {
+        
+        var project = BuildCompletedProject();
+
+        
+        var act = () => project.Complete();
+
+        
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*already completed*");
+    }
+
+    [Fact]
+    public void PutOnHold_ActiveProject_SetsStatusToOnHold()
+    {
+        
+        var project = BuildActiveProject();
+
+        
+        project.PutOnHold();
+
+        
+        project.Status.Should().Be(ProjectStatus.OnHold);
+    }
+    [Fact]
+    public void PutOnHold_CompletedProject_ThrowsInvalidOperationException()
+    {
+        var project = BuildCompletedProject();
+
+        var act = () => project.PutOnHold();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*completed*");
+    }
+
+    [Fact]
+    public void PutOnHold_AlreadyOnHoldProject_ThrowsInvalidOperationException()
+    {
+        
+        var project = BuildOnHoldProject();
+
+        
+        var act = () => project.PutOnHold();
+
+        
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*already on hold*");
+    }
+
  
+    [Fact]
+    public void Reactivate_OnHoldProject_SetsStatusToActive()
+    {
+        
+        var project = BuildOnHoldProject();
+
+        
+        project.Reactivate();
+
+        project.Status.Should().Be(ProjectStatus.Active);
+    }
+
+    [Fact]
+    public void Reactivate_ActiveProject_ThrowsInvalidOperationException()
+    {
+        var project = BuildActiveProject();
+        
+        var act = () => project.Reactivate();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*already active*");
+    }
+
+    [Fact]
+    public void Reactivate_CompletedProject_ThrowsInvalidOperationException()
+    {
+        var project = BuildCompletedProject();
+
+        var act = () => project.Reactivate();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*completed*");
+    }
+
+    [Fact]
+    public void Archive_ActiveProject_SetsStatusToArchived()
+    {
+        
+        var project = BuildActiveProject();
+
+        
+        project.Archive();
+
+        
+        project.Status.Should().Be(ProjectStatus.Archived);
+    }
+
+    [Fact]
+    public void Archive_OnHoldProject_SetsStatusToArchived()
+    {
+        
+        var project = BuildOnHoldProject();
+
+        
+        project.Archive();
+
+        
+        project.Status.Should().Be(ProjectStatus.Archived);
+    }
+
+    [Fact]
+    public void Archive_CompletedProject_SetsStatusToArchived()
+    {
+        
+        var project = BuildCompletedProject();
+
+        
+        project.Archive();
+
+        
+        project.Status.Should().Be(ProjectStatus.Archived);
+    }
+
+    [Fact]
+    public void Archive_AlreadyArchivedProject_ThrowsInvalidOperationException()
+    {
+        
+        var project = BuildActiveProject();
+        project.Archive();
+
+        
+        var act = () => project.Archive();
+
+        
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*already archived*");
+    }
+  
+
+    private static Project BuildActiveProject() =>
+        new ("Test Project", Guid.NewGuid(), "Initial description");
+
+    private static Project BuildOnHoldProject()
+    {
+        var project = BuildActiveProject();
+        project.PutOnHold();
+        return project;
+    }
+
+    private static Project BuildCompletedProject()
+    {
+        var project = BuildActiveProject();
+        project.Complete();
+        return project;
+    }
+ 
+  
 }
