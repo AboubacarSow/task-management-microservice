@@ -11,7 +11,27 @@ public record EditProjectStateCommand(Guid ProjectId,
     Guid UserId,
     ProjectStatus Status): IRequest;
 
-public class EditProjectStateCommandValidator : AbstractValidator<EditProjectStateCommand> { }
+public class EditProjectStateCommandValidator : AbstractValidator<EditProjectStateCommand> {
+
+    public EditProjectStateCommandValidator()
+    {
+
+        RuleFor(x => x.ProjectId)
+            .NotEmpty()
+            .WithMessage("ProjectId is required.");
+
+        RuleFor(x => x.UserId)
+            .NotEmpty()
+            .WithMessage("UserId is required.");
+
+
+        RuleFor(x => x.Status)
+            .IsInEnum()
+            .WithMessage("Status must be a valid project state.");
+
+      
+    }
+ }
 
 public sealed class EditProjectStateHandler(
     IProjectRepository projectRepository,
