@@ -10,6 +10,7 @@ public static class SerilogExtensions
     {
         return hostBuilder.UseSerilog((context, configuration) =>
         {
+
             configuration
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
