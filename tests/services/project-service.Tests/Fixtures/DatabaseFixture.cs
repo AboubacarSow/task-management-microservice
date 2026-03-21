@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using project_service.Projects.Models;
-using Task = project_service.Tasks.Models.Task;
+using TaskItem = project_service.Tasks.Models.TaskItem;
 
 namespace project_service.Tests.Fixtures;
 
@@ -27,8 +27,8 @@ public class DatabaseFixture
 
     public IMongoCollection<Project> GetProjectCollection()
     => Database.GetCollection<Project>("Test-Projects");
-    public IMongoCollection<Task> GetTaskCollection()
-    => Database.GetCollection<Task>("Test-Tasks");
+    public IMongoCollection<TaskItem> GetTaskCollection()
+    => Database.GetCollection<TaskItem>("Test-Tasks");
 
     public async System.Threading.Tasks.Task Dispose()
     {

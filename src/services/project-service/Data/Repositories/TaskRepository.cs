@@ -1,44 +1,54 @@
 using MongoDB.Driver;
-using Task = project_service.Tasks.Models.Task;
+using project_service.Tasks.Models;
 
 namespace project_service.Data.Repositories;
 
 public interface ITaskRepository
 {
-    System.Threading.Tasks.Task AddAsync(Task task);
-    System.Threading.Tasks.Task EditAsync(Task oldTask);
-    Task<List<Task>> GetAllByProjectId(Guid projectId);
-    Task<List<Task>> GetAllByUserIdAsync(Guid userId);
-    System.Threading.Tasks.Task<Task?> GetByIdAsync(Guid id);
+    Task AddAsync(TaskItem task);
+    Task<bool> AreAllTasksCompletedForProjectIdAsync(Guid projectId);
+    Task EditAsync(TaskItem oldTask);
+    Task<List<TaskItem>> GetAllByProjectId(Guid projectId);
+    Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId);
+    Task<TaskItem?> GetByIdAsync(Guid id);
 }
-public class TaskRepository(IMongoCollection<Task> collection) : ITaskRepository
+public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskRepository
 {
-    private readonly IMongoCollection<Task> _collection = collection;
+    private readonly IMongoCollection<TaskItem> _collection = collection;
 
-    public Task<Task?> GetByIdAsync(Guid id)
+    public Task<TaskItem?> GetByIdAsync(Guid id)
     {
         return _collection.Find(t => t.Id == id)
             .FirstOrDefaultAsync()!;
     }
 
-    public async System.Threading.Tasks.Task AddAsync(Task task)
+    public async Task AddAsync(TaskItem task)
     {
         await _collection.InsertOneAsync(task);
     }
 
-    public Task<List<Task>> GetAllByProjectId(Guid projectId)
+    public Task<List<TaskItem>> GetAllByProjectId(Guid projectId)
     {
         return _collection.Find(t => t.ProjectId == projectId)
                           .ToListAsync();
     }
 
-    public Task<List<Task>> GetAllByUserIdAsync(Guid userId)
+    public Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId)
     => _collection.Find(t => t.CreatedByUser == userId)
                           .ToListAsync();
 
-    public async System.Threading.Tasks.Task EditAsync(Task task)
+    public async Task EditAsync(TaskItem task)
     {
         await _collection.ReplaceOneAsync(t=>t.Id==task.Id,
         task);
+    }
+
+    public async Task<bool> AreAllTasksCompletedForProjectIdAsync(Guid projectId)
+    {
+        var hasIncomplete = await _collection
+        .Find(t => t.ProjectId == projectId && !(t.Status==Tasks.Models.TaskStatus.Completed))
+        .AnyAsync();
+
+        return !hasIncomplete;
     }
 }

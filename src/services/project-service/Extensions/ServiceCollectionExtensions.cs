@@ -8,7 +8,7 @@ using project_service.Data.Repositories;
 using project_service.Data.Utilities;
 using project_service.Middlewares;
 using project_service.Projects.Models;
-using Task = project_service.Tasks.Models.Task;
+using TaskItem = project_service.Tasks.Models.TaskItem;
 namespace project_service.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -24,13 +24,13 @@ public static class ServiceCollectionExtensions
             return database.GetCollection<Project>(settings.ProjectCollection);
         });
 
-        services.AddSingleton<IMongoCollection<Task>>(scope =>
+        services.AddSingleton<IMongoCollection<TaskItem>>(scope =>
         {
             var settings = scope.GetRequiredService<IOptions<DatabaseSettings>>().Value;
 
             var client = new MongoClient(settings.ConnectionStrings);
             var database = client.GetDatabase(settings.Database);
-            return database.GetCollection<Task>(settings.TaskCollection);
+            return database.GetCollection<TaskItem>(settings.TaskCollection);
         });
 
         services.AddValidatorsFromAssembly(typeof(AsssemblyReference).Assembly);

@@ -6,7 +6,7 @@ public class ProjectTests
 {
     public readonly Guid UserId = Guid.NewGuid();
     private readonly string Name = "Yaz lab Project 1";
-    private readonly string Description = @"Building a Task management Microservice with a gate way
+    private readonly string Description = @"Building a TaskItem management Microservice with a gate way
          that does not behave only as a proxy but also as a unit of work";
 
     [Fact]

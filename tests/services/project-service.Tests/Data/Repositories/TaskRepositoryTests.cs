@@ -31,7 +31,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
 
     }
     [Fact]
-    public async System.Threading.Tasks.Task GetAllByProjectId_ShouldReturnOnlyTaskForGivenProjectId()
+    public async Task GetAllByProjectId_ShouldReturnOnlyTaskForGivenProjectId()
     {
         var taskRepository = FakeRepositories.GetTaskRepository
             (_databaseFixture.GetTaskCollection());
@@ -52,7 +52,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
 
     }
      [Fact]
-    public async System.Threading.Tasks.Task GetAllByUserId_ShouldReturnOnlyTaskForGivenUserId()
+    public async Task GetAllByUserId_ShouldReturnOnlyTaskForGivenUserId()
     {
         var taskRepository = FakeRepositories.GetTaskRepository
             (_databaseFixture.GetTaskCollection());
@@ -111,7 +111,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         var projectId = Guid.NewGuid();
 
         bool result = await taskRepository
-            .AreAllTasksCompletedByProjectIdAsync(projectId);
+            .AreAllTasksCompletedForProjectIdAsync(projectId);
 
         result.Should().BeTrue();
     }
@@ -133,12 +133,12 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
 
         foreach (var task in tasks)
         {
-            task.CompleteTask(); 
+            CompleteTaskTest(task); 
             await taskRepository.AddAsync(task);
         }
 
         var result = await taskRepository
-            .AreAllTasksCompletedByProjectIdAsync(projectId);
+            .AreAllTasksCompletedForProjectIdAsync(projectId);
 
         result.Should().BeTrue();
     }
@@ -153,7 +153,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         var userId = Guid.NewGuid();
 
         var completedTask = new TaskItem("Done Task", projectId, userId);
-        completedTask.CompleteTask();
+        CompleteTaskTest(completedTask);
 
         var incompleteTask = new TaskItem("Pending Task", projectId, userId);
 
@@ -161,7 +161,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         await taskRepository.AddAsync(incompleteTask);
 
         var result = await taskRepository
-            .AreAllTasksCompletedByProjectIdAsync(projectId);
+            .AreAllTasksCompletedForProjectIdAsync(projectId);
 
         result.Should().BeFalse();
     }
@@ -185,7 +185,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
             await taskRepository.AddAsync(task);
 
         var result = await taskRepository
-            .AreAllTasksCompletedByProjectIdAsync(projectId);
+            .AreAllTasksCompletedForProjectIdAsync(projectId);
 
         result.Should().BeFalse();
     }
@@ -201,7 +201,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         var userId = Guid.NewGuid();
 
         var validTask = new TaskItem("Valid Task", targetProject, userId);
-        validTask.CompleteTask();
+        CompleteTaskTest(validTask);
 
         var otherTask = new TaskItem("Other Project Task", otherProject, userId);
         // not completed on purpose
@@ -210,9 +210,19 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         await taskRepository.AddAsync(otherTask);
 
         var result = await taskRepository
-            .AreAllTasksCompletedByProjectIdAsync(targetProject);
+            .AreAllTasksCompletedForProjectIdAsync(targetProject);
 
         result.Should().BeTrue();
+    }
+
+ 
+
+    private void CompleteTaskTest(TaskItem task)
+    {
+        var userToAssignId = Guid.NewGuid();
+        task.AssignTo(userToAssignId);
+        task.StartWork();
+        task.CompleteTask();
     }
 }
 
