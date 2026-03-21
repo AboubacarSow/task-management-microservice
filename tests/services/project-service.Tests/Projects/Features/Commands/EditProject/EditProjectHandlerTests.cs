@@ -53,9 +53,7 @@ public class EditProjectHandlerTests
             .WithMessage($"*{_projectId}*");
     }
 
-    // -------------------------------------------------------------------------
-    // RED 2: User is not the owner → throws ForbiddenException
-    // -------------------------------------------------------------------------
+   
     [Fact]
     public async Task Handle_UserIsNotOwner_ThrowsForbiddenException()
     {
@@ -75,9 +73,7 @@ public class EditProjectHandlerTests
             .WithMessage($"*{_otherId}*");
     }
 
-    // -------------------------------------------------------------------------
-    // RED 3: Valid description → updated and saved
-    // -------------------------------------------------------------------------
+    
     [Fact]
     public async Task Handle_ValidDescription_UpdatesDescriptionAndSaves()
     {
@@ -97,9 +93,7 @@ public class EditProjectHandlerTests
         _repositoryMock.Verify(r => r.EditAsync(project), Times.Once);
     }
 
-    // -------------------------------------------------------------------------
-    // RED 4: Valid due date → updated and saved
-    // -------------------------------------------------------------------------
+   
     [Fact]
     public async Task Handle_ValidDueDate_UpdatesDueDateAndSaves()
     {
@@ -120,9 +114,7 @@ public class EditProjectHandlerTests
         _repositoryMock.Verify(r => r.EditAsync(project), Times.Once);
     }
 
-    // -------------------------------------------------------------------------
-    // RED 5: Due date in the past → throws ArgumentException
-    // -------------------------------------------------------------------------
+    
     [Fact]
     public async Task Handle_PastDueDate_ThrowsArgumentException()
     {
@@ -142,9 +134,7 @@ public class EditProjectHandlerTests
             .WithMessage("*future*");
     }
 
-    // -------------------------------------------------------------------------
-    // RED 6: All fields null → saves without changes
-    // -------------------------------------------------------------------------
+    
     [Fact]
     public async Task Handle_NoFieldsProvided_SavesWithoutChanges()
     {
