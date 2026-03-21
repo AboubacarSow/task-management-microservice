@@ -9,9 +9,9 @@ class MongoUserRepository(UserRepositoryInterface):
     def __init__(self, collection):
         self.collection = collection
 
-    def add_user(self, user) -> User:
+    async def add_user(self, user) -> User:
         user_dict = user.model_dump(exclude={"id"})
-        result = self.collection.insert_one(user_dict)
+        result = await self.collection.insert_one(user_dict)
         return User(
         id=str(result.inserted_id),
         first_name=user.first_name,
@@ -23,8 +23,8 @@ class MongoUserRepository(UserRepositoryInterface):
         is_active=user.is_active
     )
 
-    def get_user(self, user_id: str):
-        data = self.collection.find_one({"_id": ObjectId(user_id)})
+    async def get_user(self, user_id: str):
+        data = await self.collection.find_one({"_id": ObjectId(user_id)})
 
         if not data:
             return None
@@ -40,8 +40,8 @@ class MongoUserRepository(UserRepositoryInterface):
             is_active=data["is_active"]
         )
 
-    def get_user_by_email(self, email: str):
-        data = self.collection.find_one({"email": email})
+    async def get_user_by_email(self, email: str):
+        data = await self.collection.find_one({"email": email})
 
         if not data:
             return None
@@ -57,9 +57,9 @@ class MongoUserRepository(UserRepositoryInterface):
             is_active=data["is_active"]
         )
 
-    def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict):
         data["updated_at"] = datetime.now()
-        result = self.collection.update_one(
+        result = await self.collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": data}
         )
@@ -67,13 +67,13 @@ class MongoUserRepository(UserRepositoryInterface):
         if result.matched_count == 0:
             return None
 
-        return self.get_user(user_id)
+        return await self.get_user(user_id)
 
-    def delete_user(self, user_id: str):
-        user = self.get_user(user_id)
+    async def delete_user(self, user_id: str):
+        user = await self.get_user(user_id)
 
         if not user:
             return None
 
-        self.collection.delete_one({"_id": ObjectId(user_id)})
+        await self.collection.delete_one({"_id": ObjectId(user_id)})
         return user
