@@ -1,3 +1,4 @@
+using FluentValidation;
 using MediatR;
 using project_service.Commons.Exceptions;
 using project_service.Data.Repositories;
@@ -10,6 +11,7 @@ public record EditProjectStateCommand(Guid ProjectId,
     Guid UserId,
     ProjectStatus Status): IRequest;
 
+public class EditProjectStateCommandValidator : AbstractValidator<EditProjectStateCommand> { }
 
 public sealed class EditProjectStateHandler(
     IProjectRepository projectRepository,

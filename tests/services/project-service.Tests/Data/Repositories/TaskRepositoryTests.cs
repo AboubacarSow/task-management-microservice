@@ -1,7 +1,6 @@
 using FluentAssertions;
 using project_service.Tests.Fixtures;
 using project_service.Tests.Helpers;
-using System.Threading.Tasks;
 using project_service.Tasks.Models;
 
 namespace project_service.Tests.Data.Repositories;

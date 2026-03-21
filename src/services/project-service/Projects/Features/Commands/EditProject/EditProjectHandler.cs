@@ -9,7 +9,9 @@ namespace project_service.Projects.Features.Commands.EditProject;
 
 public record EditProjectCommand(Guid ProjectId,
      Guid UserId, 
-     string? Description, DateTime? DueAt):IRequest;
+     string? Description, DateTime? DueAt): IRequest;
+
+
 
 public class EditProjectCommandValidator : AbstractValidator<EditProjectCommand>
 {
