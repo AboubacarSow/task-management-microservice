@@ -69,7 +69,7 @@ public class EditProjectStateHandlerTests
         var act = () => _handler.Handle(command, CancellationToken.None);
 
         await act.Should()
-            .ThrowAsync<ForbiddenException>();
+            .ThrowAsync<ForbiddenException>(_otherUserId.ToString(),"MARK_AS_COMPLETED");
     }
 
     [Fact]
