@@ -13,7 +13,7 @@ public class EditProjectStateEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/projects/{id}/state", async (
+        app.MapPut("/api/projects/{id:guid}/state", async (
                 Guid id,
                 EditProjectStateRequest request,
                 ISender sender,
