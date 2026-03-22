@@ -17,8 +17,8 @@ public class AddUserToGroupCommandValidatorTests
     public void Should_Have_Error_When_ProjectId_Is_Empty()
     {
         var command = new AddUserToGroupCommand(
-            Guid.Empty,
-            Guid.NewGuid()
+            Guid.NewGuid(),
+            Guid.Empty
         );
 
         var result = _validator.TestValidate(command);
@@ -30,8 +30,8 @@ public class AddUserToGroupCommandValidatorTests
     public void Should_Have_Error_When_UserId_Is_Empty()
     {
         var command = new AddUserToGroupCommand(
-            Guid.NewGuid(),
-            Guid.Empty
+            Guid.Empty,
+            Guid.NewGuid()
         );
 
         var result = _validator.TestValidate(command);

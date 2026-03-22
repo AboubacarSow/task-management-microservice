@@ -11,7 +11,14 @@ public record AddUserToGroupCommand(Guid UserId, Guid ProjectId): IRequest<Unit>
 
 public class AddUserToGroupCommandValidator: AbstractValidator<AddUserToGroupCommand>
 {
+    public AddUserToGroupCommandValidator()
+    {
+        RuleFor(c=>c.UserId)
+        .NotEmpty().WithMessage("UserId is required");
 
+        RuleFor(c=>c.ProjectId)
+        .NotEmpty().WithMessage("ProjectId is required");
+    }
 }
 public class AddUserToGroupHandler(IProjectRepository projectRepository,
     ILogger<AddUserToGroupHandler> logger) : IRequestHandler<AddUserToGroupCommand,Unit>
