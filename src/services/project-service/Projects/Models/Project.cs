@@ -106,11 +106,9 @@ public sealed class Project :BaseEntity
     {
         if (userId == Guid.Empty)
             throw new ArgumentException("UserId cannot be empty");
-        if (userId == OwnerId)
+        if (userId == OwnerId || _group.Contains(userId))
             return;
 
-        if (_group.Contains(userId))
-            return;
         _group.Add(userId);
 
         if (_peopleWorking.Contains(userId))
@@ -128,9 +126,10 @@ public sealed class Project :BaseEntity
 
     public void AddToPeopleWorking(Guid userId)
     {
+        if(userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
         if (_peopleWorking.Contains(userId))
             return;
-           
         _peopleWorking.Add(userId);
     }
 }

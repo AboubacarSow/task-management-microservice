@@ -497,8 +497,6 @@ public class ProjectTests
         var ownerId = Guid.NewGuid();
         var project = FakeProjectData.BuildProject(ownerId);
 
-        project.AddToPeopleWorking(ownerId);
-
         project.PeopleWorking.Should().Contain(ownerId);
     }
 
