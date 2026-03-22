@@ -33,8 +33,8 @@ public static class ApplicatinBuilderExtensions
         .GetRequiredService<IMongoCollection<Project>>();
 
         var indexes = new List<CreateIndexModel<Project>>{
-            new (Builders<Project>.IndexKeys.Ascending(p=>p.CreatedByUser)),
-            new (Builders<Project>.IndexKeys.Ascending(p=>p.CreatedByUser)
+            new (Builders<Project>.IndexKeys.Ascending(p=>p.OwnerId)),
+            new (Builders<Project>.IndexKeys.Ascending(p=>p.OwnerId)
             .Descending(p=>p.CreatedAt))
         };
 

@@ -127,10 +127,10 @@ public class EditProjectHandlerTests
         var command = BuildEditCommand(dueAt: DateTime.UtcNow.AddDays(-1));
 
         // Act
-        var act = () => _handler.Handle(command, CancellationToken.None).GetAwaiter().GetResult();
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
-          act.Should().Throw<ArgumentException>()
+          await act.Should().ThrowAsync<ArgumentException>()
             .WithMessage("*future*");
     }
 

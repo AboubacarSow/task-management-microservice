@@ -9,7 +9,14 @@ public sealed class Project :BaseEntity
 
     public ProjectStatus Status { get; private set; }
     [BsonGuidRepresentation(GuidRepresentation.Standard)]
-    public Guid CreatedByUser { get;private set;}
+    public Guid OwnerId { get;private set;}
+
+    private readonly List<Guid> _group = [];
+    public IReadOnlyCollection<Guid> Group => _group;
+
+    private readonly List<Guid> _peopleWorking = [];
+
+    public IReadOnlyCollection<Guid> PeopleWorking => _peopleWorking;
 
     public Project(string name,Guid userId, string? description =null)
     {
@@ -24,10 +31,12 @@ public sealed class Project :BaseEntity
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
         LastUpdatedAt = CreatedAt;
-        CreatedByUser = userId;
+        OwnerId = userId;
         Name = name;
         Description = description;
         Status = ProjectStatus.Active;
+
+        _peopleWorking.Add(OwnerId);
     }
 
     public void SetDueDate(DateTime date)
@@ -82,7 +91,7 @@ public sealed class Project :BaseEntity
         if (Status == ProjectStatus.Archived)
             throw new InvalidOperationException("*archived*");
 
-         Status = ProjectStatus.Active;
+        Status = ProjectStatus.Active;
         
     }
 
@@ -91,5 +100,36 @@ public sealed class Project :BaseEntity
         if (Status == ProjectStatus.Archived)
             throw new InvalidOperationException("*already archived*");
         Status = ProjectStatus.Archived;
+    }
+
+    public void AddUserToGroup(Guid userId)
+    {
+        if (userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
+        if (userId == OwnerId || _group.Contains(userId))
+            return;
+
+        _group.Add(userId);
+
+        if (_peopleWorking.Contains(userId))
+            return;
+        _peopleWorking.Add(userId);
+    }
+
+    public bool IsInGroup(Guid userId)
+    {
+        if (userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
+
+        return userId == OwnerId || _group.Contains(userId);
+    }
+
+    public void AddToPeopleWorking(Guid userId)
+    {
+        if(userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
+        if (_peopleWorking.Contains(userId))
+            return;
+        _peopleWorking.Add(userId);
     }
 }

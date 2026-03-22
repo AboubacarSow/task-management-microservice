@@ -329,6 +329,16 @@ public class TaskTests
         Assert.True(_task.LastUpdatedAt > previewsDate);
 
     }
+    [Fact]
+    public void Reassigning_WithEmptyUserId_ShouldThrowException()
+    {
+        var empty_userId = Guid.Empty;
+
+        var action = ()=> _task.ReassignTo(empty_userId);
+
+        action.Should().Throw<ArgumentException>()
+            .WithMessage("User Id cannot be null or empty");
+    }
 
     [Fact]
     public void SetDueDate_WithValidDueDate_DueAt_ShouldNotBeNull()

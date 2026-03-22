@@ -27,7 +27,7 @@ public class ProjectRepository(IMongoCollection<Project> collection) : IProjectR
 
     public async Task<List<Project>> GetAllByUserId(Guid userId)
     {
-        return await _collection.Find(p=>p.CreatedByUser==userId)
+        return await _collection.Find(p=>p.OwnerId==userId)
                                 .ToListAsync();
     }
 

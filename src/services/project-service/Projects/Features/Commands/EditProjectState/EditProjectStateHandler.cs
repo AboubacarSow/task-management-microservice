@@ -57,7 +57,7 @@ public sealed class EditProjectStateHandler(
             throw new NotFoundException(nameof(Project),request.ProjectId.ToString());
         }
 
-        if (project.CreatedByUser != request.UserId)
+        if (project.OwnerId != request.UserId)
         {
             _logger.LogWarning(
                 "User {UserId}  IS_NOT_OWNER of project {ProjectId}",

@@ -37,7 +37,7 @@ public class CreateProjectHandlerTests
 
         _projectRepositoryMock.Verify(r=>r.AddAsync(It.Is<Project>(p =>
                 p.Name == command.Name &&
-                p.CreatedByUser == command.CreatedByUser
+                p.OwnerId == command.CreatedByUser
             )),Times.Once());
             
     }
