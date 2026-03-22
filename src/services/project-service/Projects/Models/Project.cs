@@ -14,7 +14,9 @@ public sealed class Project :BaseEntity
     private readonly List<Guid> _group = [];
     public IReadOnlyCollection<Guid> Group => _group;
 
-    public IReadOnlyCollection<Guid> PeopleWorking { get; set; }
+    private readonly List<Guid> _peopleWorking = [];
+
+    public IReadOnlyCollection<Guid> PeopleWorking => _peopleWorking;
 
     public Project(string name,Guid userId, string? description =null)
     {
@@ -33,6 +35,8 @@ public sealed class Project :BaseEntity
         Name = name;
         Description = description;
         Status = ProjectStatus.Active;
+
+        _peopleWorking.Add(OwnerId);
     }
 
     public void SetDueDate(DateTime date)
@@ -107,8 +111,11 @@ public sealed class Project :BaseEntity
 
         if (_group.Contains(userId))
             return;
-
         _group.Add(userId);
+
+        if (_peopleWorking.Contains(userId))
+            return;
+        _peopleWorking.Add(userId);
     }
 
     public bool IsInGroup(Guid userId)
@@ -121,6 +128,9 @@ public sealed class Project :BaseEntity
 
     public void AddToPeopleWorking(Guid userId)
     {
-        throw new NotImplementedException();
+        if (_peopleWorking.Contains(userId))
+            return;
+           
+        _peopleWorking.Add(userId);
     }
 }

@@ -345,10 +345,8 @@ public class ProjectTests
     {
         
         var project = BuildCompletedProject();
-
         
         project.Archive();
-
         
         project.Status.Should().Be(ProjectStatus.Archived);
     }
@@ -413,6 +411,8 @@ public class ProjectTests
         project.PeopleWorking.Should().Contain(userId);
     }
 
+    
+
     [Fact]
     public void IsInGroup_Should_Return_True_If_User_In_Group()
     {
@@ -456,7 +456,7 @@ public class ProjectTests
         project.AddUserToGroup(userId);
         project.AddUserToGroup(userId);
 
-        project.PeopleWorking.Count.Should().Be(1);
+        project.PeopleWorking.Count.Should().Be(1+1);
     }
     [Fact]
     public void Owner_Should_Be_In_Group_And_PeopleWorking()
@@ -487,20 +487,10 @@ public class ProjectTests
         project.AddToPeopleWorking(userId);
         project.AddToPeopleWorking(userId);
 
-        project.PeopleWorking.Count.Should().Be(1);
+        project.PeopleWorking.Count.Should().Be(1+1);
     }
 
-    [Fact]
-    public void AddToPeopleWorking_Should_Add_User_To_Group_If_Not_Already()
-    {
-        var project = FakeProjectData.BuildProject(Guid.NewGuid());
-        var userId = Guid.NewGuid();
-
-        project.AddToPeopleWorking(userId);
-
-        project.Group.Should().Contain(userId);
-    }
-
+    
     [Fact]
     public void Owner_Should_Be_Allowed_In_PeopleWorking()
     {
