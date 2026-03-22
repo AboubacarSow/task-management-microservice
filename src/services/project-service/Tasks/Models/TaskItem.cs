@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using project_service.Commons;
 using project_service.Tasks.Exceptions;
 
@@ -85,6 +84,8 @@ public sealed class TaskItem :BaseEntity
 
     public void ReassignTo(Guid new_userId)
     {
+        if (new_userId.Equals(Guid.Empty))
+            throw new ArgumentException("User Id cannot be null or empty");
         AssignedToUser = new_userId;
         Touch();
     }

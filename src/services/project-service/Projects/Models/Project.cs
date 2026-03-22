@@ -82,7 +82,7 @@ public sealed class Project :BaseEntity
         if (Status == ProjectStatus.Archived)
             throw new InvalidOperationException("*archived*");
 
-         Status = ProjectStatus.Active;
+        Status = ProjectStatus.Active;
         
     }
 
