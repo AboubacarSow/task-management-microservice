@@ -1,0 +1,71 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/projects/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "project-service",
+            "Port": 5000 
+        }
+      ],
+      "UpstreamPathTemplate": "/projects/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH","DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "project_service" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {   
+            "Host": "project-service", 
+            "Port": 5000 
+        }
+      ],
+      "UpstreamPathTemplate": "/tasks/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "project_service" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/agent/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "agent-service", 
+            "Port": 5001 
+        }
+      ],
+      "UpstreamPathTemplate": "/agent/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "agent_service" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "user-service", 
+            "Port": 5002 
+        }
+      ],
+      "UpstreamPathTemplate": "/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "user_service" ]
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId"
+  }
+}
