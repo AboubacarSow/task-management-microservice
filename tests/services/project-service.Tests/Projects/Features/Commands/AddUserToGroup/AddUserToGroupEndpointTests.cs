@@ -111,7 +111,7 @@ public class AddUserToGroupEndpointTests
         AddUserToGroupCommand? capturedCommand = null;
 
         _senderMock.Setup(s => s.Send(It.IsAny<AddUserToGroupCommand>(), It.IsAny<CancellationToken>()))
-                   .Callback<IRequest, CancellationToken>((cmd, _) =>
+                   .Callback<IRequest<Unit>, CancellationToken>((cmd, _) =>
                    {
                        capturedCommand = (AddUserToGroupCommand)cmd;
                    })

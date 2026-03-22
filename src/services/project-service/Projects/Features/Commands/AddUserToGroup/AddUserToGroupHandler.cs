@@ -8,7 +8,6 @@ namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
 public record AddUserToGroupCommand(Guid UserId, Guid ProjectId): IRequest<Unit>;
-
 public class AddUserToGroupCommandValidator: AbstractValidator<AddUserToGroupCommand>
 {
     public AddUserToGroupCommandValidator()
