@@ -1,6 +1,5 @@
 using FluentValidation.TestHelper;
 using project_service.Projects.Features.Commands.AddUserToGroup;
-using Xunit;
 
 namespace project_service.Tests.Projects.Features.Commands.AddUserToGroup;
 
