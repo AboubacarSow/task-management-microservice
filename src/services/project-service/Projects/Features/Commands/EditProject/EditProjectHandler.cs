@@ -39,7 +39,7 @@ public class EditProjectHandler(IProjectRepository repository,ILogger<EditProjec
         var project = await _repository.GetByIdAsync(request.ProjectId)
         ?? throw new NotFoundException(nameof(Project), request.ProjectId.ToString());
 
-        if(project.CreatedByUser != request.UserId)
+        if(project.OwnerId != request.UserId)
             throw new ForbiddenException(request.UserId.ToString(), "EDIT_PROJECT");
 
 

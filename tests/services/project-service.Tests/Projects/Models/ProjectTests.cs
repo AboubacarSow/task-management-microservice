@@ -138,7 +138,7 @@ public class ProjectTests
     public void CreateProject_ShouldStoreCreator()
     {
         var project = new Project(Name, UserId);
-        project.CreatedByUser.Should().Be(UserId);
+        project.OwnerId.Should().Be(UserId);
     }
     [Fact]
     public void CreateProject_WithEmptyCreatedBy_ShouldThrowException()
@@ -359,14 +359,69 @@ public class ProjectTests
         var project = BuildActiveProject();
         project.Archive();
 
-        
         var act = () => project.Archive();
-
         
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("*already archived*");
     }
-  
+    
+
+    [Fact]
+    public void AddUserToGroup_Should_Add_User()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+        var userId = Guid.NewGuid();
+
+        project.AddUserToGroup(userId);
+
+        project.Group.Should().Contain(userId);
+    }
+
+    [Fact]
+    public void AddUserToGroup_Should_Not_Add_Duplicate_User()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+        var userId = Guid.NewGuid();
+
+        project.AddUserToGroup(userId);
+        project.AddUserToGroup(userId);
+
+        project.Group.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void IsInGroup_Should_Return_True_If_User_In_Group()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+        var userId = Guid.NewGuid();
+
+        project.AddUserToGroup(userId);
+
+        var result = project.IsInGroup(userId);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsInGroup_Should_Return_False_If_User_Not_In_Group()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+
+        var result = project.IsInGroup(Guid.NewGuid());
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Owner_Should_Always_Be_In_Group()
+    {
+        var ownerId = Guid.NewGuid();
+        var project = new Project("Test Project", ownerId, "Initial description");
+
+        bool result = project.IsInGroup(ownerId);
+
+        result.Should().BeTrue();
+    }
 
     private static Project BuildActiveProject() =>
         new ("Test Project", Guid.NewGuid(), "Initial description");
@@ -394,3 +449,4 @@ public class ProjectTests
  
   
 }
+

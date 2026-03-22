@@ -9,7 +9,10 @@ public sealed class Project :BaseEntity
 
     public ProjectStatus Status { get; private set; }
     [BsonGuidRepresentation(GuidRepresentation.Standard)]
-    public Guid CreatedByUser { get;private set;}
+    public Guid OwnerId { get;private set;}
+
+    private readonly List<Guid> _group = [];
+    public IReadOnlyCollection<Guid> Group => _group;
 
     public Project(string name,Guid userId, string? description =null)
     {
@@ -24,7 +27,7 @@ public sealed class Project :BaseEntity
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
         LastUpdatedAt = CreatedAt;
-        CreatedByUser = userId;
+        OwnerId = userId;
         Name = name;
         Description = description;
         Status = ProjectStatus.Active;
@@ -91,5 +94,24 @@ public sealed class Project :BaseEntity
         if (Status == ProjectStatus.Archived)
             throw new InvalidOperationException("*already archived*");
         Status = ProjectStatus.Archived;
+    }
+
+    public void AddUserToGroup(Guid userId)
+    {
+        if (userId == OwnerId)
+            return;
+
+        if (_group.Contains(userId))
+            return;
+
+        _group.Add(userId);
+    }
+
+    public bool IsInGroup(Guid userId)
+    {
+        if (userId == OwnerId)
+            return true;
+
+        return _group.Contains(userId);
     }
 }

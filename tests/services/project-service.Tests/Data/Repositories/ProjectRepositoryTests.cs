@@ -30,7 +30,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
         result.Should().NotBeNull();
         result.Id.Should().Be(project.Id);
         result.Name.Should().Be(project.Name);
-        result.CreatedByUser.Should().Be(project.CreatedByUser);
+        result.OwnerId.Should().Be(project.OwnerId);
         
     }
     [Fact]
@@ -54,7 +54,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
         result.Should().NotBeNull();
 
         result.Should().HaveCount(2);
-        result.Should().OnlyContain(p=>p.CreatedByUser == user2);
+        result.Should().OnlyContain(p=>p.OwnerId == user2);
         
     }
 
