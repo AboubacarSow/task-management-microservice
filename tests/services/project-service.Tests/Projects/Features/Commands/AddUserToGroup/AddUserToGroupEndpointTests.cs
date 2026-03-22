@@ -121,7 +121,7 @@ public class AddUserToGroupEndpointTests
 
         var request = new
         {
-            UserId = userId
+            TargetUserId = userId
         };
 
         var response = await _client.PostAsJsonAsync($"/api/projects/{_projectId}/group", request);
@@ -130,6 +130,6 @@ public class AddUserToGroupEndpointTests
 
         capturedCommand.Should().NotBeNull();
         capturedCommand!.ProjectId.Should().Be(_projectId);
-        capturedCommand.UserId.Should().Be(userId);
+        capturedCommand.TargetUserId.Should().Be(userId);
     }
 }

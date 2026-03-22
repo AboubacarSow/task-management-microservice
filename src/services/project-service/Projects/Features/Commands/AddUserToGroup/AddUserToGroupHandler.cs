@@ -7,12 +7,12 @@ using project_service.Projects.Models;
 namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
-public record AddUserToGroupCommand(Guid UserId, Guid ProjectId): IRequest<Unit>;
+public record AddUserToGroupCommand(Guid TargetUserId, Guid ProjectId): IRequest<Unit>;
 public class AddUserToGroupCommandValidator: AbstractValidator<AddUserToGroupCommand>
 {
     public AddUserToGroupCommandValidator()
     {
-        RuleFor(c=>c.UserId)
+        RuleFor(c=>c.TargetUserId)
         .NotEmpty().WithMessage("UserId is required");
 
         RuleFor(c=>c.ProjectId)
@@ -29,7 +29,7 @@ public class AddUserToGroupHandler(IProjectRepository projectRepository,
         _logger.LogInformation(
             "Handling AddUserToProjectGroupCommand for ProjectId: {ProjectId}, UserId: {UserId}",
             request.ProjectId,
-            request.UserId);
+            request.TargetUserId);
 
         var project = await _projectRepository.GetByIdAsync(request.ProjectId);
 
@@ -42,23 +42,23 @@ public class AddUserToGroupHandler(IProjectRepository projectRepository,
             throw new NotFoundException(nameof(Project),request.ProjectId.ToString());
         }
 
-        var wasAlreadyInGroup = project.IsInGroup(request.UserId);
+        var wasAlreadyInGroup = project.IsInGroup(request.TargetUserId);
 
-        project.AddUserToGroup(request.UserId);
+        project.AddUserToGroup(request.TargetUserId);
 
         if (wasAlreadyInGroup)
         {
             _logger.LogInformation(
                 "User already in group. No changes applied. ProjectId: {ProjectId}, UserId: {UserId}",
                 request.ProjectId,
-                request.UserId);
+                request.TargetUserId);
         }
         else
         {
             _logger.LogInformation(
                 "User added to group successfully. ProjectId: {ProjectId}, UserId: {UserId}",
                 request.ProjectId,
-                request.UserId);
+                request.TargetUserId);
         }
 
         await _projectRepository.EditAsync(project);

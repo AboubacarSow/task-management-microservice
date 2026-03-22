@@ -35,7 +35,7 @@ public class AddUserToGroupCommandValidatorTests
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.UserId);
+        result.ShouldHaveValidationErrorFor(x => x.TargetUserId);
     }
 
     [Fact]

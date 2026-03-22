@@ -5,7 +5,7 @@ using project_service.Data.Utilities;
 namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
-public record AddUserToGroupRequest(Guid UserId);
+public record AddUserToGroupRequest(Guid TargetUserId);
 public class AddUserToGroupEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -17,10 +17,10 @@ public class AddUserToGroupEndpoint : ICarterModule
             IUserContext userContext
             ) =>
         {
-
+            // Will be used later on to check if user is authorize to perform such operation
             var userId = userContext.GetUserId();
 
-            var command = new AddUserToGroupCommand(request.UserId,id);
+            var command = new AddUserToGroupCommand(request.TargetUserId,id);
 
             await sender.Send(command);
 
