@@ -1,3 +1,4 @@
+using FluentValidation;
 using MediatR;
 using project_service.Commons.Exceptions;
 using project_service.Data.Repositories;
@@ -7,6 +8,11 @@ namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
 public record AddUserToGroupCommand(Guid UserId, Guid ProjectId): IRequest<Unit>;
+
+public class AddUserToGroupCommandValidator: AbstractValidator<AddUserToGroupCommand>
+{
+
+}
 public class AddUserToGroupHandler(IProjectRepository projectRepository,
     ILogger<AddUserToGroupHandler> logger) : IRequestHandler<AddUserToGroupCommand,Unit>
 {

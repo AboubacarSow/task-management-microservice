@@ -65,3 +65,5 @@ public class AddUserToGroupHandlerTests
         project.Group.Count.Should().Be(1);
     }
 }
+
+
