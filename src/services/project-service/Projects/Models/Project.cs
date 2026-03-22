@@ -98,6 +98,8 @@ public sealed class Project :BaseEntity
 
     public void AddUserToGroup(Guid userId)
     {
+        if (userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
         if (userId == OwnerId)
             return;
 
@@ -109,9 +111,9 @@ public sealed class Project :BaseEntity
 
     public bool IsInGroup(Guid userId)
     {
-        if (userId == OwnerId)
-            return true;
+        if (userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
 
-        return _group.Contains(userId);
+        return userId == OwnerId || _group.Contains(userId);
     }
 }
