@@ -12,7 +12,9 @@ public static class Config
 
     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("project-service", "Project Service Access")
+            new ApiScope("project_service", "Project Service Access"),
+            new ApiScope("agent_service", "Agent Service Access"),
+            new ApiScope("user_service", "User Service Access")
         ];
 
     public static IEnumerable<Client> Clients =>
@@ -33,7 +35,9 @@ public static class Config
                 {
                     "openid",
                     "profile",
-                    "project-service"
+                    "project_service",
+                    "agent_service",
+                    "user_service",
                 },
 
                 AccessTokenLifetime          = 3600,   

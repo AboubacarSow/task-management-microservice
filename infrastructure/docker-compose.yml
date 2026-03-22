@@ -1,6 +1,20 @@
-version: '3.9'
+version: "3.9"
 
 services:
+  dispatcher-service:
+    build:
+      context: .
+      dockerfile: src/services/dispatcher-service/Dockerfile
+    image: dispatcher-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - authentication-service
+      - project-service
+      - agent-service
+      - user-service
+    networks:
+      - internal
 
   authentication-service:
     build:
@@ -9,7 +23,7 @@ services:
     image: authentication-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - UserService__BaseUrl=http://user-service:8000
+      - UserService__BaseUrl=http://user-service:5002
     depends_on:
       - mongodb
       - elasticsearch
@@ -28,6 +42,30 @@ services:
     depends_on:
       - mongodb
       - elasticsearch
+    networks:
+      - internal
+
+  agent-service:
+    build:
+      context: ./src/services/ai_agent_service
+    image: agent-service
+    command: uvicorn main:app --host 0.0.0.0 --port 5001
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+    networks:
+      - internal
+
+  user-service:
+    build:
+      context: ./src/services/user_service
+    image: user-service
+    command: uvicorn main:app --host 0.0.0.0 --port 5002
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
     networks:
       - internal
 
