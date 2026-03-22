@@ -14,6 +14,8 @@ public sealed class Project :BaseEntity
     private readonly List<Guid> _group = [];
     public IReadOnlyCollection<Guid> Group => _group;
 
+    public IReadOnlyCollection<Guid> PeopleWorking { get; set; }
+
     public Project(string name,Guid userId, string? description =null)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -115,5 +117,10 @@ public sealed class Project :BaseEntity
             throw new ArgumentException("UserId cannot be empty");
 
         return userId == OwnerId || _group.Contains(userId);
+    }
+
+    public void AddToPeopleWorking(Guid userId)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,5 +1,6 @@
 using FluentAssertions;
 using project_service.Projects.Models;
+using project_service.Tests.Helpers;
 
 namespace project_service.Tests.Projects.Models;
 public class ProjectTests
@@ -390,6 +391,29 @@ public class ProjectTests
     }
 
     [Fact]
+    public void AddUserToGroup_Should_Not_Add_Owner()
+    {
+        var ownerId = Guid.NewGuid();
+        var project = new Project("Test Project", ownerId, "Initial description");
+
+        project.AddUserToGroup(ownerId);
+
+        project.Group.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void AddUserToGroup_Should_Add_User_To_PeopleWorking()
+    {
+        var project = FakeProjectData.BuildProject(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+
+        project.AddUserToGroup(userId);
+
+        project.Group.Should().Contain(userId);
+        project.PeopleWorking.Should().Contain(userId);
+    }
+
+    [Fact]
     public void IsInGroup_Should_Return_True_If_User_In_Group()
     {
         var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
@@ -416,11 +440,76 @@ public class ProjectTests
     public void Owner_Should_Always_Be_In_Group()
     {
         var ownerId = Guid.NewGuid();
-        var project = new Project("Test Project", ownerId, "Initial description");
+        var project = FakeProjectData.BuildProject(ownerId);
 
         bool result = project.IsInGroup(ownerId);
 
         result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void AddUserToGroup_Should_Not_Duplicate_In_PeopleWorking()
+    {
+        var project = FakeProjectData.BuildProject(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+
+        project.AddUserToGroup(userId);
+        project.AddUserToGroup(userId);
+
+        project.PeopleWorking.Count.Should().Be(1);
+    }
+    [Fact]
+    public void Owner_Should_Be_In_Group_And_PeopleWorking()
+    {
+        var ownerId = Guid.NewGuid();
+        var project = FakeProjectData.BuildProject(ownerId);
+
+        project.IsInGroup(ownerId).Should().BeTrue();
+        project.PeopleWorking.Should().Contain(ownerId);
+    }
+    [Fact]
+    public void AddToPeopleWorking_Should_Add_User()
+    {
+        var project =   FakeProjectData.BuildProject(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+
+        project.AddToPeopleWorking(userId);
+
+        project.PeopleWorking.Should().Contain(userId);
+    }
+
+    [Fact]
+    public void AddToPeopleWorking_Should_Not_Add_Duplicate()
+    {
+        var project = FakeProjectData.BuildProject(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+
+        project.AddToPeopleWorking(userId);
+        project.AddToPeopleWorking(userId);
+
+        project.PeopleWorking.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void AddToPeopleWorking_Should_Add_User_To_Group_If_Not_Already()
+    {
+        var project = FakeProjectData.BuildProject(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+
+        project.AddToPeopleWorking(userId);
+
+        project.Group.Should().Contain(userId);
+    }
+
+    [Fact]
+    public void Owner_Should_Be_Allowed_In_PeopleWorking()
+    {
+        var ownerId = Guid.NewGuid();
+        var project = FakeProjectData.BuildProject(ownerId);
+
+        project.AddToPeopleWorking(ownerId);
+
+        project.PeopleWorking.Should().Contain(ownerId);
     }
 
     private static Project BuildActiveProject() =>
