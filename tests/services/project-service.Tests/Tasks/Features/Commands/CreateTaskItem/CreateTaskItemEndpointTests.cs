@@ -10,7 +10,6 @@ public class CreateTaskItemEndpointTests
     private readonly HttpClient _client;
     private readonly Mock<ISender> _senderMock = new();
 
-    private readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
     public CreateTaskItemEndpointTests(WebApplicationFactory<Program> factory)
     {

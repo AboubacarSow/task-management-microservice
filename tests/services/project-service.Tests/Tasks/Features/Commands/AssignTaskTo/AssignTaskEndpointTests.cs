@@ -94,7 +94,7 @@ public class AssignTaskToEndpointTests
         AssignTaskToCommand? capturedCommand = null;
 
         _senderMock.Setup(s => s.Send(It.IsAny<AssignTaskToCommand>(), It.IsAny<CancellationToken>()))
-                   .Callback<IRequest, CancellationToken>((cmd, _) =>
+                   .Callback<IRequest<Unit>, CancellationToken>((cmd, _) =>
                    {
                        capturedCommand = (AssignTaskToCommand)cmd;
                    })
