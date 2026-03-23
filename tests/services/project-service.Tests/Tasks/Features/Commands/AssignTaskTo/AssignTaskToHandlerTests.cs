@@ -50,12 +50,12 @@ public class AssignTaskToHandlerTests
 
         project.AddUserToGroup(currentUser);
 
-        var task = new TaskItem("task", project.Id, currentUser);
+        var task = new TaskItem("task", project.Id, assignedUser);
 
         _taskRepo.Setup(x => x.GetByIdAsync(task.Id)).ReturnsAsync(task);
         _projectRepo.Setup(x => x.GetByIdAsync(project.Id)).ReturnsAsync(project);
 
-        var command = new AssignTaskToCommand(task.Id, assignedUser, currentUser);
+        var command = new AssignTaskToCommand(task.Id, currentUser, assignedUser);
 
         await _handler.Handle(command, CancellationToken.None);
 
