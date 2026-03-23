@@ -44,3 +44,7 @@ class UserDeleted(BaseModel):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
+    
+class UserActive(BaseModel):
+    id: str
+    is_active: bool
