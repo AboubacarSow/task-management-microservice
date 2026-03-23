@@ -1,20 +1,58 @@
 using project_service.Data.Repositories;
-
+using MediatR;
+using project_service.Commons.Exceptions;
 namespace project_service.Projects.Features.Commands.AddUserToPeople;
 
 
+public record AddUserToPeopleWorkingCommand(Guid ProjectId, Guid TargetUserId): IRequest<Unit>;
+public class AddUserToPeopleWorkingHandler(
+    IProjectRepository projectRepository,
+    ILogger<AddUserToPeopleWorkingHandler> logger)
+        : IRequestHandler<AddUserToPeopleWorkingCommand,Unit>
+{
+    private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly ILogger<AddUserToPeopleWorkingHandler> _logger = logger;
 
-public record AddUserToPeopleWorkingCommand
-{
-    public AddUserToPeopleWorkingCommand(Guid projectId, Guid userId)
+    public async Task<Unit> Handle(
+        AddUserToPeopleWorkingCommand request, 
+        CancellationToken cancellationToken)
     {
-    }
-}
-public class AddUserToPeopleWorkingHandler(IProjectRepository repository)
-{
-    
-    public async Task Handle(AddUserToPeopleWorkingCommand command, CancellationToken none)
-    {
-        throw new NotImplementedException();
+
+        var project = await _projectRepository.GetByIdAsync(request.ProjectId);
+
+        if (project is null)
+        {
+            _logger.LogWarning(
+                "Project not found. ProjectId: {ProjectId}",
+                request.ProjectId);
+
+            throw new NotFoundException(nameof(project),request.ProjectId.ToString());
+        }
+
+        var alreadyWorking = project.PeopleWorking.Contains(request.TargetUserId);
+
+        project.AddToPeopleWorking(request.TargetUserId);
+
+        if (alreadyWorking)
+        {
+            _logger.LogInformation(
+                "User already in PeopleWorking. No changes applied. ProjectId: {ProjectId}, UserId: {UserId}",
+                request.ProjectId,
+                request.TargetUserId);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "User added to PeopleWorking. ProjectId: {ProjectId}, UserId: {UserId}",
+                request.ProjectId,
+                request.TargetUserId);
+        }
+
+        await _projectRepository.EditAsync(project);
+        _logger.LogInformation(
+            "Project updated successfully after PeopleWorking change. ProjectId: {ProjectId}",
+            request.ProjectId);
+
+        return Unit.Value;
     }
 }

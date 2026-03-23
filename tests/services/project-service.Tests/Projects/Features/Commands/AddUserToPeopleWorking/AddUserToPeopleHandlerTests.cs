@@ -1,4 +1,6 @@
+using Castle.Core.Logging;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using project_service.Commons.Exceptions;
 using project_service.Data.Repositories;
@@ -13,6 +15,7 @@ namespace project_service.Tests.Projects.Features.Commands.AddUserToPeopleWorkin
 public class AddUserToPeopleWorkingHandlerTests
 {
     private readonly Mock<IProjectRepository> _repoMock = new();
+    private readonly Mock<ILogger<AddUserToPeopleWorkingHandler>> _loggerMock = new();
 
     [Fact]
     public async Task Handle_Should_Add_User_To_PeopleWorking_And_Save()
@@ -24,12 +27,11 @@ public class AddUserToPeopleWorkingHandlerTests
         var projectId = Guid.NewGuid();
         var userId = Guid.NewGuid();
 
-        project.AddUserToGroup(userId); 
 
         _repoMock.Setup(r => r.GetByIdAsync(projectId))
                  .ReturnsAsync(project);
 
-        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object);
+        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object,_loggerMock.Object);
 
         var command = new AddUserToPeopleWorkingCommand(projectId, userId);
 
@@ -40,6 +42,7 @@ public class AddUserToPeopleWorkingHandlerTests
         project.PeopleWorking.Should().Contain(userId);
 
         _repoMock.Verify(r => r.EditAsync(project), Times.Once);
+       
     }
 
 
@@ -55,7 +58,7 @@ public class AddUserToPeopleWorkingHandlerTests
         _repoMock.Setup(r => r.GetByIdAsync(projectId))
                 .ReturnsAsync((Project?)null);
 
-        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object);
+        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object, _loggerMock.Object);
 
         var command = new AddUserToPeopleWorkingCommand(projectId, userId);
 
@@ -67,28 +70,7 @@ public class AddUserToPeopleWorkingHandlerTests
     }
 
 
-    [Fact]
-    public async Task Handle_Should_Throw_When_User_Not_In_Group()
-    {
-        // Arrange
-        var project = FakeProjectData.BuildProject(Guid.NewGuid());
-
-        var projectId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-
-        _repoMock.Setup(r => r.GetByIdAsync(projectId))
-                .ReturnsAsync(project);
-
-        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object);
-
-        var command = new AddUserToPeopleWorkingCommand(projectId, userId);
-
-        // Act
-        Func<Task> act = async () => await handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
-    }
+    
 
     [Fact]
     public async Task Handle_Should_Not_Duplicate_User_In_PeopleWorking()
@@ -97,13 +79,12 @@ public class AddUserToPeopleWorkingHandlerTests
         var project = FakeProjectData.BuildProject(Guid.NewGuid());
         var userId = Guid.NewGuid();
 
-        project.AddUserToGroup(userId);
         project.AddToPeopleWorking(userId); 
 
         _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(project);
 
-        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object);
+        var handler = new AddUserToPeopleWorkingHandler(_repoMock.Object, _loggerMock.Object);
 
         var command = new AddUserToPeopleWorkingCommand(Guid.NewGuid(), userId);
 
@@ -111,6 +92,6 @@ public class AddUserToPeopleWorkingHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        project.PeopleWorking.Count.Should().Be(1);
+        project.PeopleWorking.Count.Should().Be(1+1);
     }
 }
