@@ -11,6 +11,12 @@ public record GetPeopleWorkingByIdQuery(Guid UserId,Guid ProjectId): IRequest<Li
 
 public class GetPeopleWorkingByIdQueryValidator: AbstractValidator<GetPeopleWorkingByIdQuery>{
 
+    public GetPeopleWorkingByIdQueryValidator()
+    {
+        RuleFor(q=>q.UserId).NotEmpty().WithMessage("UserId is required");
+
+        RuleFor(q=>q.ProjectId).NotEmpty().WithMessage("ProjectId is required");
+    }
 }
 public class GetPeopleWorkingByIdHandler(IProjectRepository repository, ILogger<GetPeopleWorkingByIdHandler> logger)
         : IRequestHandler<GetPeopleWorkingByIdQuery, List<Guid>>
