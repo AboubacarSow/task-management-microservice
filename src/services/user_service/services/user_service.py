@@ -15,17 +15,21 @@ class UserService:
         user = await self.user_repository.get_user(user_id)
         
         if not user:
-            raise ValueError("User with this id does not exsit")
+            raise ValueError("User with this id does not exist")
         
         return user
     
     async def update_user(self, user_id: str, data: dict):
+        current_user = await self.user_repository.get_user(user_id)
+        if not current_user:
+            raise ValueError("User with this id does not exist")
+        
+        if "email" in data:
+            existing_user = await self.user_repository.get_user_by_email(data["email"])
+            if existing_user:
+                raise FileExistsError("User with this email already exists")
+            
         user = await self.user_repository.update_user(user_id, data)
-        if not user:
-            raise ValueError("User with this id does not exsit")
-        existing_user = await self.user_repository.get_user_by_email(data["email"])
-        if existing_user:
-            raise FileExistsError("User with this email already exists")
         
         return user
     
@@ -33,6 +37,6 @@ class UserService:
         user = await self.user_repository.delete_user(user_id)
         
         if not user:
-            raise ValueError("User with this id does not exsit")
+            raise ValueError("User with this id does not exist")
         
         return user

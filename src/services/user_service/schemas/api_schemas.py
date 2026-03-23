@@ -15,7 +15,6 @@ class UserCreatedSuccesfully(BaseModel):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
-    is_active: bool
     
 class UserGet(BaseModel):
     id: str 
@@ -24,7 +23,6 @@ class UserGet(BaseModel):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
-    is_active: bool
     
 class UserUpdate(BaseModel):
     first_name: Optional[str] = None
@@ -38,7 +36,6 @@ class UserUpdated(BaseModel):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
-    is_active: bool
     
 class UserDeleted(BaseModel):
     id: str
@@ -47,4 +44,3 @@ class UserDeleted(BaseModel):
     email: EmailStr
     created_at: datetime
     updated_at: datetime
-    is_active: bool
