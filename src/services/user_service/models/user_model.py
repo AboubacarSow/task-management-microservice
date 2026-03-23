@@ -10,4 +10,4 @@ class User(BaseModel):
     password: str
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
-    is_active: bool = False
+    is_active: bool = True

@@ -109,7 +109,7 @@ async def test_get_user_not_found():
     repo = FakeUserRepository()
     service = UserService(repo)
 
-    with pytest.raises(ValueError, match="User with this id does not exsit"):
+    with pytest.raises(ValueError, match="User with this id does not exist"):
         await service.get_user("non-existing-id")
         
 @pytest.mark.asyncio   
@@ -152,7 +152,7 @@ async def test_update_user_not_found():
         "last_name": "Yilmaz"
     }
     
-    with pytest.raises(ValueError, match="User with this id does not exsit"):
+    with pytest.raises(ValueError, match="User with this id does not exist"):
         await service.update_user(user_id, user_dict)
   
 @pytest.mark.asyncio      
@@ -185,5 +185,5 @@ async def test_delete_user_id_not_found():
 
     user_id = str(uuid.uuid4())
     
-    with pytest.raises(ValueError, match="User with this id does not exsit"):
+    with pytest.raises(ValueError, match="User with this id does not exist"):
         await service.delete_user(user_id)

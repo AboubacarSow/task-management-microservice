@@ -90,7 +90,7 @@ async def test_add_new_user_duplicate_email():
     data2 = response2.json()
 
     assert response1.status_code == 200
-    assert response2.status_code == 400
+    assert response2.status_code == 409
 
     assert "id" in data1
     assert data1["email"] == "ali@test1.com"
@@ -129,7 +129,7 @@ async def test_get_user_not_exist():
     data = response.json()
     assert response.status_code == 404
     assert "detail" in data
-    assert data["detail"] == "User with this id does not exsit"
+    assert data["detail"] == "User with this id does not exist"
 
 @pytest.mark.asyncio   
 async def test_update_user():
@@ -177,7 +177,7 @@ async def test_update_user_not_exsit():
     
     assert response.status_code == 404
     assert "detail" in data
-    assert data["detail"] == "User with this id does not exsit"
+    assert data["detail"] == "User with this id does not exist"
  
 @pytest.mark.asyncio   
 async def test_delete_user():
@@ -211,4 +211,35 @@ async def test_delete_user_not_exist():
     data = response.json()
     assert response.status_code == 404
     assert "detail" in data
-    assert data["detail"] == "User with this id does not exsit"
+    assert data["detail"] == "User with this id does not exist"
+
+@pytest.mark.asyncio
+async def test_is_user_active():
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response1 = await client.post("/api/users/", json={
+            "first_name": "Ali",
+            "last_name": "Veli",
+            "email": "ali@te.com",
+            "password": "123456"
+        })
+    data1 = response1.json()
+    assert response1.status_code == 200
+    assert "id" in data1
+    user_id = data1["id"]
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response2 = await client.get(f"/api/users/{user_id}/active")
+    data2 = response2.json()
+    assert "is_active" in data2
+    assert data2["is_active"] == True
+ 
+@pytest.mark.asyncio   
+async def test_is_user_active_user_not_found():
+    user_id = str(uuid.uuid4())
+    
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get(f"/api/users/{user_id}/active")
+    
+    data = response.json()
+    assert response.status_code == 404
+    assert "detail" in data
+    assert data["detail"] == "User with this id does not exist"
