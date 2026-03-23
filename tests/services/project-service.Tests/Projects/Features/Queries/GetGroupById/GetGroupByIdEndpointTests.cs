@@ -95,11 +95,11 @@ public class GetGroupByIdEndpointTests
         GetGroupByIdQuery? capturedQuery = null;
 
         _senderMock.Setup(s => s.Send(It.IsAny<GetGroupByIdQuery>(), It.IsAny<CancellationToken>()))
-                   .Callback<IRequest, CancellationToken>((q, _) =>
+                   .Callback<IRequest<List<Guid>>, CancellationToken>((q, _) =>
                    {
                        capturedQuery = (GetGroupByIdQuery)q;
                    })
-                   .ReturnsAsync(new List<Guid>());
+                   .ReturnsAsync([]);
 
         var response = await _client.GetAsync($"/api/projects/{_projectId}/group");
 
