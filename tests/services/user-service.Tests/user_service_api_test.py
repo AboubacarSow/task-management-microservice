@@ -212,3 +212,22 @@ async def test_delete_user_not_exist():
     assert response.status_code == 404
     assert "detail" in data
     assert data["detail"] == "User with this id does not exist"
+
+@pytest.mark.asyncio
+async def test_is_user_active():
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response1 = await client.post("/api/users/", json={
+            "first_name": "Ali",
+            "last_name": "Veli",
+            "email": "ali@te.com",
+            "password": "123456"
+        })
+    data1 = response1.json()
+    assert response1.status_code == 200
+    assert "id" in data1
+    user_id = data1["id"]
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response2 = await client.get(f"/api/users/{user_id}/active")
+    data2 = response2.json()
+    assert "is_active" in data2
+    assert data2["is_active"] == True
