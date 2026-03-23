@@ -79,7 +79,7 @@ public class StartTaskEndpointTests : IClassFixture<WebApplicationFactory<Progra
         StartTaskCommand? capturedCommand = null;
 
         _senderMock.Setup(s => s.Send(It.IsAny<StartTaskCommand>(), It.IsAny<CancellationToken>()))
-                   .Callback<IRequest, CancellationToken>((cmd, _) => capturedCommand = (StartTaskCommand)cmd)
+                   .Callback<IRequest<Unit>, CancellationToken>((cmd, _) => capturedCommand = (StartTaskCommand)cmd)
                    .ReturnsAsync(Unit.Value);
 
         var response = await _client.PostAsync($"/api/tasks/{_taskId}/start", null);

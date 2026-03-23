@@ -1,5 +1,6 @@
 
 
+
 namespace project_service.Tasks.Features.Commands.StartWorkingOnTask;
 
 
@@ -12,18 +13,12 @@ public class StartTaskCommandValidator: AbstractValidator<StartTaskCommand>
         RuleFor(c=>c.TaskId).NotEmpty();
     }
 }
-public class StartTaskHandler : IRequestHandler<StartTaskCommand,Unit>
+public class StartTaskHandler(
+    ITaskRepository taskRepo,
+    ILogger<StartTaskHandler> logger) : IRequestHandler<StartTaskCommand,Unit>
 {
-    private readonly ITaskRepository _taskRepo;
-    private readonly ILogger<StartTaskHandler> _logger;
-
-    public StartTaskHandler(
-        ITaskRepository taskRepo,
-        ILogger<StartTaskHandler> logger)
-    {
-        _taskRepo = taskRepo;
-        _logger = logger;
-    }
+    private readonly ITaskRepository _taskRepo = taskRepo;
+    private readonly ILogger<StartTaskHandler> _logger = logger;
 
     public async Task<Unit> Handle(StartTaskCommand request, CancellationToken cancellationToken)
     {
