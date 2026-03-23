@@ -16,7 +16,7 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
             "Error Message: {exceptionMessage}, Time of occurrence {time}",
             exception.Message, DateTime.UtcNow);
 
-        (string Detail, string Title, int StatusCode) details = exception switch
+        (string Detail, string Title, int StatusCode) = exception switch
         {
             ValidationException =>
             (
@@ -65,9 +65,9 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
 
         var problemDetails = new ProblemDetails
         {
-            Title = details.Title,
-            Status = details.StatusCode,
-            Detail = details.Detail,
+            Title = Title,
+            Status = StatusCode,
+            Detail = Detail,
             Instance = context.Request.Path
         };
 
