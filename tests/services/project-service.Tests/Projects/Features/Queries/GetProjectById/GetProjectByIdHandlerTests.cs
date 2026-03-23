@@ -1,3 +1,4 @@
+using Elasticsearch.Net.Specification.IndicesApi;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -33,7 +34,7 @@ public class GetProjectByIdHandlerTests
         _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
             .ReturnsAsync(project);
 
-        var query = new GetProjectByIdQuery(projectId);
+        var query = new GetProjectByIdQuery(project.OwnerId, projectId);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -54,7 +55,7 @@ public class GetProjectByIdHandlerTests
         _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
             .ReturnsAsync((Project?)null);
 
-        var query = new GetProjectByIdQuery(projectId);
+        var query = new GetProjectByIdQuery(Guid.NewGuid(), projectId);
 
         // Act
         Action action= ()=> _handler.Handle(query, CancellationToken.None).GetAwaiter().GetResult();
@@ -62,6 +63,28 @@ public class GetProjectByIdHandlerTests
         // Assert
         action.Should().Throw<NotFoundException>()
             .WithMessage($"{nameof(Project)} with id: {projectId} not found");
+    }
+
+    [Fact]
+    public void Handle_ShouldThrowForbiddenException_When_CurrentUser_Not_InPeopleWorking()
+    {
+        // Arrange
+        var project = new Project("Building a web scraper", Guid.NewGuid());
+        var projectId = project.Id;
+
+        var currentUserId = Guid.NewGuid();  
+
+        _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
+            .ReturnsAsync(project);
+
+        var query = new GetProjectByIdQuery(currentUserId, projectId);
+
+        // Act
+        Action action = () => _handler.Handle(query, CancellationToken.None).GetAwaiter().GetResult();
+
+        // Assert
+        action.Should().Throw<ForbiddenException>()
+            .WithMessage($"User :{currentUserId} is not authorize to perform the [READ_PROJECT] operation");
     }
 
     [Fact]
@@ -73,11 +96,11 @@ public class GetProjectByIdHandlerTests
         _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
             .ReturnsAsync((Project?)null);
 
-        var query = new GetProjectByIdQuery(projectId);
+        var query = new GetProjectByIdQuery(Guid.NewGuid(), projectId);
 
         // Act
         _ = await Record.ExceptionAsync(() =>
-        _handler.Handle(new GetProjectByIdQuery(projectId), CancellationToken.None));
+        _handler.Handle(new GetProjectByIdQuery(Guid.NewGuid(), projectId), CancellationToken.None));
 
         // Assert
         _repositoryMock.Verify(r => r.GetByIdAsync(projectId), Times.Once);
@@ -90,11 +113,13 @@ public class GetProjectByIdHandlerTests
         var project = new Project("Building a web scraper", Guid.NewGuid());
         project.SetDescription("Building using TDD approach");
         var projectId = project.Id;
+        var userId = Guid.NewGuid();
+        project.AddToPeopleWorking(userId);
 
         _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
             .ReturnsAsync(project);
 
-        var query = new GetProjectByIdQuery(projectId);
+        var query = new GetProjectByIdQuery(userId, projectId);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -113,12 +138,14 @@ public class GetProjectByIdHandlerTests
         // Arrange
         var project = new Project("Building a web scraper", Guid.NewGuid());
         var projectId = project.Id;
+        var userId = Guid.NewGuid();
+        project.AddToPeopleWorking(userId);
 
         _repositoryMock.Setup(r => r.GetByIdAsync(projectId))
             .ReturnsAsync(project);
 
         // Act
-        await _handler.Handle(new GetProjectByIdQuery(projectId), CancellationToken.None);
+        await _handler.Handle(new GetProjectByIdQuery(userId, projectId), CancellationToken.None);
 
         // Assert
         _loggerMock.Verify(l => l.Log(
@@ -143,7 +170,7 @@ public class GetProjectByIdHandlerTests
 
         // Act
         _ = await Record.ExceptionAsync(() => 
-        _handler.Handle(new GetProjectByIdQuery(projectId), CancellationToken.None));
+        _handler.Handle(new GetProjectByIdQuery(Guid.NewGuid(), projectId), CancellationToken.None));
 
         // Assert
         _loggerMock.Verify(l => l.Log(

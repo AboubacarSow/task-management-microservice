@@ -17,7 +17,9 @@ public class GetProjectsByOwnerIdEndpoint : ICarterModule
             var result = await sender.Send(query);
             return Results.Ok(result);
 
-        }).RequireAuthorization();
+        }).RequireAuthorization()
+        .WithName("GetAllByOwner");
+        
     }
 }
 

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using project_service.Commons.Exceptions;
 using project_service.Data.Utilities;
 using project_service.Projects.Dtos;
 using project_service.Projects.Features.Queries.GetProjectById;
@@ -118,9 +119,9 @@ public class GetProjectByIdEndpointTests : IClassFixture<WebApplicationFactory<P
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetProjectByIdQuery>(),
             It.IsAny<CancellationToken>()))!
-            .ReturnsAsync((ProjectDto?)null);
+            .ThrowsAsync(new NotFoundException(nameof(Project), Guid.NewGuid().ToString()));
 
-        var response = await GetProjectAsync(projectId);
+        var response = await GetProjectAsync(Guid.NewGuid());
 
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -192,7 +193,7 @@ public class GetProjectByIdEndpointTests : IClassFixture<WebApplicationFactory<P
 
         // Assert
         capturedQuery.Should().NotBeNull();
-        capturedQuery!.Id.Should().Be(projectId);
+        capturedQuery!.ProjectId.Should().Be(projectId);
     }
 
     private async Task<HttpResponseMessage> GetProjectAsync(Guid projectId) {

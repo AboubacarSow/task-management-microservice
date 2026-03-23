@@ -1,10 +1,26 @@
 using project_service.Data.Repositories;
 using MediatR;
 using project_service.Commons.Exceptions;
+using FluentValidation;
 namespace project_service.Projects.Features.Commands.AddUserToPeople;
 
 
 public record AddUserToPeopleWorkingCommand(Guid ProjectId, Guid TargetUserId): IRequest<Unit>;
+
+public class AddUserToPeopleWorkingCommandValidator : AbstractValidator<AddUserToPeopleWorkingCommand>
+{
+    public AddUserToPeopleWorkingCommandValidator()
+    {
+        RuleFor(x => x.ProjectId)
+            .NotEmpty()
+            .WithMessage("ProjectId is required");
+
+        RuleFor(x => x.TargetUserId)
+            .NotEmpty()
+            .WithMessage("UserId is required");
+    }
+}
+
 public class AddUserToPeopleWorkingHandler(
     IProjectRepository projectRepository,
     ILogger<AddUserToPeopleWorkingHandler> logger)
