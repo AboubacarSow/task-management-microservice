@@ -1,6 +1,4 @@
-using FluentAssertions;
 using project_service.Tasks.Exceptions;
-using project_service.Tasks.Models;
 using TaskStatus = project_service.Tasks.Models.TaskStatus;
 
 
@@ -164,6 +162,17 @@ public class TaskTests
 
         _task.Status.Should().Be(TaskStatus.InProgress);
     }
+
+    //[Fact]
+    //public void StartWork_ShouldNotChangeStatus_WhenAlready_InProgress()
+    //{
+    //    //Arrane
+    //    AssignTask();
+    //    //Act
+    //    _task.StartWork();
+
+    //    _task.Status.Should().Be(TaskStatus.InProgress);
+    //}
     [Fact]
     public void StartWork_ShouldUpdateLastUpdatedAt()
     {

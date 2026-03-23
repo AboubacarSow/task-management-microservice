@@ -1,4 +1,3 @@
-using FluentAssertions;
 using project_service.Projects.Features.Queries.GetProjectsByOwnerId;
 
 namespace project_service.Tests.Projects.Features.Queries.GetProjectsByOwnerId;

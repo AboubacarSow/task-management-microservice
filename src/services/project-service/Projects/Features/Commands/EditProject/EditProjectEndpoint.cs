@@ -1,8 +1,3 @@
-using Carter;
-using FluentValidation;
-using MediatR;
-using project_service.Data.Utilities;
-
 namespace project_service.Projects.Features.Commands.EditProject;
 public record EditProjectRequest(string? Description, DateTime? DueAt);
 

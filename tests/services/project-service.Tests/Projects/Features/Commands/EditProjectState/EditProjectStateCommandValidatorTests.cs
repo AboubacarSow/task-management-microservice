@@ -1,6 +1,4 @@
-using FluentValidation.TestHelper;
 using project_service.Projects.Features.Commands.EditProjectState;
-using project_service.Projects.Models;
 
 namespace project_service.Tests.Projects.Features.Commands.EditProjectState;
 

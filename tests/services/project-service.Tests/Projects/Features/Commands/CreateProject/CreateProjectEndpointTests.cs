@@ -1,22 +1,5 @@
-using FluentAssertions;
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Moq;
-using project_service.Commons.Behaviors;
-using project_service.Data.Repositories;
-using project_service.Data.Utilities;
+
 using project_service.Projects.Features.Commands.CreateProject;
-using project_service.Tests.Helpers;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace project_service.Tests.Projects.Features.Commands.CreateProject;
 

@@ -1,12 +1,4 @@
-using Castle.Core.Logging;
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using project_service.Commons.Exceptions;
-using project_service.Data.Repositories;
 using project_service.Projects.Features.Commands.AddUserToPeople;
-using project_service.Projects.Models;
-using project_service.Tests.Helpers;
 
 namespace project_service.Tests.Projects.Features.Commands.AddUserToPeopleWorking;
 

@@ -1,4 +1,3 @@
-using FluentValidation.TestHelper;
 using project_service.Projects.Features.Queries.GetPeopleWorkingById;
 
 namespace project_service.Tests.Projects.Features.Queries.GetPeopleWorkingById;

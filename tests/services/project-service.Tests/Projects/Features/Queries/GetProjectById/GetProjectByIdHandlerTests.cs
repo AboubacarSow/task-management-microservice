@@ -1,13 +1,4 @@
-using Elasticsearch.Net.Specification.IndicesApi;
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using project_service.Commons.Exceptions;
-using project_service.Data.Repositories;
 using project_service.Projects.Features.Queries.GetProjectById;
-using project_service.Projects.Models;
-using System.Drawing;
-using System.Security.AccessControl;
 
 namespace project_service.Tests.Projects.Features.Queries.GetProjectById;
 

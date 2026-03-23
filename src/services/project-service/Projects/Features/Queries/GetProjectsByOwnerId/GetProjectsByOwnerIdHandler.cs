@@ -1,11 +1,3 @@
-using FluentValidation;
-using Mapster;
-using MediatR;
-using project_service.Data.Repositories;
-using project_service.Projects.Dtos;
-using project_service.Projects.Models;
-using System.Collections;
-
 namespace project_service.Projects.Features.Queries.GetProjectsByOwnerId;
 
 
@@ -21,15 +13,10 @@ public class GetProjectsByOwnerIdQueryValidator
             .WithMessage("Owner ID is required.");
     }
 }
-public class GetProjectsByOwnerIdHandler : IRequestHandler<GetProjectsByOwnerIdQuery, List<ProjectDto>>
+public class GetProjectsByOwnerIdHandler(IProjectRepository repository, ILogger<GetProjectsByOwnerIdHandler> logger) : IRequestHandler<GetProjectsByOwnerIdQuery, List<ProjectDto>>
 {
-    private readonly IProjectRepository _repository;
-    private readonly ILogger<GetProjectsByOwnerIdHandler> _logger;
-    public GetProjectsByOwnerIdHandler(IProjectRepository repository, ILogger<GetProjectsByOwnerIdHandler> logger)
-    {
-        _repository = repository;
-        _logger = logger;
-    }
+    private readonly IProjectRepository _repository = repository;
+    private readonly ILogger<GetProjectsByOwnerIdHandler> _logger = logger;
 
     public async Task<List<ProjectDto>> Handle(GetProjectsByOwnerIdQuery request, CancellationToken cancellationToken)
     {

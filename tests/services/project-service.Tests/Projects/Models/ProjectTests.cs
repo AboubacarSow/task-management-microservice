@@ -1,7 +1,3 @@
-using FluentAssertions;
-using project_service.Projects.Models;
-using project_service.Tests.Helpers;
-
 namespace project_service.Tests.Projects.Models;
 public class ProjectTests
 {

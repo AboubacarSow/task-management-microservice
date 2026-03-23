@@ -1,4 +1,3 @@
-using FluentValidation.TestHelper;
 using project_service.Projects.Features.Commands.CreateProject;
 
 namespace project_service.Tests.Projects.Features.Commands.CreateProject;

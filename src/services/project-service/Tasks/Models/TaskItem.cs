@@ -29,6 +29,8 @@ public sealed class TaskItem :BaseEntity
         Status = TaskStatus.ToDo;
         Priority = TaskPriority.Medium;
     }
+
+    
     public void AssignTo(Guid userId)
     {
         if(userId.Equals(Guid.Empty))
@@ -48,6 +50,10 @@ public sealed class TaskItem :BaseEntity
     {
         if (AssignedToUser == null || AssignedToUser.Equals(Guid.Empty))
             throw new TaskInvalidOperationException("TaskItem must be assigned first to be Started");
+        if(Status == TaskStatus.Completed)
+            throw new TaskInvalidOperationException("*completed*");
+        if (Status == TaskStatus.InProgress)
+            throw new TaskInvalidOperationException("*already started*");
         Status = TaskStatus.InProgress;
         Touch();
         
