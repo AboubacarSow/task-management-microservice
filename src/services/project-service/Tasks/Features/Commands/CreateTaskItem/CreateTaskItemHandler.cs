@@ -5,6 +5,22 @@ namespace project_service.Tasks.Features.Commands.CreateTaskItem;
 
 public record CreateTaskItemCommand(Guid CurrentUserId,Guid ProjectId, string Title): IRequest<Guid>;
 
+
+public class CreateTaskItemCommandValidator : AbstractValidator<CreateTaskItemCommand> 
+{
+
+    public CreateTaskItemCommandValidator() 
+    {
+        RuleFor(c => c.CurrentUserId).NotEmpty()
+            .WithMessage("CurrentUserId is required");
+
+        RuleFor(c => c.ProjectId).NotEmpty().WithMessage("ProjectId is required");
+
+        RuleFor(c => c.Title).NotEmpty()
+            .MaximumLength(200).WithMessage("Title to long or empty");
+    }
+}
+
 public class CreateTaskItemHandler(
     ITaskRepository taskRepo,
     IProjectRepository projectRepo,
