@@ -1,11 +1,3 @@
-using FluentValidation;
-using Mapster;
-using MediatR;
-using project_service.Commons.Exceptions;
-using project_service.Data.Repositories;
-using project_service.Projects.Dtos;
-using project_service.Projects.Models;
-
 namespace project_service.Projects.Features.Queries.GetProjectById;
 
 
@@ -22,15 +14,10 @@ public class GetProjectByIdQueryValidator : AbstractValidator<GetProjectByIdQuer
     }
 }
 
-public class GetProjectByIdHandler:IRequestHandler<GetProjectByIdQuery,ProjectDto>
+public class GetProjectByIdHandler(IProjectRepository repository, ILogger<GetProjectByIdHandler> logger) : IRequestHandler<GetProjectByIdQuery,ProjectDto>
 {
-    private readonly IProjectRepository _repository;
-    private readonly ILogger<GetProjectByIdHandler> _logger;
-    public GetProjectByIdHandler(IProjectRepository repository, ILogger<GetProjectByIdHandler> logger)
-    {
-        _repository = repository;
-        _logger = logger;
-    }
+    private readonly IProjectRepository _repository = repository;
+    private readonly ILogger<GetProjectByIdHandler> _logger = logger;
 
     public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
     {

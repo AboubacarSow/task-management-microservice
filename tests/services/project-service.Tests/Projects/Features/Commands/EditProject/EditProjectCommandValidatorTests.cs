@@ -1,4 +1,3 @@
-using FluentAssertions;
 using project_service.Projects.Features.Commands.EditProject;
 
 namespace project_service.Tests.Projects.Features.Commands.EditProject;

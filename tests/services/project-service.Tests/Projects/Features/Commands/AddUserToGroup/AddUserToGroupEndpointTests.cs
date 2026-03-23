@@ -1,16 +1,4 @@
-using FluentAssertions;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using project_service.Data.Utilities;
 using project_service.Projects.Features.Commands.AddUserToGroup;
-using project_service.Tests.Helpers;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace project_service.Tests.Projects.Features.Commands.AddUserToGroup;
 

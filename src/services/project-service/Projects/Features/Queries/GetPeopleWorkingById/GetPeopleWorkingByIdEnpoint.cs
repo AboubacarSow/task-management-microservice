@@ -1,7 +1,3 @@
-using Carter;
-using MediatR;
-using project_service.Data.Utilities;
-
 namespace project_service.Projects.Features.Queries.GetPeopleWorkingById;
 
 public class GetPeopleWorkingByIdEnpoint : ICarterModule

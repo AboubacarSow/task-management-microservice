@@ -1,10 +1,4 @@
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using project_service.Data.Repositories;
 using project_service.Projects.Features.Queries.GetProjectsByOwnerId;
-using project_service.Projects.Models;
-using project_service.Tests.Helpers;
 
 namespace project_service.Tests.Projects.Features.Queries.GetProjectsByOwnerId;
 

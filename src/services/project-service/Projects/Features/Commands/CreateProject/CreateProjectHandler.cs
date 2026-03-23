@@ -1,10 +1,3 @@
-using FluentValidation;
-using Mapster;
-using MediatR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using project_service.Data.Repositories;
-using project_service.Projects.Models;
-
 namespace project_service.Projects.Features.Commands.CreateProject;
 
 public record CreateProjectCommand(string Name,Guid CreatedByUser,string? Description) : IRequest<Guid>;

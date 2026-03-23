@@ -1,4 +1,3 @@
-using FluentValidation.TestHelper;
 using project_service.Projects.Features.Commands.AddUserToGroup;
 
 namespace project_service.Tests.Projects.Features.Commands.AddUserToGroup;

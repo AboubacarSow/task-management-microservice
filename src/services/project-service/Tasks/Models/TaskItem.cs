@@ -29,6 +29,8 @@ public sealed class TaskItem :BaseEntity
         Status = TaskStatus.ToDo;
         Priority = TaskPriority.Medium;
     }
+
+    
     public void AssignTo(Guid userId)
     {
         if(userId.Equals(Guid.Empty))

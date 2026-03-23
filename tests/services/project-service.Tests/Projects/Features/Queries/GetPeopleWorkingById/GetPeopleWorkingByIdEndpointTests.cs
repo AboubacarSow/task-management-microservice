@@ -1,15 +1,5 @@
-using FluentAssertions;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using project_service.Data.Utilities;
 using project_service.Projects.Features.Queries.GetPeopleWorkingById;
-using project_service.Tests.Helpers;
-using System.Net;
-using System.Net.Http.Headers;
+
 
 namespace project_service.Tests.Projects.Features.Queries.GetPeopleWorkingById;
 

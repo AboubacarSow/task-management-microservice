@@ -1,9 +1,3 @@
-using MediatR;
-using project_service.Commons.Exceptions;
-using project_service.Data.Repositories;
-using project_service.Projects.Models;
-using FluentValidation;
-
 namespace project_service.Projects.Features.Queries.GetPeopleWorkingById;
 
 

@@ -1,7 +1,3 @@
-using project_service.Data.Repositories;
-using MediatR;
-using project_service.Commons.Exceptions;
-using FluentValidation;
 namespace project_service.Projects.Features.Commands.AddUserToPeople;
 
 
