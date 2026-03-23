@@ -231,3 +231,15 @@ async def test_is_user_active():
     data2 = response2.json()
     assert "is_active" in data2
     assert data2["is_active"] == True
+ 
+@pytest.mark.asyncio   
+async def test_is_user_active_user_not_found():
+    user_id = str(uuid.uuid4())
+    
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get(f"/api/users/{user_id}/active")
+    
+    data = response.json()
+    assert response.status_code == 404
+    assert "detail" in data
+    assert data["detail"] == "User with this id does not exist"
