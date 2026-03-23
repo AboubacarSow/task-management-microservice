@@ -52,7 +52,7 @@ public sealed class TaskItem :BaseEntity
             throw new TaskInvalidOperationException("TaskItem must be assigned first to be Started");
         if(Status == TaskStatus.Completed)
             throw new TaskInvalidOperationException("*completed*");
-        if(Status == TaskStatus.InProgress)
+        if (Status == TaskStatus.InProgress)
             throw new TaskInvalidOperationException("*already started*");
         Status = TaskStatus.InProgress;
         Touch();

@@ -1,3 +1,4 @@
+using project_service.Tasks.Exceptions;
 using project_service.Tasks.Features.Commands.StartWorkingOnTask;
 
 namespace project_service.Tests.Tasks.Features.Commands.StartWorkingOnTask;
@@ -78,15 +79,16 @@ public class StartTaskHandlerTests
         var userId = Guid.NewGuid();
         var task = new TaskItem("task", Guid.NewGuid(), userId);
         task.AssignTo(userId);
-        task.StartWork(); // already started
+        task.StartWork();
 
         _taskRepo.Setup(x => x.GetByIdAsync(task.Id))
                  .ReturnsAsync(task);
 
         var command = new StartTaskCommand(task.Id, userId);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            _handler.Handle(command, default));
+        //Act 
+        var action = () => _handler.Handle(command, CancellationToken.None);
+        //  Assert
+       await action.Should().ThrowAsync<TaskInvalidOperationException>().WithMessage("*already started*");
     }
 }
