@@ -9,11 +9,15 @@ public class GetProjectByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/{id:guid}", async (Guid id, ISender sender) =>
         {
+
+            //ToDo
+            // Only user in PeopleWorking can see project
             var query = new GetProjectByIdQuery(id);
             var result = await sender.Send(query);
 
             return Results.Ok(result);
 
-        }).RequireAuthorization();
+        }).RequireAuthorization()
+        .WithName("GetById");
     }
 }

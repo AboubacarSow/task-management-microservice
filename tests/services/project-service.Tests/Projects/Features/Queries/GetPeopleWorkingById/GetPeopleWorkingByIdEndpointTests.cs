@@ -58,7 +58,7 @@ public class GetPeopleWorkingByIdEndpointTests
         _senderMock.Setup(s => s.Send(It.IsAny<GetPeopleWorkingByIdQuery>(), It.IsAny<CancellationToken>()))
                    .ReturnsAsync([]);
 
-        var response = await _client.GetAsync($"/api/projects/{_projectId}/people-working");
+        var response = await _client.GetAsync($"/api/projects/{_projectId}/people");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

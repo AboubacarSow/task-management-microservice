@@ -18,6 +18,7 @@ public class GetGroupByIdEndpoint : ICarterModule
 
                 return Results.Ok(result);
             })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithName("GetGroup");
     }
 }

@@ -437,6 +437,30 @@ public class ProjectTests
     }
 
     [Fact]
+    public void IsPeopleWorking_Should_Return_False_If_User_Not_In_Poeple()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+
+        bool result = project.IsInPeopleWorking(Guid.NewGuid());
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsPeopleWorking_Should_Return_True_If_User_In_PeopleWorking()
+    {
+        var project = new Project("Test Project", Guid.NewGuid(), "Initial description");
+        var userId = Guid.NewGuid();
+
+        project.AddToPeopleWorking(userId);
+
+        var result = project.IsInPeopleWorking(userId);
+
+        result.Should().BeTrue();
+    }
+
+
+    [Fact]
     public void Owner_Should_Always_Be_In_Group()
     {
         var ownerId = Guid.NewGuid();
