@@ -4,6 +4,14 @@ namespace project_service.Tasks.Features.Commands.StartWorkingOnTask;
 
 
 public record StartTaskCommand(Guid TaskId,Guid CurrentUserId):IRequest<Unit>;
+
+public class StartTaskCommandValidator: AbstractValidator<StartTaskCommand>
+{
+    public StartTaskCommandValidator()
+    {
+        RuleFor(c=>c.TaskId).NotEmpty();
+    }
+}
 public class StartTaskHandler : IRequestHandler<StartTaskCommand,Unit>
 {
     private readonly ITaskRepository _taskRepo;
