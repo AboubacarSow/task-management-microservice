@@ -5,6 +5,21 @@ namespace project_service.Tasks.Features.Commands.AssignTaskTo;
 
 public record AssignTaskToCommand(Guid TaskId,Guid CurrentUserId,Guid UserId):IRequest<Unit>;
 
+public class AssignTaskToCommandValidator : AbstractValidator<AssignTaskToCommand>
+{
+    public AssignTaskToCommandValidator()
+    {
+        RuleFor(x => x.TaskId)
+            .NotEmpty();
+
+        RuleFor(x => x.UserId)
+            .NotEmpty();
+
+        RuleFor(x => x.CurrentUserId)
+            .NotEmpty();
+    }
+}
+
 public class AssignTaskToHandler(ITaskRepository taskRepository, IProjectRepository projectRepository, 
 ILogger<AssignTaskToHandler> logger):IRequestHandler<AssignTaskToCommand,Unit>
 {
@@ -41,7 +56,7 @@ ILogger<AssignTaskToHandler> logger):IRequestHandler<AssignTaskToCommand,Unit>
             task.Id, request.UserId);
 
         // (event later)
-        // await _taskRepo.PublishEvent(...);
+        // raise taskAssignedUser;
 
         return Unit.Value;
     }
