@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using project_service.Projects.Features.Queries.GetPeopleWorkingById;
 using project_service.Data.Repositories;
+using project_service.Projects.Features.Queries.GetPeopleWorkingById;
 using project_service.Tests.Helpers;
 
 namespace project_service.Tests.Projects.Features.Queries.GetPeopleWorkingById;
@@ -47,4 +47,3 @@ public class GetPeopleWorkingHandlerTests
         await act.Should().ThrowAsync<UnauthorizedAccessException>();
     }
 }
-
