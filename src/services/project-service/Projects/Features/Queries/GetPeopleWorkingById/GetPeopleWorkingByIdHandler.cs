@@ -1,13 +1,17 @@
 using MediatR;
 using project_service.Commons.Exceptions;
 using project_service.Data.Repositories;
-using project_service.Data.Utilities;
 using project_service.Projects.Models;
+using FluentValidation;
 
 namespace project_service.Projects.Features.Queries.GetPeopleWorkingById;
 
 
 public record GetPeopleWorkingByIdQuery(Guid UserId,Guid ProjectId): IRequest<List<Guid>>;
+
+public class GetPeopleWorkingByIdQueryValidator: AbstractValidator<GetPeopleWorkingByIdQuery>{
+
+}
 public class GetPeopleWorkingByIdHandler(IProjectRepository repository, ILogger<GetPeopleWorkingByIdHandler> logger)
         : IRequestHandler<GetPeopleWorkingByIdQuery, List<Guid>>
 {
