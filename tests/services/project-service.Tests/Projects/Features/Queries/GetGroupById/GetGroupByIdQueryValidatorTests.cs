@@ -24,7 +24,7 @@ public class GetGroupByIdQueryValidatorTests
 
         var result = _validator.TestValidate(query);
 
-        result.ShouldHaveValidationErrorFor(x => x.ProjectId);
+        result.ShouldHaveValidationErrorFor(x => x.UserId);
     }
 
     [Fact]

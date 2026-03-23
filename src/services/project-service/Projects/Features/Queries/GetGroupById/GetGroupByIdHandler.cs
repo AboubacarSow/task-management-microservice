@@ -11,7 +11,11 @@ public record GetGroupByIdQuery(Guid UserId,Guid ProjectId):IRequest<List<Guid>>
 
 public class GetGroupByIdQueryValidator : AbstractValidator<GetGroupByIdQuery>
 {
- 
+    public GetGroupByIdQueryValidator()
+    {
+        RuleFor(q => q.UserId).NotEmpty().WithMessage("UserId is required");
+        RuleFor(q => q.ProjectId).NotEmpty().WithMessage("ProjectId is required");
+    }
 }
 public class GetGroupByIdHandler(IProjectRepository repository, ILogger<GetGroupByIdHandler> logger)
         : IRequestHandler<GetGroupByIdQuery, List<Guid>>
