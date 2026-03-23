@@ -49,4 +49,7 @@ class UserRouter:
             
         @self.router.get("/{user_id}/active")
         async def is_user_active(user_id: str, service: UserService = Depends(self.get_user_service))-> UserActive:
-            return await service.get_user(user_id)
+            try:
+                return await service.get_user(user_id)
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))
