@@ -11,7 +11,7 @@ public class GetProjectByIdQueryValidatorTests
     public void Validate_Should_Pass_When_ProjectId_Is_Valid()
     {
         // Arrange
-        var query = new GetProjectByIdQuery(Guid.NewGuid());
+        var query = new GetProjectByIdQuery(Guid.NewGuid(),Guid.NewGuid());
 
         // Act
         var result = _validator.Validate(query);
@@ -24,7 +24,7 @@ public class GetProjectByIdQueryValidatorTests
     public void Validate_Should_Fail_When_ProjectId_Is_Empty()
     {
         // Arrange
-        var query = new GetProjectByIdQuery(Guid.Empty);
+        var query = new GetProjectByIdQuery(Guid.NewGuid(),Guid.Empty);
 
         // Act
         var result = _validator.Validate(query);
@@ -32,6 +32,21 @@ public class GetProjectByIdQueryValidatorTests
         // Assert
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainSingle(e => 
-            e.PropertyName == nameof(GetProjectByIdQuery.Id));
+            e.PropertyName == nameof(GetProjectByIdQuery.ProjectId));
+    }
+
+    [Fact]
+    public void Validate_Should_Fail_When_CurrentUserId_Is_Empty()
+    {
+        // Arrange
+        var query = new GetProjectByIdQuery(Guid.Empty, Guid.NewGuid());
+
+        // Act
+        var result = _validator.Validate(query);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e =>
+            e.PropertyName == nameof(GetProjectByIdQuery.CurrentUserId));
     }
 }

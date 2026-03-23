@@ -134,8 +134,11 @@ public sealed class Project :BaseEntity
         _peopleWorking.Add(userId);
     }
 
-    public bool IsInPeopleWorking(Guid guid)
+    public bool IsInPeopleWorking(Guid userId)
     {
-        throw new NotImplementedException();
+        if (userId == Guid.Empty)
+            throw new ArgumentException("UserId cannot be empty");
+
+        return _peopleWorking.Contains(userId);
     }
 }
