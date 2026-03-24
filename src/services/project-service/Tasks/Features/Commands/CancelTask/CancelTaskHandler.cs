@@ -3,6 +3,14 @@
 namespace project_service.Tasks.Features.Commands.CancelTask;
 
 public record CancelTaskCommand(Guid CurrentUserId, Guid TaskId):IRequest<Unit>;
+public class CancelTaskCommandValidator: AbstractValidator<CancelTaskCommand>
+{
+    public CancelTaskCommandValidator()
+    {
+        RuleFor(c=>c.CurrentUserId).NotEmpty();
+        RuleFor(c=>c.TaskId).NotEmpty().WithMessage("*TaskId is required*");
+    }
+}
 
 public class CancelTaskHandler(ITaskRepository taskRepo,IProjectRepository projectRepo,
 ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
@@ -11,7 +19,7 @@ ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
    private readonly IProjectRepository _projectRepository = projectRepo;
    private readonly ILogger<CancelTaskHandler> _logger = logger;
 
-    public async Task Handle(CancelTaskCommand command, CancellationToken none)
+    public async Task<Unit> Handle(CancelTaskCommand command, CancellationToken none)
     {
         var task = await _taskRepository.GetByIdAsync(command.TaskId);
 
@@ -39,9 +47,9 @@ ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
         {
             _logger.LogWarning(
                 "User {UserId} not authorized to perform this operation :{Operation}",
-                command.CurrentUserId, "EDIT_TASK");
+                command.CurrentUserId, "CANCEL_TASK");
 
-            throw new ForbiddenException(command.CurrentUserId.ToString(), "EDIT_TASK");
+            throw new ForbiddenException(command.CurrentUserId.ToString(), "CANCEL_TASK");
         }
 
         var owner = task.CreatedByUser;
@@ -51,7 +59,7 @@ ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
         await _taskRepository.EditAsync(task);
 
         if (owner != command.CurrentUserId)
-            _logger.LogInformation("User in Group updated Task :{TaskId} successfully",
+            _logger.LogInformation("User in Group cancelled Task :{TaskId} successfully",
                 command.TaskId);
                 
         return Unit.Value;
