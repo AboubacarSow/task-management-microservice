@@ -187,3 +187,24 @@ async def test_delete_user_id_not_found():
     
     with pytest.raises(ValueError, match="User with this id does not exist"):
         await service.delete_user(user_id)
+        
+@pytest.mark.asyncio
+async def test_authenticate_user():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+    
+    user_id = str(uuid.uuid4())
+    user = User(
+        id=user_id,
+        first_name="Ali",
+        last_name="Khan",
+        email="ali@test.com",
+        password="123456"
+    )
+    
+    await service.add_user(user)
+    
+    validated_user = await service.authenticate_user("ali@test.com", "123456")
+    assert isinstance(validated_user, User)
+    assert validated_user.id == user_id
+    
