@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using project_service.Commons;
 using project_service.Tasks.Exceptions;
 
@@ -5,11 +7,14 @@ namespace project_service.Tasks.Models;
 
 public sealed class TaskItem :BaseEntity
 {
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid ProjectId{get;private set;}
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid? AssignedToUser { get;private set; }
     public TaskStatus Status { get; private set; }
     public string? Note { get; private set; }
     public TaskPriority Priority { get; private set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid CreatedByUser { get; private set; }
 
     public TaskItem(string name, Guid projectId, Guid userId)
@@ -121,6 +126,14 @@ public sealed class TaskItem :BaseEntity
         if(string.IsNullOrWhiteSpace(note))
             throw new ArgumentException("While Blocking task, note message cannot be null or empty");
         Status = TaskStatus.Pause;
+        Note = $"Note :{Note}. Note: {note}";
         Touch();
+    }
+
+    public void SetName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+        Name = name;
     }
 }

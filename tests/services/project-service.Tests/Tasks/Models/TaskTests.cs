@@ -206,6 +206,18 @@ public class TaskTests
 
         _task.Description.Should().NotBe(null);
     }
+
+    [Fact]
+    public void AfterSetName_ShouldUpdateField()
+    {
+        var name = "new name";
+        var old = _task.Name;
+
+        _task.SetName(name);
+
+        _task.Name.Should().Be(name);
+        _task.Name.Should().NotBe(old);
+    }
     [Fact]
     public void SetDescription_WithEmptyDescription_ShouldThrowException()
     {
