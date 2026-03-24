@@ -48,3 +48,15 @@ class UserDeleted(BaseModel):
 class UserActive(BaseModel):
     id: str
     is_active: bool
+    
+class UserAuth(BaseModel):
+    email: EmailStr
+    password: str
+    
+class UserAuthed(BaseModel):
+    id: str
+    first_name: str
+    last_name: str
+    email: EmailStr
+    created_at: datetime
+    updated_at: datetime

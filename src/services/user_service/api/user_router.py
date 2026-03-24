@@ -1,7 +1,7 @@
 from services.user_service.services.user_service import UserService
 from services.user_service.models.user_model import User
-from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, 
-                                                       UserUpdate, UserUpdated, UserDeleted, UserActive)
+from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, UserUpdate, UserUpdated,
+                                                       UserDeleted, UserActive, UserAuth, UserAuthed)
 from services.user_service.database.mongo import user_collection
 from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
@@ -53,3 +53,7 @@ class UserRouter:
                 return await service.get_user(user_id)
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
+            
+        @self.router.post("/validate")
+        async def authenticate_user(data: UserAuth, service: UserService = Depends(self.get_user_service))-> UserAuthed:
+            return await service.authenticate_user(data.email,data.password)
