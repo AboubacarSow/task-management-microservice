@@ -95,13 +95,7 @@ public sealed class TaskItem :BaseEntity
         LastUpdatedAt = DateTime.UtcNow;
     }
 
-    public void ReassignTo(Guid new_userId)
-    {
-        if (new_userId.Equals(Guid.Empty))
-            throw new ArgumentException("User Id cannot be null or empty");
-        AssignedToUser = new_userId;
-        Touch();
-    }
+   
 
     public void SetDueAt(DateTime date)
     {
@@ -119,7 +113,7 @@ public sealed class TaskItem :BaseEntity
         Touch();
     }
 
-    public void Block(string note)
+    public void Pause(string note)
     {
         if (Status != TaskStatus.InProgress)
             throw new TaskInvalidOperationException("Cannot perform this operation.TaskItem is not in progress");

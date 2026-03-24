@@ -7,9 +7,18 @@ namespace project_service.Tasks.Features.Commands.EditTask;
 
 public record EditTaskCommand(Guid CurrentUserId,
         Guid TaskId,
-        string Title,
+        string? Title,
         DateTime DueAt,
         string? Description=null): IRequest<TaskItemDto>;
+
+public class EditTaskCommandValidator: AbstractValidator<EditTaskCommand>
+{
+    public EditTaskCommandValidator(){
+        RuleFor(c=>c.TaskId).NotEmpty().WithMessage("TaskId is required");
+        RuleFor(c=>c.CurrentUserId).NotEmpty().WithMessage("UserId is required");
+        RuleFor(c => c.DueAt).NotNull().WithMessage("Please Prove a date for DueDate");
+    }
+}
 public class EditTaskHandler(ITaskRepository taskRepository,IProjectRepository projectRepository, 
 ILogger<EditTaskHandler> logger)
 : IRequestHandler<EditTaskCommand, TaskItemDto>
@@ -53,7 +62,7 @@ ILogger<EditTaskHandler> logger)
 
         var owner = task.CreatedByUser;
 
-        task.SetName(command.Title);
+        task.SetName(command.Title!);
         if(!string.IsNullOrWhiteSpace(command.Description)) 
             task.SetDescription(command.Description);
         task.SetDueAt(command.DueAt);

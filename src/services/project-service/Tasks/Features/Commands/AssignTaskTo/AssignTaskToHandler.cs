@@ -10,10 +10,10 @@ public class AssignTaskToCommandValidator : AbstractValidator<AssignTaskToComman
     public AssignTaskToCommandValidator()
     {
         RuleFor(x => x.TaskId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("TaskId is required");
 
         RuleFor(x => x.UserId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("UserIs is required");
 
         RuleFor(x => x.CurrentUserId)
             .NotEmpty();
