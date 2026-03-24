@@ -1,4 +1,7 @@
 from services.user_service.models.user_model import User
+from services.user_service.utils.password import hash_password, verify_password
+
+
 class UserService:
     def __init__(self, user_repository):
         self.user_repository = user_repository
@@ -8,6 +11,8 @@ class UserService:
 
         if existing_user:
             raise ValueError("User with this email already exists")
+        
+        user.password = hash_password(user.password)
 
         return await self.user_repository.add_user(user)
     
