@@ -75,7 +75,6 @@ public class UnassignTaskEndpointTests : IClassFixture<WebApplicationFactory<Pro
                    })
                    .ReturnsAsync(Unit.Value);
 
-        var assignedUser = Guid.NewGuid();
 
 
         var response = await _client.PatchAsync(
@@ -85,7 +84,6 @@ public class UnassignTaskEndpointTests : IClassFixture<WebApplicationFactory<Pro
 
         capturedCommand.Should().NotBeNull();
         capturedCommand!.TaskId.Should().Be(_taskId);
-        capturedCommand.CurrentUserId.Should().Be(assignedUser);
 
         capturedCommand.CurrentUserId.Should()
             .Be(_userId);
