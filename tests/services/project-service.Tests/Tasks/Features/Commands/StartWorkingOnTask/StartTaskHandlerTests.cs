@@ -1,4 +1,3 @@
-using project_service.Tasks.Exceptions;
 using project_service.Tasks.Features.Commands.StartWorkingOnTask;
 
 namespace project_service.Tests.Tasks.Features.Commands.StartWorkingOnTask;

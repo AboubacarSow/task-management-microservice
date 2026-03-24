@@ -62,7 +62,7 @@ public sealed class TaskItem :BaseEntity
     public void CompleteTask(string? note=null)
     {
         if (Status != TaskStatus.InProgress)
-            throw new TaskInvalidOperationException("Cannot mark as completed a task not in Progress");
+            throw new TaskInvalidOperationException("*not in progress*");
         if (note is not null)
             Note = note;
         Status = TaskStatus.Completed;

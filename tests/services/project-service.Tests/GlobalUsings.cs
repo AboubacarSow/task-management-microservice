@@ -22,4 +22,5 @@ global using FluentValidation.TestHelper;
 global using FluentValidation;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
 global using project_service.Commons.Behaviors;
+global using project_service.Tasks.Exceptions;
 
