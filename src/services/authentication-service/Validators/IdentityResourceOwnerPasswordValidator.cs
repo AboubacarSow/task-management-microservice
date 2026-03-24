@@ -77,9 +77,9 @@ public class IdentityResourceOwnerPasswordValidator(HttpClient http, ILogger<Ide
                 claims:
                 [
                     new Claim("email", user.Email ?? string.Empty),
-                new Claim("preferred_username", user.Username ?? string.Empty),
-                new Claim("given_name", user.FirstName ?? string.Empty),
-                new Claim("family_name", user.LastName ?? string.Empty)
+                    new Claim("preferred_username", user.Username ?? string.Empty),
+                    new Claim("given_name", user.FirstName ?? string.Empty),
+                    new Claim("family_name", user.LastName ?? string.Empty)
                 ]);
         }
         catch (HttpRequestException ex)

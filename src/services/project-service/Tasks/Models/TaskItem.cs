@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using project_service.Commons;
 using project_service.Tasks.Exceptions;
 
@@ -5,11 +7,14 @@ namespace project_service.Tasks.Models;
 
 public sealed class TaskItem :BaseEntity
 {
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid ProjectId{get;private set;}
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid? AssignedToUser { get;private set; }
     public TaskStatus Status { get; private set; }
     public string? Note { get; private set; }
     public TaskPriority Priority { get; private set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid CreatedByUser { get; private set; }
 
     public TaskItem(string name, Guid projectId, Guid userId)
@@ -62,7 +67,7 @@ public sealed class TaskItem :BaseEntity
     public void CompleteTask(string? note=null)
     {
         if (Status != TaskStatus.InProgress)
-            throw new TaskInvalidOperationException("Cannot mark as completed a task not in Progress");
+            throw new TaskInvalidOperationException("*not in progress*");
         if (note is not null)
             Note = note;
         Status = TaskStatus.Completed;
@@ -71,6 +76,8 @@ public sealed class TaskItem :BaseEntity
 
     public void UnAssign()
     {
+        if(AssignedToUser == null)
+            throw new TaskInvalidOperationException("*not assigned*");
         if(Status == TaskStatus.Completed)
             throw new TaskInvalidOperationException("Cannot unassign on completed task");
         AssignedToUser=null;
@@ -88,13 +95,7 @@ public sealed class TaskItem :BaseEntity
         LastUpdatedAt = DateTime.UtcNow;
     }
 
-    public void ReassignTo(Guid new_userId)
-    {
-        if (new_userId.Equals(Guid.Empty))
-            throw new ArgumentException("User Id cannot be null or empty");
-        AssignedToUser = new_userId;
-        Touch();
-    }
+   
 
     public void SetDueAt(DateTime date)
     {
@@ -112,13 +113,21 @@ public sealed class TaskItem :BaseEntity
         Touch();
     }
 
-    public void Block(string note)
+    public void Pause(string note)
     {
         if (Status != TaskStatus.InProgress)
             throw new TaskInvalidOperationException("Cannot perform this operation.TaskItem is not in progress");
         if(string.IsNullOrWhiteSpace(note))
             throw new ArgumentException("While Blocking task, note message cannot be null or empty");
         Status = TaskStatus.Pause;
+        Note = $"Note :{Note}. Note: {note}";
         Touch();
+    }
+
+    public void SetName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+        Name = name;
     }
 }

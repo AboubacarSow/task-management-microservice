@@ -206,6 +206,18 @@ public class TaskTests
 
         _task.Description.Should().NotBe(null);
     }
+
+    [Fact]
+    public void AfterSetName_ShouldUpdateField()
+    {
+        var name = "new name";
+        var old = _task.Name;
+
+        _task.SetName(name);
+
+        _task.Name.Should().Be(name);
+        _task.Name.Should().NotBe(old);
+    }
     [Fact]
     public void SetDescription_WithEmptyDescription_ShouldThrowException()
     {
@@ -256,7 +268,7 @@ public class TaskTests
         var action = ()=> _task.CompleteTask();
 
         action.Should().Throw<TaskInvalidOperationException>()
-        .WithMessage("Cannot mark as completed a task not in Progress");
+        .WithMessage("*not in progress*");
     }
     [Fact]
     public void UnAssign_ShouldSetAssignedUser_ToNull()
@@ -267,6 +279,15 @@ public class TaskTests
         _task.UnAssign();
 
         _task.AssignedToUser.Should().BeNull();
+    }
+    [Fact]
+    public void UnAssign_Should_ThrowException_When_AssignedUser_Null()
+    {
+        //Arrange       
+        var action = () =>_task.UnAssign();
+
+        action.Should().Throw<TaskInvalidOperationException>().WithMessage("*not assigned*");
+
     }
     [Fact]
     public void UnAssigning_ShouldUpdateLastUpdatedAt()
@@ -308,46 +329,9 @@ public class TaskTests
 
     }
 
-    [Fact]
-    public void Should_ReassignToNewUser()
-    {
-        AssignTask();
-        var new_userId= Guid.NewGuid();
-        var previewsUserId= _task.AssignedToUser;
-        //Act
-        _task.ReassignTo(new_userId);
-
-        //Assert
-        Assert.NotEqual(new_userId,previewsUserId);
-    }
-    [Fact]
-    public void Reassigning__ShouldUpdateLastUpdatedAt()
-    {
-        AssignTask();
-        var new_userId= Guid.NewGuid();
-        var previewsDate = _task.LastUpdatedAt;
-        //Act
-          var before = DateTime.UtcNow;
-        _task.ReassignTo(new_userId);
-        var after = DateTime.UtcNow;
-
-        //Assert
-        _task.LastUpdatedAt.Should().BeOnOrAfter(before);
-        _task.LastUpdatedAt.Should().BeOnOrBefore(after);
-        _task.LastUpdatedAt.Should().NotBe(previewsDate);
-        Assert.True(_task.LastUpdatedAt > previewsDate);
-
-    }
-    [Fact]
-    public void Reassigning_WithEmptyUserId_ShouldThrowException()
-    {
-        var empty_userId = Guid.Empty;
-
-        var action = ()=> _task.ReassignTo(empty_userId);
-
-        action.Should().Throw<ArgumentException>()
-            .WithMessage("User Id cannot be null or empty");
-    }
+    
+    
+    
 
     [Fact]
     public void SetDueDate_WithValidDueDate_DueAt_ShouldNotBeNull()
@@ -417,7 +401,7 @@ public class TaskTests
         //Arrrage
         AssignTask();
         _task.StartWork();
-        _task.Block("Due to some reason");
+        _task.Pause("Due to some reason");
 
         Assert.Equal(TaskStatus.Pause,_task.Status);
     }
@@ -425,7 +409,7 @@ public class TaskTests
     public void Block_WhenNot_InProgress_ShouldThrowException()
     {
      
-        var action  = ()=>_task.Block("Due to some reason");
+        var action  = ()=>_task.Pause("Due to some reason");
 
         action.Should().Throw<TaskInvalidOperationException>()
             .WithMessage("Cannot perform this operation.TaskItem is not in progress");
@@ -436,7 +420,7 @@ public class TaskTests
     {
          AssignTask();
         _task.StartWork();
-        var action = ()=>_task.Block("");
+        var action = ()=>_task.Pause("");
 
         action.Should().Throw<ArgumentException>().
         WithMessage("While Blocking task, note message cannot be null or empty");
@@ -449,7 +433,7 @@ public class TaskTests
          var previewsDate = _task.LastUpdatedAt;
         //Act
           var before = DateTime.UtcNow;
-        _task.Block("For some reason, I paused this task");
+        _task.Pause("For some reason, I paused this task");
         var after = DateTime.UtcNow;
 
         //Assert
