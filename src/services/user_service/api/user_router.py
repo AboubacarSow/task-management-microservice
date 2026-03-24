@@ -1,7 +1,7 @@
 from services.user_service.services.user_service import UserService
 from services.user_service.models.user_model import User
-from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, 
-                                                       UserUpdate, UserUpdated, UserDeleted, UserActive)
+from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, UserUpdate, UserUpdated,
+                                                       UserDeleted, UserActive, UserAuth, UserAuthed)
 from services.user_service.database.mongo import user_collection
 from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
@@ -40,8 +40,8 @@ class UserRouter:
             except FileExistsError as e:
                 raise HTTPException(status_code=409, detail=str(e))
             
-        @self.router.delete("/{user_id}")
-        async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserDeleted:
+        @self.router.delete("/{user_id}", status_code=204)
+        async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service)):
             try:
                 return await service.delete_user(user_id)
             except ValueError as e:
@@ -53,3 +53,10 @@ class UserRouter:
                 return await service.get_user(user_id)
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
+            
+        @self.router.post("/validate")
+        async def authenticate_user(data: UserAuth, service: UserService = Depends(self.get_user_service))-> UserAuthed:
+            user = await service.authenticate_user(data.email,data.password)
+            if not user:
+                raise HTTPException(status_code=401, detail="Invalid email or password")
+            return user

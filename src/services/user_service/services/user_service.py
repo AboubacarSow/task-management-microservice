@@ -1,4 +1,7 @@
 from services.user_service.models.user_model import User
+from services.user_service.utils.password import hash_password, verify_password
+import uuid
+
 class UserService:
     def __init__(self, user_repository):
         self.user_repository = user_repository
@@ -8,6 +11,8 @@ class UserService:
 
         if existing_user:
             raise ValueError("User with this email already exists")
+        user.id = str(uuid.uuid4())        
+        user.password = hash_password(user.password)
 
         return await self.user_repository.add_user(user)
     
@@ -39,4 +44,15 @@ class UserService:
         if not user:
             raise ValueError("User with this id does not exist")
         
+        return user
+    
+    async def authenticate_user(self, email: str, password: str):
+        user = await self.user_repository.get_user_by_email(email)
+
+        if not user:
+            return None
+
+        if not verify_password(password, user.password):
+            return None
+
         return user
