@@ -269,6 +269,15 @@ public class TaskTests
         _task.AssignedToUser.Should().BeNull();
     }
     [Fact]
+    public void UnAssign_Should_ThrowException_When_AssignedUser_Null()
+    {
+        //Arrange       
+        var action = () =>_task.UnAssign();
+
+        action.Should().Throw<TaskInvalidOperationException>().WithMessage("*not assigned*");
+
+    }
+    [Fact]
     public void UnAssigning_ShouldUpdateLastUpdatedAt()
     {
         //Arrange
