@@ -71,6 +71,8 @@ public sealed class TaskItem :BaseEntity
 
     public void UnAssign()
     {
+        if(AssignedToUser == null)
+            throw new TaskInvalidOperationException("*not assigned*");
         if(Status == TaskStatus.Completed)
             throw new TaskInvalidOperationException("Cannot unassign on completed task");
         AssignedToUser=null;
