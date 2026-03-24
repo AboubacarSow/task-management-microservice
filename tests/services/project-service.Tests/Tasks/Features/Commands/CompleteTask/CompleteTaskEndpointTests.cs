@@ -61,9 +61,13 @@ public class CompleteTaskEndpointTests : IClassFixture<WebApplicationFactory<Pro
     {
         _senderMock.Setup(s => s.Send(It.IsAny<CompleteTaskCommand>(), It.IsAny<CancellationToken>()))
                    .ReturnsAsync(Unit.Value);
+        var request = new
+        {
+            notes = "Task *implement a unit of work service* is done. Please check it out on github.",
+        };
 
-        var response = await _client.PatchAsync(
-            $"/api/tasks/{_taskId}/complete", null);
+        var response = await _client.PatchAsJsonAsync(
+            $"/api/tasks/{_taskId}/complete", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
@@ -78,8 +82,13 @@ public class CompleteTaskEndpointTests : IClassFixture<WebApplicationFactory<Pro
     {
         _client.DefaultRequestHeaders.Authorization = null;
 
-        var response = await _client.PatchAsync(
-            $"/api/tasks/{_taskId}/complete", null);
+        var request = new
+        {
+            notes = "",
+        };
+
+        var response = await _client.PatchAsJsonAsync(
+            $"/api/tasks/{_taskId}/complete", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
