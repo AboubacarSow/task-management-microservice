@@ -59,8 +59,8 @@ ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
         await _taskRepository.EditAsync(task);
 
         if (owner != command.CurrentUserId)
-            _logger.LogInformation("User in Group cancelled Task :{TaskId} successfully",
-                command.TaskId);
+            _logger.LogInformation("User {UserId} in Group cancelled Task :{TaskId} successfully",
+              command.CurrentUserId,command.TaskId);
                 
         return Unit.Value;
     }
