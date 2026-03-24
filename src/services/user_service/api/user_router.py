@@ -40,8 +40,8 @@ class UserRouter:
             except FileExistsError as e:
                 raise HTTPException(status_code=409, detail=str(e))
             
-        @self.router.delete("/{user_id}")
-        async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserDeleted:
+        @self.router.delete("/{user_id}", status_code=204)
+        async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service)):
             try:
                 return await service.delete_user(user_id)
             except ValueError as e:

@@ -87,10 +87,7 @@ async def test_get_user():
     repo = FakeUserRepository()
     service = UserService(repo)
 
-    user_id = str(uuid.uuid4())
-
     user = User(
-        id=user_id,
         first_name="Ali",
         last_name="Khan",
         email="ali@test.com",
@@ -99,10 +96,10 @@ async def test_get_user():
 
     await service.add_user(user)
 
-    retrieved_user = await service.get_user(user_id)
+    retrieved_user = await service.get_user(user.id)
 
     assert isinstance(retrieved_user, User)
-    assert retrieved_user.id == user_id
+    assert retrieved_user.id == user.id
  
 @pytest.mark.asyncio   
 async def test_get_user_not_found():
@@ -117,10 +114,7 @@ async def test_update_user():
     repo = FakeUserRepository()
     service = UserService(repo)
 
-    user_id = str(uuid.uuid4())
-
     user = User(
-        id=user_id,
         first_name="Ali",
         last_name="Khan",
         email="ali@test.com",
@@ -134,10 +128,10 @@ async def test_update_user():
         "last_name": "Yilmaz"
     }
 
-    updated_user = await service.update_user(user_id, user_dict)
+    updated_user = await service.update_user(user.id, user_dict)
 
     assert isinstance(updated_user, User)
-    assert updated_user.id == user_id
+    assert updated_user.id == user.id
     assert updated_user.first_name == "Ahmet"
     assert updated_user.last_name == "Yilmaz"
  
@@ -160,10 +154,7 @@ async def test_delete_user():
     repo = FakeUserRepository()
     service = UserService(repo)
 
-    user_id = str(uuid.uuid4())
-
     user = User(
-        id=user_id,
         first_name="Ali",
         last_name="Khan",
         email="ali@test.com",
@@ -172,11 +163,11 @@ async def test_delete_user():
 
     await service.add_user(user)
 
-    deleted_user = await service.delete_user(user_id)
+    deleted_user = await service.delete_user(user.id)
 
     assert isinstance(deleted_user, User)
-    assert deleted_user.id == user_id
-    assert await repo.get_user(user_id) is None
+    assert deleted_user.id == user.id
+    assert await repo.get_user(user.id) is None
  
 @pytest.mark.asyncio   
 async def test_delete_user_id_not_found():
@@ -193,9 +184,7 @@ async def test_authenticate_user():
     repo = FakeUserRepository()
     service = UserService(repo)
     
-    user_id = str(uuid.uuid4())
     user = User(
-        id=user_id,
         first_name="Ali",
         last_name="Khan",
         email="ali@test.com",
@@ -206,7 +195,7 @@ async def test_authenticate_user():
     
     validated_user = await service.authenticate_user("ali@test.com", "123456")
     assert isinstance(validated_user, User)
-    assert validated_user.id == user_id
+    assert validated_user.id == user.id
     
 @pytest.mark.asyncio
 async def test_authenticate_user_user_not_found():

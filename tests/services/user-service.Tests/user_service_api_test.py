@@ -197,10 +197,7 @@ async def test_delete_user():
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.delete(f"/api/users/{user_id}")
     
-    data2 = response2.json()
-    assert response2.status_code == 200
-    assert "id" in data2
-    assert data2["id"] == user_id
+    assert response2.status_code == 204
 
 @pytest.mark.asyncio 
 async def test_delete_user_not_exist():

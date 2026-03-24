@@ -10,35 +10,16 @@ class MongoUserRepository(UserRepositoryInterface):
         self.collection = collection
 
     async def add_user(self, user) -> User:
-        user_dict = user.model_dump(exclude={"id"})
-        result = await self.collection.insert_one(user_dict)
-        return User(
-        id=str(result.inserted_id),
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        password=user.password,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-        is_active=user.is_active
-    )
+        result = await self.collection.insert_one(user.model_dump())
+        return user
 
     async def get_user(self, user_id: str):
-        data = await self.collection.find_one({"_id": ObjectId(user_id)})
+        data = await self.collection.find_one({"id": user_id})
 
         if not data:
             return None
 
-        return User(
-            id=str(data["_id"]),
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-            email=data["email"],
-            password=data["password"],
-            created_at=data["created_at"],
-            updated_at=data["updated_at"],
-            is_active=data["is_active"]
-        )
+        return User(**data)
 
     async def get_user_by_email(self, email: str):
         data = await self.collection.find_one({"email": email})
@@ -46,21 +27,12 @@ class MongoUserRepository(UserRepositoryInterface):
         if not data:
             return None
 
-        return User(
-            id=str(data["_id"]),
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-            email=data["email"],
-            password=data["password"],
-            created_at=data["created_at"],
-            updated_at=data["updated_at"],
-            is_active=data["is_active"]
-        )
+        return User(**data)
 
     async def update_user(self, user_id: str, data: dict):
         data["updated_at"] = datetime.now()
         result = await self.collection.update_one(
-            {"_id": ObjectId(user_id)},
+            {"id": user_id},
             {"$set": data}
         )
 
@@ -75,5 +47,5 @@ class MongoUserRepository(UserRepositoryInterface):
         if not user:
             return None
 
-        await self.collection.delete_one({"_id": ObjectId(user_id)})
+        await self.collection.delete_one({"id": user_id})
         return user
