@@ -120,7 +120,7 @@ public sealed class TaskItem :BaseEntity
         if(string.IsNullOrWhiteSpace(note))
             throw new ArgumentException("While Blocking task, note message cannot be null or empty");
         Status = TaskStatus.Pause;
-        Note = $"Note :{Note}. Note: {note}";
+        Note = $"{Note}{note}. ";
         Touch();
     }
 

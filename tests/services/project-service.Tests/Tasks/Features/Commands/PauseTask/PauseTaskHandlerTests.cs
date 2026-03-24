@@ -45,7 +45,7 @@ public class PauseTaskHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         task.Status.Should().Be(TaskStatus.Pause);
-        task.Note.Should().Be("Break time");
+        task.Note.Should().Be("Break time. ");
     }
     [Fact]
     public async Task Should_Throw_When_User_Not_AssignedUser()
