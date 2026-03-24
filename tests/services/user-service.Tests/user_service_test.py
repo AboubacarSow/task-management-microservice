@@ -208,3 +208,10 @@ async def test_authenticate_user():
     assert isinstance(validated_user, User)
     assert validated_user.id == user_id
     
+@pytest.mark.asyncio
+async def test_authenticate_user_user_not_found():
+    repo = FakeUserRepository()
+    service = UserService(repo)
+    
+    validated_user = await service.authenticate_user("ali@test.com", "123456")
+    assert validated_user is None
