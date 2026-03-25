@@ -3,9 +3,10 @@ using project_service.Tasks.Dtos;
 
 namespace project_service.Tasks.Features.Queries.GetTasksByOwnerId;
 
-public record GetTasksByOwnerIdQuery(Guid CurrentUserId);
+public record GetTasksByOwnerIdQuery(Guid CurrentUserId):IRequest<List<TaskItemDto>>;
 
-public class GetTasksByOwnerIdHandler(ITaskRepository taskRepository,ILogger<GetTasksByOwnerIdHandler> logger)
+public class GetTasksByOwnerIdHandler(ITaskRepository taskRepository,
+    ILogger<GetTasksByOwnerIdHandler> logger) : IRequestHandler<GetTasksByOwnerIdQuery, List<TaskItemDto>>
 {
     private readonly ITaskRepository _taskRepository = taskRepository ;
     private readonly ILogger<GetTasksByOwnerIdHandler> _logger = logger;
@@ -23,5 +24,10 @@ public class GetTasksByOwnerIdHandler(ITaskRepository taskRepository,ILogger<Get
         _logger.LogInformation("{Count} tasks for owner {OwnerId}", tasks.Count, query.CurrentUserId);
 
         return tasks.Adapt<List<TaskItemDto>>();
+    }
+
+    public Task<List<TaskItemDto>> Handle(GetTasksByOwnerIdHandler request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

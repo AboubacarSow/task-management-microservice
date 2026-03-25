@@ -1,3 +1,4 @@
+using Mapster;
 using project_service.Tasks.Dtos;
 using project_service.Tasks.Features.Queries.GetTasksByOwnerId;
 
@@ -44,7 +45,7 @@ public class GetTasksByOwnerIdEndpointTests : IClassFixture<WebApplicationFactor
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetTasksByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
-            .ReturnsAsync(tasks);
+            .ReturnsAsync(tasks.Adapt<List<TaskItemDto>>);
 
         // Act
         var response = await _client.GetAsync("/api/tasks/me");
@@ -63,7 +64,7 @@ public class GetTasksByOwnerIdEndpointTests : IClassFixture<WebApplicationFactor
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetTasksByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedTasks);
+            .ReturnsAsync(expectedTasks.Adapt<List<TaskItemDto>>);
 
         // Act
         var response = await _client.GetAsync("/api/tasks/me");
@@ -134,7 +135,7 @@ public class GetTasksByOwnerIdEndpointTests : IClassFixture<WebApplicationFactor
             {
                 capturedQuery = (GetTasksByOwnerIdQuery)q;
             })
-            .ReturnsAsync(new List<TaskItemDto>());
+            .ReturnsAsync([]);
 
         // Act
         await _client.GetAsync("/api/tasks/me");
