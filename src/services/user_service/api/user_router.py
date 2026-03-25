@@ -5,6 +5,9 @@ from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSu
 from services.user_service.database.mongo import user_collection
 from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class UserRouter:
@@ -20,6 +23,7 @@ class UserRouter:
         async def create_user(user: UserCreate, service: UserService = Depends(self.get_user_service))-> UserCreatedSuccesfully:
             try:
                 user = User(**user.model_dump())
+                logger.info(f"Create user request received for email={user.email}")
                 return await service.add_user(user)
             except ValueError as e:
                 raise HTTPException(status_code=409, detail=str(e))
@@ -27,6 +31,7 @@ class UserRouter:
         @self.router.get("/{user_id}")
         async def get_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserGet:
             try:
+                logger.info(f"Get user request received for user_id={user_id}")
                 return await service.get_user(user_id)
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
@@ -34,6 +39,7 @@ class UserRouter:
         @self.router.put("/{user_id}")
         async def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(self.get_user_service))-> UserUpdated:
             try:
+                logger.info(f"Update user request received for user_id={user_id}")
                 return await service.update_user(user_id,data.model_dump(exclude_unset=True))
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
@@ -43,20 +49,25 @@ class UserRouter:
         @self.router.delete("/{user_id}", status_code=204)
         async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service)):
             try:
-                return await service.delete_user(user_id)
+                logger.info(f"Delete user request received for user_id={user_id}")
+                await service.delete_user(user_id)
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
             
         @self.router.get("/{user_id}/active")
         async def is_user_active(user_id: str, service: UserService = Depends(self.get_user_service))-> UserActive:
             try:
+                logger.info(f"Is user active request received for user_id={user_id}")
                 return await service.get_user(user_id)
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
             
         @self.router.post("/validate")
         async def authenticate_user(data: UserAuth, service: UserService = Depends(self.get_user_service))-> UserAuthed:
+            logger.info(f"Authenticate request received for email={data.email}")
             user = await service.authenticate_user(data.email,data.password)
             if not user:
+                logger.warning(f"Authentication failed for email={data.email}")
                 raise HTTPException(status_code=401, detail="Invalid email or password")
+            logger.info(f"Authentication successful for user_id={user.id}")
             return user

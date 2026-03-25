@@ -1,4 +1,3 @@
-from bson import ObjectId
 from services.user_service.models.user_model import User
 from services.user_service.repositories.user_repository_interface import UserRepositoryInterface
 from datetime import datetime
@@ -10,7 +9,7 @@ class MongoUserRepository(UserRepositoryInterface):
         self.collection = collection
 
     async def add_user(self, user) -> User:
-        result = await self.collection.insert_one(user.model_dump())
+        await self.collection.insert_one(user.model_dump())
         return user
 
     async def get_user(self, user_id: str):

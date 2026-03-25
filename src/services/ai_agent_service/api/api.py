@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from services.ai_agent_service.agents.agent import Agent
-from services.ai_agent_service.schemas.agent_schema import (GenerateDescriptionInput, GenerateDescriptionOutput,
+from ..agents.agent import Agent
+from ..schemas.agent_schema import (GenerateDescriptionInput, GenerateDescriptionOutput,
                                                             SuggestTasksInput, SuggestTasksOutput,
                                                             RefineProjectNameInput, RefineProjectNameOutput)
 

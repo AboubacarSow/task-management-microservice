@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 import uvicorn
 from services.user_service.api.user_router import UserRouter
+from services.user_service.utils.logger import setup_logger
+
+setup_logger()
 
 app = FastAPI()
 
