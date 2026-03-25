@@ -26,8 +26,5 @@ public class GetTasksByOwnerIdHandler(ITaskRepository taskRepository,
         return tasks.Adapt<List<TaskItemDto>>();
     }
 
-    public Task<List<TaskItemDto>> Handle(GetTasksByOwnerIdHandler request, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+ 
 }

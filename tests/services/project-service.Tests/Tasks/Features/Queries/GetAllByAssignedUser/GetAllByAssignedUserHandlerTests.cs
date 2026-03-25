@@ -8,7 +8,7 @@ namespace project_service.Tests.Tasks.Features.Queries.GetAllByAssignedUser;
 public class GetAllByAssignedUserHandlerTests
 {
     private readonly Mock<ITaskRepository> _taskRepoMock = new();
-    private readonly Mock<ILogger<GetAllByAssignedUserQuery>> _loggerMock = new();
+    private readonly Mock<ILogger<GetAllByAssignedUserHandler>> _loggerMock = new();
 
     private readonly GetAllByAssignedUserHandler _handler;
 
@@ -24,7 +24,7 @@ public class GetAllByAssignedUserHandlerTests
         // Arrange
         var assigned_user = Guid.NewGuid();
         var user1 = Guid.NewGuid();
-        var tasks = FakeTaskData.GetTasksForMultipleUsers(Guid.NewGuid(),Guid.NewGuid());
+        var tasks = FakeTaskData.GetTasksForMultipleUsers(Guid.NewGuid(),user1);
         foreach(var task in tasks)
         {
             if (task.CreatedByUser == user1)
@@ -41,7 +41,7 @@ public class GetAllByAssignedUserHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().HaveCount(4);
+        result.Should().HaveCount(5);
     }
 
     [Fact]
