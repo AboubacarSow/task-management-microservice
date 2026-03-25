@@ -48,7 +48,7 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
             .ReturnsAsync(tasks.Adapt<List<TaskItemDto>>);
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/me");
+        var response = await _client.GetAsync("/api/tasks/assigned/me");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -67,7 +67,7 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
             .ReturnsAsync(expectedTasks.Adapt<List<TaskItemDto>>);
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/me");
+        var response = await _client.GetAsync("/api/tasks/assigned/me");
         var body = await response.Content.ReadFromJsonAsync<List<TaskItemDto>>();
 
         // Assert
@@ -83,10 +83,10 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
     {
         _senderMock.Setup(r => r.Send(It.IsAny<GetAllByAssignedUserQuery>(),
             It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<TaskItemDto>());
+            .ReturnsAsync([]);
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/me");
+        var response = await _client.GetAsync("/api/tasks/assigned/me");
         var body = await response.Content.ReadFromJsonAsync<List<TaskItemDto>>();
 
         // Assert
@@ -101,7 +101,7 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
         _client.DefaultRequestHeaders.Authorization = null;
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/me");
+        var response = await _client.GetAsync("/api/tasks/assigned/me");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -115,7 +115,7 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
             .ReturnsAsync(new List<TaskItemDto>());
 
         // Act
-        await _client.GetAsync("/api/tasks/me");
+        await _client.GetAsync("/api/tasks/assigned/me");
 
         // Assert
         _senderMock.Verify(r => r.Send(It.IsAny<GetAllByAssignedUserQuery>(),
@@ -138,7 +138,7 @@ public class GetAllByAssignedUserEndpointTests : IClassFixture<WebApplicationFac
             .ReturnsAsync([]);
 
         // Act
-        await _client.GetAsync("/api/tasks/me");
+        await _client.GetAsync("/api/tasks/assigned/me");
 
         // Assert
         capturedQuery.Should().NotBeNull();
