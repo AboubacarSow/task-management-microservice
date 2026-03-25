@@ -1,4 +1,3 @@
-using Moq;
 using project_service.Tasks.Features.Queries.GetTasksByOwnerId;
 
 namespace project_service.Tests.Tasks.Features.Queries.GetTasksByOwnerId;
@@ -104,7 +103,7 @@ public class GetTasksByOwnerIdHandlerTests
     
 
     [Fact]
-    public async Task Handle_Should_Log_Warning_When_No_Projects_FoundAsync()
+    public async Task Handle_Should_Log_Warning_When_No_Tasks_FoundAsync()
     {
         // Arrange
         var ownerId = Guid.NewGuid();
