@@ -43,7 +43,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         foreach (var task in tasks)
             await taskRepository.AddAsync(task);
 
-        var result = await taskRepository.GetAllByProjectId(project1);
+        var result = await taskRepository.GetAllByProjectIdAsync(project1);
 
         result.Should().NotBeNullOrEmpty();
         result.Should().HaveCount(4);

@@ -7,9 +7,6 @@ public class GetProjectByIdEndpoint : ICarterModule
         app.MapGet("/api/projects/{id:guid}", 
                 async (Guid id, ISender sender,IUserContext userContext) =>
         {
-
-            //ToDo
-            // Only user in PeopleWorking can see project
             var currentUserId = userContext.GetUserId();
             var query = new GetProjectByIdQuery(currentUserId,id);
             var result = await sender.Send(query);
