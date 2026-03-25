@@ -52,4 +52,8 @@ public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskReposi
 
         return !hasIncomplete;
     }
+
+    public Task<List<TaskItem>> GetAllByAssignedUserIdAsync(Guid userId)
+      => _collection.Find(t => t.AssignedToUser == userId)
+                    .ToListAsync();
 }
