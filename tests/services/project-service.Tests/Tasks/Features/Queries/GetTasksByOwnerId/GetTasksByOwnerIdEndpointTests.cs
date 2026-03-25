@@ -130,7 +130,7 @@ public class GetTasksByOwnerIdEndpointTests : IClassFixture<WebApplicationFactor
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetTasksByOwnerIdQuery>(),
             It.IsAny<CancellationToken>()))
-            .Callback<IRequest<IEnumerable<TaskItemDto>>, CancellationToken>((q, _) =>
+            .Callback<IRequest<List<TaskItemDto>>, CancellationToken>((q, _) =>
             {
                 capturedQuery = (GetTasksByOwnerIdQuery)q;
             })
