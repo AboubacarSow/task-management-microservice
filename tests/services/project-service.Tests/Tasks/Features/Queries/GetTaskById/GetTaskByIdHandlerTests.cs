@@ -1,6 +1,6 @@
 using project_service.Tasks.Features.Queries.GetTaskById;
 
-namespace project_service.Tests.Tasks.Features.Queries.GetById;
+namespace project_service.Tests.Tasks.Features.Queries.GetTaskById;
 
 
 public class GetTaskByIdHandlerTests
