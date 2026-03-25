@@ -13,7 +13,7 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH","DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "project_service" ]
+        "AllowedScopes": [ "project_fullpermission" ]
       }
     },
     {
@@ -29,7 +29,7 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "project_service" ]
+        "AllowedScopes": [ "project_fullpermission" ]
       }
     },
     {
@@ -45,7 +45,7 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "agent_service" ]
+        "AllowedScopes": [ "agent_fullpermission" ]
       }
     },
     {
@@ -61,7 +61,7 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "user_service" ]
+        "AllowedScopes": [ "user_fullpermission" ]
       }
     }
   ],

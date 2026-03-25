@@ -5,15 +5,7 @@ namespace project_service.Tasks.Features.Commands.CreateTaskItem;
 
 public record CreateTaskItemCommand(Guid CurrentUserId,Guid ProjectId, string Title): IRequest<Guid>;
 
-public class CreateTaskItemCommandValidator: AbstractValidator<CreateTaskItemCommand>
-{
-    public CreateTaskItemCommandValidator()
-    {
-        RuleFor(c => c.CurrentUserId).NotEmpty().WithMessage("UserId must be provide");
-        RuleFor(c => c.ProjectId).NotEmpty().WithMessage("ProjectId must be provided");
-        RuleFor(c => c.Title).NotEmpty().WithMessage("Task must be have a name of title");
-    }
-}
+
 public class CreateTaskItemCommandValidator : AbstractValidator<CreateTaskItemCommand> 
 {
 

@@ -24,8 +24,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - UserService__BaseUrl=http://user-service:5002
+      - Elasticsearch__Uri=http://elasticsearch:9200
     depends_on:
-      - mongodb
       - elasticsearch
     networks:
       - internal
@@ -37,7 +37,10 @@ services:
     image: project-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
+      - DatabaseSettings__Database=TaskManagementDb
+      - DatabaseSettings__ProjectCollection=Projects
+      - DatabaseSettings__TaskCollection=Tasks
       - Elasticsearch__Uri=http://elasticsearch:9200
     depends_on:
       - mongodb
@@ -52,8 +55,11 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 5001
     environment:
       - MONGO_URL=mongodb://mongodb:27017
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2 
     depends_on:
       - mongodb
+      - ollama
     networks:
       - internal
 
@@ -75,6 +81,15 @@ services:
       - mongodb_data:/data/db
     networks:
       - internal
+  
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
 
   elasticsearch:
     image: elasticsearch:8.13.0
@@ -90,6 +105,7 @@ services:
 volumes:
   mongodb_data:
   elasticsearch_data:
+  ollama_data:
 
 networks:
   internal:

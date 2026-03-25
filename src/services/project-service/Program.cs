@@ -1,6 +1,5 @@
 using Carter;
 using Microsoft.IdentityModel.Tokens;
-using project_service.Data.Utilities;
 using project_service.Extensions;
 using shared.Behaviors;
 
@@ -15,6 +14,7 @@ builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
            options.Authority = "http://authentication-service:5000"; 
+           options.Audience = "project-service";
       
             options.TokenValidationParameters = new TokenValidationParameters()
             {
