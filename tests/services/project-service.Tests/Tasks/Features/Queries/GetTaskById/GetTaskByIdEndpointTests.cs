@@ -74,7 +74,7 @@ public class GetTaskByIdEndpointTests : IClassFixture<WebApplicationFactory<Prog
         // Arrange
         var taskId = Guid.NewGuid();
         var expectedProject = ( new TaskItemDto(
-                Id: Guid.NewGuid(),
+                Id: taskId,
                 Name: "Setup database schema",
                 ProjectId: Guid.NewGuid(),
                 CreatedByUser: Guid.NewGuid(),
@@ -108,12 +108,12 @@ public class GetTaskByIdEndpointTests : IClassFixture<WebApplicationFactory<Prog
     public async Task GET_Task_Should_Use_MediatR_Handler()
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var taskId = Guid.NewGuid();
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetTaskByIdQuery>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync( new TaskItemDto(
-                Id: Guid.NewGuid(),
+                Id: taskId,
                 Name: "Setup database schema",
                 ProjectId: Guid.NewGuid(),
                 CreatedByUser: Guid.NewGuid(),
@@ -128,7 +128,7 @@ public class GetTaskByIdEndpointTests : IClassFixture<WebApplicationFactory<Prog
             ));
 
         // Act
-        await GetTaskByIdAsync(projectId);
+        await GetTaskByIdAsync(taskId);
 
         // Assert
         _senderMock.Verify(r => r.Send(It.IsAny<GetTaskByIdQuery>(),
@@ -144,7 +144,7 @@ public class GetTaskByIdEndpointTests : IClassFixture<WebApplicationFactory<Prog
 
         _senderMock.Setup(r => r.Send(It.IsAny<GetTaskByIdQuery>(),
             It.IsAny<CancellationToken>()))
-            .Callback<IRequest<ProjectDto?>, CancellationToken>((q, _) =>
+            .Callback<IRequest<TaskItemDto?>, CancellationToken>((q, _) =>
             {
                 capturedQuery = (GetTaskByIdQuery)q;
             })

@@ -4,6 +4,18 @@ namespace project_service.Tasks.Features.Queries.GetTaskById;
 
 
 public record GetTaskByIdQuery(Guid CurrentUserId,Guid TaskId):IRequest<TaskItemDto>;
+
+
+public class GetTaskByIdQueryValidator: AbstractValidator<GetTaskByIdQuery>
+{
+    public GetTaskByIdQueryValidator()
+    {
+        RuleFor(x => x.TaskId).NotEmpty()
+            .WithMessage("Task Id is required");
+        RuleFor(x => x.CurrentUserId).NotEmpty()
+            .WithMessage("User is required");
+    }
+}
 public class GetTaskByIdHandler(ITaskRepository taskRepository, IProjectRepository projectRepository,
  ILogger<GetTaskByIdHandler> logger): IRequestHandler<GetTaskByIdQuery, TaskItemDto>
 {
