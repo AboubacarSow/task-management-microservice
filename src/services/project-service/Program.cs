@@ -14,6 +14,7 @@ builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
            options.Authority = "http://authentication-service:5000"; 
+           options.Audience = "project-service";
       
             options.TokenValidationParameters = new TokenValidationParameters()
             {
