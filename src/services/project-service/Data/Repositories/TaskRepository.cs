@@ -9,8 +9,9 @@ public interface ITaskRepository
     Task<bool> AreAllTasksCompletedForProjectIdAsync(Guid projectId);
     Task EditAsync(TaskItem oldTask);
     Task<List<TaskItem>> GetAllByProjectId(Guid projectId);
-    Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId);
+    Task<List<TaskItem>> GetAllByOwnerIdAsync(Guid userId);
     Task<TaskItem?> GetByIdAsync(Guid id);
+    Task<List<TaskItem>> GetAllByAssignedUserIdAsync(Guid user2);
 }
 public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskRepository
 {
@@ -33,7 +34,7 @@ public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskReposi
                           .ToListAsync();
     }
 
-    public Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId)
+    public Task<List<TaskItem>> GetAllByOwnerIdAsync(Guid userId)
     => _collection.Find(t => t.CreatedByUser == userId)
                           .ToListAsync();
 
