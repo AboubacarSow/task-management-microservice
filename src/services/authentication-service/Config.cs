@@ -12,10 +12,18 @@ public static class Config
 
     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("project_service", "Project Service Access"),
-            new ApiScope("agent_service", "Agent Service Access"),
-            new ApiScope("user_service", "User Service Access")
+            new ApiScope("project_fullpermission", "Full permission for project operations"),
+            new ApiScope("agent_fullpermission", "Agent Service Access"),
+            new ApiScope("user_fullpermission", "User Service Access")
         ];
+    
+    public static IEnumerable<ApiResource> ApiRessources =>
+    [
+        new ApiResource("project-service"){Scopes={"project_fullpermission"}},
+        new ApiResource("agent-service"){Scopes={"agent_fullpermission"}},
+        new ApiResource("user-service"){Scopes={"user_fullpermission"}},
+
+    ];
 
     public static IEnumerable<Client> Clients =>
         [
@@ -35,9 +43,9 @@ public static class Config
                 {
                     "openid",
                     "profile",
-                    "project_service",
-                    "agent_service",
-                    "user_service",
+                    "project_fullpermission",
+                    "agent_fullpermission",
+                    "user_fullpermission",
                 },
 
                 AccessTokenLifetime          = 3600,   

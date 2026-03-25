@@ -1,6 +1,5 @@
 using Carter;
 using Microsoft.IdentityModel.Tokens;
-using project_service.Data.Utilities;
 using project_service.Extensions;
 using shared.Behaviors;
 

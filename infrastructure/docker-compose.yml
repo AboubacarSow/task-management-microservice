@@ -24,8 +24,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - UserService__BaseUrl=http://user-service:5002
+      - Elasticsearch__Uri=http://elasticsearch:9200
     depends_on:
-      - mongodb
       - elasticsearch
     networks:
       - internal
@@ -37,7 +37,10 @@ services:
     image: project-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
+      - DatabaseSettings__Database=TaskManagementDb
+      - DatabaseSettings__ProjectCollection=Projects
+      - DatabaseSettings__TaskCollection=Tasks
       - Elasticsearch__Uri=http://elasticsearch:9200
     depends_on:
       - mongodb

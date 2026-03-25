@@ -4,6 +4,14 @@ namespace project_service.Tasks.Features.Commands.PauseTask;
 
 
 public record PauseTaskCommand(Guid TaskId, Guid UserId, string Notes): IRequest<Unit>;
+
+public class PauseTaskCommandValidator: AbstractValidator<PauseTaskCommand>
+{
+    public PauseTaskCommandValidator()
+    {
+        RuleFor(c=>c.Notes).NotEmpty().WithMessage("Note is required");
+    }
+}
 public class PauseTaskHandler(ITaskRepository taskRepository, IProjectRepository projectRepository,
  ILogger<PauseTaskHandler> logger) : IRequestHandler<PauseTaskCommand, Unit>
 {
