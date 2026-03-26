@@ -28,7 +28,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return User(**data)
 
-    async def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict) -> User:
         data["updated_at"] = datetime.now()
         result = await self.collection.update_one(
             {"id": user_id},
