@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
@@ -30,14 +30,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     
 class UserUpdated(BaseModel):
-    id: str
-    first_name: str
-    last_name: str
-    email: EmailStr
-    created_at: datetime
-    updated_at: datetime
-    
-class UserDeleted(BaseModel):
     id: str
     first_name: str
     last_name: str
