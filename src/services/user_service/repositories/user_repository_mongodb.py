@@ -40,7 +40,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return await self.get_user(user_id)
 
-    async def delete_user(self, user_id: str):
+    async def delete_user(self, user_id: str) -> User:
         user = await self.get_user(user_id)
 
         if not user:
