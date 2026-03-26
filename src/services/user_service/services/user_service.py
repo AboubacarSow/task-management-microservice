@@ -57,7 +57,7 @@ class UserService:
             raise ValueError("User with this id does not exist")
         logger.info(f"User deleted successfully: user_id={user_id}")
     
-    async def authenticate_user(self, email: str, password: str):
+    async def authenticate_user(self, email: str, password: str) -> User:
         user = await self.user_repository.get_user_by_email(email)
 
         if not user:
