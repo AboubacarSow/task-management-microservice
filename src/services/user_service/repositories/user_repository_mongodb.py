@@ -12,7 +12,7 @@ class MongoUserRepository(UserRepositoryInterface):
         await self.collection.insert_one(user.model_dump())
         return user
 
-    async def get_user(self, user_id: str):
+    async def get_user(self, user_id: str) -> User:
         data = await self.collection.find_one({"id": user_id})
 
         if not data:
