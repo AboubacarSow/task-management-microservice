@@ -22,7 +22,7 @@ class UserService:
         logger.info(f"User created successfully: user_id={created_user.id}")
         return created_user
     
-    async def get_user(self, user_id: str):
+    async def get_user(self, user_id: str) -> User:
         user = await self.user_repository.get_user(user_id)
         
         if not user:
