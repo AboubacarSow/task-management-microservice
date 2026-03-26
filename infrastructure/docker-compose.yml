@@ -72,7 +72,7 @@ services:
       context: .
       dockerfile: /src/services/user_service/Dockerfile
     image: user-service
-    command: uvicorn main:app --host 0.0.0.0 --port 5002
+    command: uvicorn src.services.user_service.main:app --host 0.0.0.0 --port 5002
     environment:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=user_service
