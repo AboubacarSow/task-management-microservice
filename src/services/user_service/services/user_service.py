@@ -9,7 +9,7 @@ class UserService:
     def __init__(self, user_repository):
         self.user_repository = user_repository
 
-    async def add_user(self, user: User):
+    async def add_user(self, user: User) -> User:
         existing_user = await self.user_repository.get_user_by_email(user.email)
 
         if existing_user:
