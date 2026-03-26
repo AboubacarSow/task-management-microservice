@@ -1,5 +1,5 @@
-from services.user_service.models.user_model import User
-from services.user_service.repositories.user_repository_interface import UserRepositoryInterface
+from ..models.user_model import User
+from ..repositories.user_repository_interface import UserRepositoryInterface
 from datetime import datetime
 
 

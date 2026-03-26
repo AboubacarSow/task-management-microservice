@@ -1,9 +1,9 @@
-from services.user_service.services.user_service import UserService
-from services.user_service.models.user_model import User
-from services.user_service.schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, UserUpdate, UserUpdated,
+from ..services.user_service import UserService
+from ..models.user_model import User
+from ..schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, UserUpdate, UserUpdated,
                                                        UserDeleted, UserActive, UserAuth, UserAuthed)
-from services.user_service.database.mongo import user_collection
-from services.user_service.repositories.user_repository_mongodb import MongoUserRepository
+from ..database.mongo import user_collection
+from ..repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
 import logging
 

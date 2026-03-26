@@ -1,5 +1,5 @@
-from services.user_service.models.user_model import User
-from services.user_service.utils.password import hash_password, verify_password
+from ..models.user_model import User
+from ..utils.password import hash_password, verify_password
 import uuid
 import logging
 

@@ -5,6 +5,6 @@ import uvicorn
 setup_logger()
 
 api_instance = AgentApi()
-
+app = api_instance.app
 if __name__ == "__main__":
-    uvicorn.run(api_instance.app)
+    uvicorn.run(app)
