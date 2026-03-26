@@ -65,7 +65,7 @@ public class GetAllByProjectIdEndpointTests : IClassFixture<WebApplicationFactor
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         body.Should().NotBeNull();
-        body.Should().HaveCount(5);
+        body.Should().HaveCount(9);
         body![0].Name.Should().Be(tasks[0].Name);
         body![1].Name.Should().Be(tasks[1].Name);
     }

@@ -4,7 +4,7 @@ using project_service.Tasks.Dtos;
 namespace project_service.Tasks.Features.Queries.GetAllByProjectId;
 
 
-public record GetAllByProjectIdQuery(Guid CurrentUserId,Guid ProjectId);
+public record GetAllByProjectIdQuery(Guid CurrentUserId,Guid ProjectId):IRequest<List<TaskItemDto>>;
 
 public class GetAllByProjectIdQueryValidator:AbstractValidator<GetAllByProjectIdQuery>
 {
@@ -16,7 +16,7 @@ public class GetAllByProjectIdQueryValidator:AbstractValidator<GetAllByProjectId
     }
 }
 public class GetAllByProjectIdHandler(ITaskRepository _taskRepository, IProjectRepository _projectRepository,
- ILogger<GetAllByProjectIdHandler> _logger)
+ ILogger<GetAllByProjectIdHandler> _logger): IRequestHandler<GetAllByProjectIdQuery, List<TaskItemDto>>
 {
 
     public async Task<List<TaskItemDto>> Handle(GetAllByProjectIdQuery query, CancellationToken none)
