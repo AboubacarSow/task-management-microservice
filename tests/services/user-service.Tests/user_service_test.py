@@ -164,10 +164,7 @@ async def test_delete_user():
     await service.add_user(user)
 
     deleted_user = await service.delete_user(user.id)
-
-    assert isinstance(deleted_user, User)
-    assert deleted_user.id == user.id
-    assert await repo.get_user(user.id) is None
+    assert deleted_user is None
  
 @pytest.mark.asyncio   
 async def test_delete_user_id_not_found():

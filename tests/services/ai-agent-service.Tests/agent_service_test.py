@@ -9,6 +9,18 @@ from services.ai_agent_service import api_instance
 
 client = TestClient(api_instance.app)
 
+def override_get_current_user():
+    return {
+        "id": "test_user",
+        "email": "test@test.com",
+        "first_name": "Test",
+        "last_name": "User"
+    }
+    
+from services.ai_agent_service.utils.jwt_handler import get_current_user
+
+api_instance.app.dependency_overrides[get_current_user] = override_get_current_user
+
 def test_generate_description_mocked():
     
     with patch.object(api_instance.agent, "generate_description") as mock_generate:
