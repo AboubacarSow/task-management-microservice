@@ -1,8 +1,5 @@
-using project_service.Projects.Features.Queries.GetProjectById;
-using project_service.Projects.Models;
-using project_service.Tasks.Dtos;
 using project_service.Tasks.Features.Queries.GetAllByProjectId;
-using System.Runtime.CompilerServices;
+
 
 namespace project_service.Tests.Tasks.Features.Queries.GetAllByProjectId;
 

@@ -5,6 +5,16 @@ namespace project_service.Tasks.Features.Queries.GetAllByProjectId;
 
 
 public record GetAllByProjectIdQuery(Guid CurrentUserId,Guid ProjectId);
+
+public class GetAllByProjectIdQueryValidator:AbstractValidator<GetAllByProjectIdQuery>
+{
+    public GetAllByProjectIdQueryValidator()
+    {
+        RuleFor(q=>q.ProjectId).NotEmpty().WithMessage("ProjectId is required");
+
+        RuleFor(q=>q.CurrentUserId).NotEmpty();
+    }
+}
 public class GetAllByProjectIdHandler(ITaskRepository _taskRepository, IProjectRepository _projectRepository,
  ILogger<GetAllByProjectIdHandler> _logger)
 {
