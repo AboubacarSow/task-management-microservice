@@ -3,22 +3,17 @@ from langchain_core.prompts import ChatPromptTemplate
 from typing import List, Optional
 from pydantic import BaseModel, Field
 import logging
-from dotenv import load_dotenv
 import os
-
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, "../.env")
-
-load_dotenv(ENV_PATH)
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
 
 logger = logging.getLogger(__name__)
 
 class Agent:
     def __init__(self):
-        self.llm = ChatOllama(model=OLLAMA_MODEL, base_url=os.getenv("OLLAMA_BASE_URL"))
-        logger.info("Agent initialized with model: llama3.2")
+        model = os.getenv("OLLAMA_MODEL")
+        base_url = os.getenv("OLLAMA_BASE_URL")
+        self.llm = ChatOllama(model=model, base_url=base_url)
+        logger.info(f"Agent initialized with model: {model}")
+        
     def generate_description(self, project_name: str) -> str:
         logger.info(f"Generating description for project: {project_name}")
         prompt = ChatPromptTemplate.from_messages([

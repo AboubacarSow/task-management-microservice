@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+loaded = load_dotenv()
+
 from .api.api import AgentApi
 from .utils.logger import setup_logger
 import uvicorn

@@ -9,6 +9,23 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 from services.user_service.models.user_model import User
 from services.user_service.main import app, user_router
 from services.user_service.services.user_service import UserService
+from services.user_service.utils.jwt_handler import get_current_user
+
+def override_get_current_user():
+    return {
+        "id": "test_user",
+        "email": "test@test.com",
+        "first_name": "Test",
+        "last_name": "User"
+    }
+    
+def update_get_current_user(user_id):
+    app.dependency_overrides[get_current_user] = lambda: {
+        "id": user_id,
+        "first_name": "Ali",
+        "last_name": "Veli",
+        "email": "ali@test2.com"
+    }
 
 class FakeUserRepository:
     def __init__(self):
@@ -50,6 +67,7 @@ class FakeUserRepository:
 repo = FakeUserRepository()
 service = UserService(repo)
 app.dependency_overrides[user_router.get_user_service] = lambda: service
+app.dependency_overrides[get_current_user] = override_get_current_user
 transport = ASGITransport(app=app)
 
 @pytest.mark.asyncio
@@ -113,6 +131,8 @@ async def test_get_user():
     assert response1.status_code == 200
     assert "id" in data1
     user_id = data1["id"]
+    update_get_current_user(user_id)
+    
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.get(f"/api/users/{user_id}")
     data2 = response2.json()
@@ -123,6 +143,8 @@ async def test_get_user():
 @pytest.mark.asyncio
 async def test_get_user_not_exist():
     user_id = str(uuid.uuid4())
+    update_get_current_user(user_id)
+    
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get(f"/api/users/{user_id}")
     
@@ -146,6 +168,7 @@ async def test_update_user():
     assert "id" in data1
     
     user_id = data1["id"]
+    update_get_current_user(user_id)
     
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.put(f"/api/users/{user_id}", json={
@@ -167,6 +190,7 @@ async def test_update_user():
 @pytest.mark.asyncio 
 async def test_update_user_not_exsit():
     user_id = str(uuid.uuid4())
+    update_get_current_user(user_id)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.put(f"/api/users/{user_id}", json={
             "first_name":"Updated",
@@ -194,6 +218,8 @@ async def test_delete_user():
     assert "id" in data1
     
     user_id = data1["id"]
+    update_get_current_user(user_id)
+    
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.delete(f"/api/users/{user_id}")
     
@@ -202,6 +228,8 @@ async def test_delete_user():
 @pytest.mark.asyncio 
 async def test_delete_user_not_exist():
     user_id = str(uuid.uuid4())
+    update_get_current_user(user_id)
+    
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.delete(f"/api/users/{user_id}")
     
@@ -223,6 +251,8 @@ async def test_is_user_active():
     assert response1.status_code == 200
     assert "id" in data1
     user_id = data1["id"]
+    update_get_current_user(user_id)
+    
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.get(f"/api/users/{user_id}/active")
     data2 = response2.json()
@@ -232,6 +262,7 @@ async def test_is_user_active():
 @pytest.mark.asyncio   
 async def test_is_user_active_user_not_found():
     user_id = str(uuid.uuid4())
+    update_get_current_user(user_id)
     
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get(f"/api/users/{user_id}/active")
