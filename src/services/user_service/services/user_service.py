@@ -32,7 +32,7 @@ class UserService:
         logger.info(f"User retrieved successfully: user_id={user_id}")
         return user
     
-    async def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict) -> User:
         current_user = await self.user_repository.get_user(user_id)
         if not current_user:
             logger.warning(f"User not found: user_id={user_id}")
