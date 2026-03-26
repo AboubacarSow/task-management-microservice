@@ -59,13 +59,13 @@ public class GetAllByProjectIdHandlerTests
     {
         // Arrange
         var projectId = Guid.NewGuid();
-
+        _project.AddToPeopleWorking(_current_user);
         var tasks = FakeTaskData
             .GetTasksForMultipleProjects(Guid.NewGuid(), projectId);
         _projectRepoMock.Setup(r => r.GetByIdAsync(_project.Id))
                         .ReturnsAsync(_project);
 
-        _taskRepoMock.Setup(r => r.GetAllByProjectIdAsync(projectId))
+        _taskRepoMock.Setup(r => r.GetAllByProjectIdAsync(_project.Id))
             .ReturnsAsync([]);
 
         var query = new GetAllByProjectIdQuery(_current_user,_project.Id);
@@ -84,6 +84,7 @@ public class GetAllByProjectIdHandlerTests
         // Arrange
         var AssignedUser = Guid.NewGuid();
         var createdAt = DateTime.UtcNow;
+        _project.AddToPeopleWorking(_current_user);
         var tasks = FakeTaskData
             .GetTasksForMultipleProjects(Guid.NewGuid(), _project.Id);
 
@@ -113,7 +114,7 @@ public class GetAllByProjectIdHandlerTests
     public async Task Handle_Should_Call_Repository_OnceAsync()
     {
         // Arrange
-
+        _project.AddToPeopleWorking(_current_user);
 
         _projectRepoMock.Setup(r => r.GetByIdAsync(_project.Id))
                         .ReturnsAsync(_project);
@@ -137,7 +138,7 @@ public class GetAllByProjectIdHandlerTests
     {
         // Arrange
 
-        var currentUserId = Guid.NewGuid();
+        _project.AddToPeopleWorking(_current_user);
 
         _projectRepoMock.Setup(r => r.GetByIdAsync(_project.Id))
             .ReturnsAsync(_project);
@@ -146,7 +147,7 @@ public class GetAllByProjectIdHandlerTests
             .ReturnsAsync([]);
 
         // Act
-        await _handler.Handle(new GetAllByProjectIdQuery(currentUserId,_project.Id), CancellationToken.None);
+        await _handler.Handle(new GetAllByProjectIdQuery(_current_user,_project.Id), CancellationToken.None);
 
         // Assert
         _loggerMock.Verify(l => l.Log(
