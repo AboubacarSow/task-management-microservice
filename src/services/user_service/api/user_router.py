@@ -5,12 +5,10 @@ from ..schemas.api_schemas import (UserCreate, UserCreatedSuccesfully, UserGet, 
 from ..database.mongo import user_collection
 from ..repositories.user_repository_mongodb import MongoUserRepository
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from ..utils.jwt_handler import get_current_user
 import logging
 
 logger = logging.getLogger(__name__)
-security = HTTPBearer()
 
 class UserRouter:
     def __init__(self):
