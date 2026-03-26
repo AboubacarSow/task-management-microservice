@@ -20,7 +20,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return User(**data)
 
-    async def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: str) -> User:
         data = await self.collection.find_one({"email": email})
 
         if not data:
