@@ -78,6 +78,7 @@ public class EditTaskEndpointTests : IClassFixture<WebApplicationFactory<Program
     public async Task PATCH_Edit_ShouldReturn200_WithDto()
     {
         var taskDto = new TaskItemDto(
+                Id:Guid.NewGuid(),
                 Name: "Setup database schema",
                 ProjectId: Guid.NewGuid(),
                 CreatedByUser: Guid.NewGuid(),

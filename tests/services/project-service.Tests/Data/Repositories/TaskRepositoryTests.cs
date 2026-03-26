@@ -43,7 +43,7 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
         foreach (var task in tasks)
             await taskRepository.AddAsync(task);
 
-        var result = await taskRepository.GetAllByProjectId(project1);
+        var result = await taskRepository.GetAllByProjectIdAsync(project1);
 
         result.Should().NotBeNullOrEmpty();
         result.Should().HaveCount(4);
@@ -63,11 +63,12 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
 
         foreach (var task in tasks)
         {
+            
             await taskRepository.AddAsync(task);
 
         }
 
-        List<TaskItem> result = await taskRepository.GetAllByUserIdAsync(user2);
+        List<TaskItem> result = await taskRepository.GetAllByOwnerIdAsync(user2);
 
         result.Should().NotBeNullOrEmpty();
         result.Should().HaveCount(5);
@@ -75,6 +76,32 @@ public class TaskRepositoryTests(DatabaseFixture fixture)
 
     }
 
+    [Fact]
+    public async Task GetAllByAssignedUserId_ShouldReturnOnlyTasksForGivenAssignedUser()
+    {
+        var taskRepository = FakeRepositories.GetTaskRepository(
+            _databaseFixture.GetTaskCollection());
+
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+
+        var assigned_user = Guid.NewGuid();
+
+        var tasks = FakeTaskData.GetTasksForMultipleUsers(user1, user2);
+        
+        foreach (var task in tasks)
+        {
+            if(task.CreatedByUser==user1)
+                task.AssignTo(assigned_user);
+            await taskRepository.AddAsync(task);
+        }
+
+        List<TaskItem> result = await taskRepository.GetAllByAssignedUserIdAsync(assigned_user);
+
+        result.Should().NotBeNullOrEmpty();
+        result.Should().HaveCount(4);
+        result.Should().OnlyContain(t => t.AssignedToUser == assigned_user);
+    }
 
     [Fact]
     public async Task EditAsync_ShouldUpdateTaskFields()

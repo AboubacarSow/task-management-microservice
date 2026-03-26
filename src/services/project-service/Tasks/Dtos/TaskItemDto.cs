@@ -3,6 +3,7 @@
 namespace project_service.Tasks.Dtos;
 
 public record TaskItemDto(
+    Guid Id,
     string Name,
     Guid ProjectId,
     Guid CreatedByUser,

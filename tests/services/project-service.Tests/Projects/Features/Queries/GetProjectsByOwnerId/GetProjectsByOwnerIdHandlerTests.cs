@@ -10,7 +10,7 @@ public class GetProjectsByOwnerIdHandlerTests
 
     public GetProjectsByOwnerIdHandlerTests()
     {
-        _handler = new GetProjectsByOwnerIdHandler(
+        _handler = new (
             _repositoryMock.Object,
             _loggerMock.Object);
     }

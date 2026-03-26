@@ -8,9 +8,10 @@ public interface ITaskRepository
     Task AddAsync(TaskItem task);
     Task<bool> AreAllTasksCompletedForProjectIdAsync(Guid projectId);
     Task EditAsync(TaskItem oldTask);
-    Task<List<TaskItem>> GetAllByProjectId(Guid projectId);
-    Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId);
+    Task<List<TaskItem>> GetAllByProjectIdAsync(Guid projectId);
+    Task<List<TaskItem>> GetAllByOwnerIdAsync(Guid userId);
     Task<TaskItem?> GetByIdAsync(Guid id);
+    Task<List<TaskItem>> GetAllByAssignedUserIdAsync(Guid user2);
 }
 public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskRepository
 {
@@ -27,13 +28,13 @@ public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskReposi
         await _collection.InsertOneAsync(task);
     }
 
-    public Task<List<TaskItem>> GetAllByProjectId(Guid projectId)
+    public Task<List<TaskItem>> GetAllByProjectIdAsync(Guid projectId)
     {
         return _collection.Find(t => t.ProjectId == projectId)
                           .ToListAsync();
     }
 
-    public Task<List<TaskItem>> GetAllByUserIdAsync(Guid userId)
+    public Task<List<TaskItem>> GetAllByOwnerIdAsync(Guid userId)
     => _collection.Find(t => t.CreatedByUser == userId)
                           .ToListAsync();
 
@@ -51,4 +52,8 @@ public class TaskRepository(IMongoCollection<TaskItem> collection) : ITaskReposi
 
         return !hasIncomplete;
     }
+
+    public Task<List<TaskItem>> GetAllByAssignedUserIdAsync(Guid userId)
+      => _collection.Find(t => t.AssignedToUser == userId)
+                    .ToListAsync();
 }
