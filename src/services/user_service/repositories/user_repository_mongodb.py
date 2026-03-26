@@ -12,7 +12,7 @@ class MongoUserRepository(UserRepositoryInterface):
         await self.collection.insert_one(user.model_dump())
         return user
 
-    async def get_user(self, user_id: str):
+    async def get_user(self, user_id: str) -> User:
         data = await self.collection.find_one({"id": user_id})
 
         if not data:
@@ -20,7 +20,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return User(**data)
 
-    async def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: str) -> User:
         data = await self.collection.find_one({"email": email})
 
         if not data:
@@ -28,7 +28,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return User(**data)
 
-    async def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict) -> User:
         data["updated_at"] = datetime.now()
         result = await self.collection.update_one(
             {"id": user_id},
@@ -40,7 +40,7 @@ class MongoUserRepository(UserRepositoryInterface):
 
         return await self.get_user(user_id)
 
-    async def delete_user(self, user_id: str):
+    async def delete_user(self, user_id: str) -> User:
         user = await self.get_user(user_id)
 
         if not user:

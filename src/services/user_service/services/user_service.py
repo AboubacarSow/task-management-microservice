@@ -9,7 +9,7 @@ class UserService:
     def __init__(self, user_repository):
         self.user_repository = user_repository
 
-    async def add_user(self, user: User):
+    async def add_user(self, user: User) -> User:
         existing_user = await self.user_repository.get_user_by_email(user.email)
 
         if existing_user:
@@ -22,7 +22,7 @@ class UserService:
         logger.info(f"User created successfully: user_id={created_user.id}")
         return created_user
     
-    async def get_user(self, user_id: str):
+    async def get_user(self, user_id: str) -> User:
         user = await self.user_repository.get_user(user_id)
         
         if not user:
@@ -32,7 +32,7 @@ class UserService:
         logger.info(f"User retrieved successfully: user_id={user_id}")
         return user
     
-    async def update_user(self, user_id: str, data: dict):
+    async def update_user(self, user_id: str, data: dict) -> User:
         current_user = await self.user_repository.get_user(user_id)
         if not current_user:
             logger.warning(f"User not found: user_id={user_id}")
@@ -57,7 +57,7 @@ class UserService:
             raise ValueError("User with this id does not exist")
         logger.info(f"User deleted successfully: user_id={user_id}")
     
-    async def authenticate_user(self, email: str, password: str):
+    async def authenticate_user(self, email: str, password: str) -> User:
         user = await self.user_repository.get_user_by_email(email)
 
         if not user:

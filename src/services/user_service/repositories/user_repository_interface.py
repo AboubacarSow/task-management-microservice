@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+from ..models.user_model import User
 
 class UserRepositoryInterface(ABC):
 
     @abstractmethod
-    async def add_user(self, user):
+    async def add_user(self, user: User):
         pass
 
     @abstractmethod
