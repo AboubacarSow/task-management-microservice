@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using authentication_service.Dtos;
 using Duende.IdentityServer.Extensions;
@@ -51,19 +52,18 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
                         );
                     return;
                 }
-
                 var claims = new List<Claim>
                 {
-                    new Claim("given_name", user.FirstName),
-                    new Claim("family_name", user.LastName),
-                    new Claim("email", user.Email)
+                    new (JwtRegisteredClaimNames.Email,user.Email),
+                    new ("given_name", user.FirstName),
+                    new ("family_name", user.LastName)
                 };
-
-                claims = claims
-                    .Where(claim => context.RequestedClaimTypes.Contains(claim.Type))
-                    .ToList();
-
+                Console.WriteLine(claims.Count);
+                Console.WriteLine(user);
+                
                 context.IssuedClaims.AddRange(claims);
+                
+                var returnedvalue = context.IssuedClaims.AsEnumerable();
             }
             
             catch (HttpRequestException ex)

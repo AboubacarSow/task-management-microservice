@@ -7,19 +7,31 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../src')))
 from services.ai_agent_service import api_instance
 
+class MockedAgentRepository:
+    def __init__(self):
+        self.logged = []
+
+    def log_response(self, log):
+        self.logged.append(log)
+        
+mock_repo = MockedAgentRepository()
+api_instance.repo = mock_repo
 client = TestClient(api_instance.app)
 
+
+        
 def override_get_current_user():
     return {
-        "id": "test_user",
+        "sub": "test_user",
         "email": "test@test.com",
-        "first_name": "Test",
-        "last_name": "User"
+        "given_name": "Test",
+        "family_name": "User"
     }
     
 from services.ai_agent_service.utils.jwt_handler import get_current_user
 
 api_instance.app.dependency_overrides[get_current_user] = override_get_current_user
+
 
 def test_generate_description_mocked():
     

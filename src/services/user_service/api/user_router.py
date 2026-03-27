@@ -43,6 +43,7 @@ class UserRouter:
             
             except ValueError as e:
                 raise HTTPException(status_code=404, detail=str(e))
+
             
         @self.router.put("/{user_id}")
         async def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(self.get_user_service),

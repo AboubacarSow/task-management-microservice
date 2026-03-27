@@ -22,6 +22,15 @@ public static class Config
         new ApiResource("project-service"){Scopes={"project_fullpermission"}},
         new ApiResource("agent-service"){Scopes={"agent_fullpermission"}},
         new ApiResource("user-service"){Scopes={"user_fullpermission"}},
+        new ApiResource("profile")
+        {
+            UserClaims =
+            {
+                "email",
+                "given_name",
+                "family_name"
+            }
+        }
 
     ];
 

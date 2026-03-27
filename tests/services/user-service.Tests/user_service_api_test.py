@@ -286,7 +286,7 @@ async def test_authenticate_user():
     
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.post(f"/api/users/validate", json={
-            "email": "ali@tet.com",
+            "username": "ali@tet.com",
             "password": "123456"
         })
     data2 = response2.json()
@@ -298,7 +298,7 @@ async def test_authenticate_user_not_found():
     
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.post(f"/api/users/validate", json={
-            "email": "ali@tet.com",
+            "username": "ali@tet.com",
             "password": "12456"
         })
     data = response.json()
