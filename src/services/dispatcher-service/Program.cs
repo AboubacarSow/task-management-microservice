@@ -18,7 +18,6 @@ builder.Services.AddAuthentication("Bearer")
         };                        
     });
 
-builder.Services.AddAuthorization();
 
 builder.Services.AddOpenApi();
 
@@ -33,8 +32,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
 
 await app.UseOcelot();
 
