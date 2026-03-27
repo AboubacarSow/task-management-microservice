@@ -5,9 +5,11 @@ public class StartTaskEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/tasks/{id:guid}/start",
-            async (Guid id, ISender sender, IUserContext userContext) =>
+            async (Guid id, [FromServices]ISender sender, ClaimsPrincipal claims) =>
             {
-                var command = new StartTaskCommand(id, userContext.GetUserId());
+
+                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+                var command = new StartTaskCommand(id, userId);
                 await sender.Send(command);
                 return Results.NoContent();
             })

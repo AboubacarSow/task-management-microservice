@@ -10,12 +10,12 @@ public class CreateTaskItemEndpoint : ICarterModule
     {
         app.MapPost("/api/tasks",
             async (
-                CreateTaskItemRequest request,
-                ISender sender,
-                IUserContext userContext) =>
+                [FromBody]CreateTaskItemRequest request,
+                [FromServices]ISender sender,
+                ClaimsPrincipal claims) =>
             {
 
-                var userId = userContext.GetUserId();
+                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
                 var command = new CreateTaskItemCommand(
                     userId,
                     request.ProjectId,

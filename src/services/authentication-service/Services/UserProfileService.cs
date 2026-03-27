@@ -23,7 +23,7 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
 
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:8000/api/users/{sub}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"http://user-service:5002/api/users/profile/{sub}");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);
@@ -108,7 +108,7 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:8000/api/users/{sub}/active");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"http://user-service:5002/api/users/{sub}/active");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);

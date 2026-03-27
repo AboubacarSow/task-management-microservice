@@ -3,7 +3,7 @@ version: "3.9"
 services:
   dispatcher-service:
     build:
-      context: .
+      context: ..
       dockerfile: src/services/dispatcher-service/Dockerfile
     image: dispatcher-service
     environment:
@@ -18,7 +18,7 @@ services:
 
   authentication-service:
     build:
-      context: .
+      context: ..
       dockerfile: src/services/authentication-service/Dockerfile
     image: authentication-service
     environment:
@@ -32,7 +32,7 @@ services:
 
   project-service:
     build:
-      context: .
+      context: ..
       dockerfile: src/services/project-service/Dockerfile
     image: project-service
     environment:
@@ -50,8 +50,8 @@ services:
 
   agent-service:
     build:
-      context: .
-      dockerfile: /src/services/ai_agent_service/Dockerfile
+      context: ..
+      dockerfile: src/services/ai_agent_service/Dockerfile
     image: agent-service
     command: uvicorn src.services.ai_agent_service.app:app --host 0.0.0.0 --port 5001
     environment:
@@ -69,8 +69,8 @@ services:
 
   user-service:
     build:
-      context: .
-      dockerfile: /src/services/user_service/Dockerfile
+      context: ..
+      dockerfile: src/services/user_service/Dockerfile
     image: user-service
     command: uvicorn src.services.user_service.main:app --host 0.0.0.0 --port 5002
     environment:
@@ -107,6 +107,30 @@ services:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - internal
+  
+  kibana:
+    image: kibana:8.13.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - internal
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    build:
+      context: ./filebeat
+      dockerfile: Dockerfile
+    user: root
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - internal
+    depends_on:
+      - elasticsearch
 
 volumes:
   mongodb_data:

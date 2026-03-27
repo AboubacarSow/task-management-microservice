@@ -11,17 +11,17 @@ public class AssignTaskToEndpoint : ICarterModule
         app.MapPatch("/api/tasks/{taskId:guid}/assign",
             async (
                 Guid taskId,
-                AssignTaskToRequest request,
-                ISender sender,
-                IUserContext userContext) =>
+                [FromBody]AssignTaskToRequest request,
+                [FromServices]ISender sender,
+                [FromServices]ClaimsPrincipal claims) =>
             {
 
-                var currentUserId = userContext.GetUserId();
+                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
 
 
                 var command = new AssignTaskToCommand(
                     taskId,
-                    currentUserId,
+                    userId,
                     request.UserId);
 
                 await sender.Send(command);

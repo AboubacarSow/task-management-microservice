@@ -30,7 +30,7 @@ public class IdentityResourceOwnerPasswordValidator(HttpClient http, ILogger<Ide
                 password = context.Password
             };
 
-            var response = await _http.PostAsJsonAsync("http://127.0.0.1:8000/api/users/validate", payload);
+            var response = await _http.PostAsJsonAsync("http://user-service:5002/api/users/validate", payload);
 
             if (!response.IsSuccessStatusCode)
             {

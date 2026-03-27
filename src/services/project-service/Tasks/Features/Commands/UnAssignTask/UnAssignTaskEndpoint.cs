@@ -7,10 +7,10 @@ public class UnAssignTaskEndpoint : ICarterModule
     {
         
         app.MapPatch("/api/tasks/{id:guid}/unassign",
-            async (Guid id, ISender sender, IUserContext userContext) =>
+            async (Guid id, [FromServices]ISender sender, [FromServices]ClaimsPrincipal claims) =>
         {
-            var current_userId = userContext.GetUserId();
-            await sender.Send(new UnAssignTaskCommand(id, current_userId));
+            var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+            await sender.Send(new UnAssignTaskCommand(id, userId));
             return Results.NoContent();
         })
         .RequireAuthorization()

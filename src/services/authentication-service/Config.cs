@@ -7,8 +7,7 @@ public static class Config
     public static IEnumerable<IdentityResource> IdentityResources =>
         [
             new IdentityResources.OpenId(),
-            new IdentityResources.Profile(),
-            new IdentityResource.Email()
+            new IdentityResources.Profile()
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -44,7 +43,7 @@ public static class Config
                 {
                     "openid",
                     "profile",
-                    "email"
+                    "email",
                     "project_fullpermission",
                     "agent_fullpermission",
                     "user_fullpermission",

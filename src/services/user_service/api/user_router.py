@@ -95,3 +95,15 @@ class UserRouter:
             
             logger.info(f"Authentication successful for user_id={user.id}")
             return user
+        
+
+        @self.router.get("/profile/{user_id}")
+        async def get_user(user_id: str, service: UserService = Depends(self.get_user_service))-> UserGet:
+            
+            
+            try:
+                logger.info(f"Get user request received for user_id={user_id}")
+                return await service.get_user(user_id)
+            
+            except ValueError as e:
+                raise HTTPException(status_code=404, detail=str(e))

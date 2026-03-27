@@ -7,11 +7,13 @@ public class PauseTaskEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPatch("/api/tasks/{id}/pause",
-            async (Guid id, PauseTaskRequest request,
-                ISender sender, IUserContext userContext) =>
+            async (Guid id, [FromBody]PauseTaskRequest request,
+                [FromServices]ISender sender,ClaimsPrincipal claims) =>
             {
+                var currentUserId =Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)?.Value!);
+
                 await sender.Send(
-                    new PauseTaskCommand(id, userContext.GetUserId(), request.Note)
+                    new PauseTaskCommand(id, currentUserId, request.Note)
                 );
 
                 return Results.NoContent();

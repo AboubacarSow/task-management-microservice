@@ -9,6 +9,8 @@ COPY src/services/ai_agent_service/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . .
+
 EXPOSE 5001
 
 CMD ["uvicorn", "src.services.ai_agent_service.app:app", "--host", "0.0.0.0", "--port", "5001"]

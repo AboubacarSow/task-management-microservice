@@ -7,9 +7,9 @@ public class EditProjectEndpoint : ICarterModule
     {
         app.MapPatch("/api/projects/{id:guid}", async (
             Guid id,
-            EditProjectRequest request,
-            ISender sender,
-            IUserContext userContext) =>
+            [FromBody]EditProjectRequest request,
+            [FromServices]ISender sender,
+            [FromServices]IUserContext userContext) =>
         {
             var command = new EditProjectCommand(
                 id,
