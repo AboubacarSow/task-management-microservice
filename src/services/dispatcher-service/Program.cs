@@ -25,7 +25,6 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 
-await app.UseOcelot();
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,6 +36,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+await app.UseOcelot();
 
 app.Run();
 
