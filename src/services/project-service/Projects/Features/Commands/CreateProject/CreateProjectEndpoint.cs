@@ -1,3 +1,4 @@
+
 namespace project_service.Projects.Features.Commands.CreateProject;
 
 
@@ -7,7 +8,8 @@ public class CreateProjectEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/projects", async (CreateProjectRequest request,ISender sender ,IUserContext userContext) => 
+        app.MapPost("/api/projects", async ([FromBody]CreateProjectRequest request,
+        [FromServices]ISender sender ,[FromServices]IUserContext userContext) => 
         {
             var userId = userContext.GetUserId();
             var command = new CreateProjectCommand(request.Name,userId,request.Description);

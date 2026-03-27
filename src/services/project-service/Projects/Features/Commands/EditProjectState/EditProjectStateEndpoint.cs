@@ -9,9 +9,9 @@ public class EditProjectStateEndpoint : ICarterModule
     {
         app.MapPut("/api/projects/{id:guid}/state", async (
                 Guid id,
-                EditProjectStateRequest request,
-                ISender sender,
-                IUserContext userContext) =>
+                [FromBody]EditProjectStateRequest request,
+                [FromServices]ISender sender,
+                [FromServices]IUserContext userContext) =>
         {
             var command = new EditProjectStateCommand(
                 id,

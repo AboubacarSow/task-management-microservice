@@ -5,7 +5,8 @@ public class GetProjectByIdEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/projects/{id:guid}", 
-                async (Guid id, ISender sender,IUserContext userContext) =>
+                async ([FromRoute]Guid id, [FromServices]ISender sender,
+                [FromServices]IUserContext userContext) =>
         {
             var currentUserId = userContext.GetUserId();
             var query = new GetProjectByIdQuery(currentUserId,id);

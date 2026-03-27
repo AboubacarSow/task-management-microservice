@@ -1,5 +1,7 @@
 
 
+using Microsoft.AspNetCore.Mvc;
+
 namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
@@ -10,9 +12,9 @@ public class AddUserToGroupEndpoint : ICarterModule
     {
         app.MapPost("/api/projects/{id:guid}/group",async (
             Guid id,
-            AddUserToGroupRequest request,
-            ISender sender,
-            IUserContext userContext
+            [FromBody]AddUserToGroupRequest request,
+            [FromServices]ISender sender,
+            [FromServices]IUserContext userContext
             ) =>
         {
             // Will be used later on to check if user is authorize to perform such operation

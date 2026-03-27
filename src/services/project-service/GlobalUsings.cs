@@ -8,3 +8,6 @@ global using project_service.Tasks.Models;
 global using FluentValidation;
 global using Mapster;
 global using project_service.Projects.Dtos;
+global using Microsoft.AspNetCore.Mvc;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;

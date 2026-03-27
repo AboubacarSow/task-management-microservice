@@ -5,8 +5,8 @@ public class GetProjectsByOwnerIdEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/projects/me", async (
-            ISender sender,
-            IUserContext userContext) =>
+            [FromServices]ISender sender,
+            [FromServices]IUserContext userContext) =>
         {
             var ownerId = userContext.GetUserId();
             var query = new GetProjectsByOwnerIdQuery(ownerId);

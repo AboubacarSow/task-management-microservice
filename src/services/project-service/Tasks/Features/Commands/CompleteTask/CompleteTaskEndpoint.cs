@@ -4,13 +4,14 @@ public class CompleteTaskEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPatch("/api/tasks/{id:guid}/complete", async (Guid id, 
-        CompleteTaskRequest request, 
-        ISender sender, 
-        IUserContext userContext)=>
+        app.MapPatch("/api/tasks/{id:guid}/complete", async ([FromRoute]Guid id, 
+        [FromBody]CompleteTaskRequest request, 
+        [FromServices]ISender sender, 
+        ClaimsPrincipal claims)=>
         {
-            var currentUserId = userContext.GetUserId();
-            var command = new CompleteTaskCommand(id,currentUserId,request.Notes);
+            var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+
+            var command = new CompleteTaskCommand(id,userId,request.Notes);
             await sender.Send(command);
 
             return Results.NoContent();

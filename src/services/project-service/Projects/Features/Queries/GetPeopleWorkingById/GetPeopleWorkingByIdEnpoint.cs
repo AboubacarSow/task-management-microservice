@@ -5,7 +5,8 @@ public class GetPeopleWorkingByIdEnpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/projects/{projectId}/people",
-        async (Guid projectId, ISender sender, IUserContext userContext) =>
+        async ([FromRoute]Guid projectId, [FromServices]ISender sender, 
+        [FromServices]IUserContext userContext) =>
         {
 
             var currentUserId = userContext.GetUserId();

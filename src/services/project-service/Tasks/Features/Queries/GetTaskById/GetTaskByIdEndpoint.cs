@@ -5,10 +5,10 @@ public class GetTaskByIdEndpoint:ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-       app.MapGet("/api/tasks/{id:guid}", async (Guid id, ISender sender, IUserContext userContext) =>
+       app.MapGet("/api/tasks/{id:guid}", async (Guid id, [FromServices]ISender sender, ClaimsPrincipal claims) =>
         {
-            var current_user = userContext.GetUserId();
-            var result = await sender.Send(new GetTaskByIdQuery(current_user,id));
+                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+            var result = await sender.Send(new GetTaskByIdQuery(userId,id));
             return Results.Ok(result);
         }).RequireAuthorization()
         .WithName("GetTaskById");
