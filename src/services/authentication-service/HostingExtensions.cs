@@ -30,6 +30,7 @@ internal static class HostingExtensions
             .AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>()
             .AddProfileService<UserProfileService>()
             .AddLicenseSummary();
+        
         builder.Services.AddEndpointsApiExplorer();
         return builder.Build();
     }
