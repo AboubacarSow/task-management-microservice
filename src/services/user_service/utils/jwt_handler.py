@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-REQUIRED_CLAIMS = ["id", "first_name", "last_name", "email"]
+REQUIRED_CLAIMS = ["sub", "given_name", "family_name", "email"]
 
 security = HTTPBearer()
 
@@ -31,7 +31,7 @@ def verify_token(token: str) -> dict:
                 detail=f"Missing required claims: {', '.join(missing_fields)}"
             )
 
-        logger.info(f"JWT verified for user_id={payload.get('id')}")
+        logger.info(f"JWT verified for user_id={payload.get('sub')}")
         return payload
 
     except JWTError:

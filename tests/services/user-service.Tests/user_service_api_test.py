@@ -13,17 +13,17 @@ from services.user_service.utils.jwt_handler import get_current_user
 
 def override_get_current_user():
     return {
-        "id": "test_user",
-        "email": "test@test.com",
-        "first_name": "Test",
-        "last_name": "User"
+        "sub": "test_user",
+        "given_name": "User",
+        "family_name": "Test",
+        "email": "test@test.com"
     }
     
 def update_get_current_user(user_id):
     app.dependency_overrides[get_current_user] = lambda: {
-        "id": user_id,
-        "first_name": "Ali",
-        "last_name": "Veli",
+        "sub": user_id,
+        "given_name": "Ali",
+        "family_name": "Veli",
         "email": "ali@test2.com"
     }
 
@@ -251,7 +251,6 @@ async def test_is_user_active():
     assert response1.status_code == 200
     assert "id" in data1
     user_id = data1["id"]
-    update_get_current_user(user_id)
     
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response2 = await client.get(f"/api/users/{user_id}/active")

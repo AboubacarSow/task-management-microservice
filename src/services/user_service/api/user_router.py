@@ -34,7 +34,7 @@ class UserRouter:
         async def get_user(user_id: str, service: UserService = Depends(self.get_user_service),
                               payload: dict = Depends(get_current_user))-> UserGet:
             
-            if payload.get("id") != user_id:
+            if payload.get("sub") != user_id:
                 raise HTTPException(status_code=403, detail="Forbidden")
             
             try:
@@ -48,7 +48,7 @@ class UserRouter:
         async def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(self.get_user_service),
                               payload: dict = Depends(get_current_user))-> UserUpdated:
             
-            if payload.get("id") != user_id:
+            if payload.get("sub") != user_id:
                 raise HTTPException(status_code=403, detail="Forbidden")
             
             try:
@@ -64,7 +64,7 @@ class UserRouter:
         async def delete_user(user_id: str, service: UserService = Depends(self.get_user_service),
                               payload: dict = Depends(get_current_user)):
             
-            if payload.get("id") != user_id:
+            if payload.get("sub") != user_id:
                 raise HTTPException(status_code=403, detail="Forbidden")
             
             try:
@@ -75,11 +75,7 @@ class UserRouter:
                 raise HTTPException(status_code=404, detail=str(e))
             
         @self.router.get("/{user_id}/active")
-        async def is_user_active(user_id: str, service: UserService = Depends(self.get_user_service),
-                              payload: dict = Depends(get_current_user))-> UserActive:
-            
-            if payload.get("id") != user_id:
-                raise HTTPException(status_code=403, detail="Forbidden")
+        async def is_user_active(user_id: str, service: UserService = Depends(self.get_user_service))-> UserActive:
             
             try:
                 logger.info(f"Is user active request received for user_id={user_id}")
