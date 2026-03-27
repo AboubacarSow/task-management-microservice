@@ -9,6 +9,7 @@ public static class Config
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
             new IdentityResources.Email()
+
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -22,11 +23,16 @@ public static class Config
     [
         new ApiResource("project-service"){Scopes={"project_fullpermission"}},
         new ApiResource("agent-service"){Scopes={"agent_fullpermission"}},
-        new ApiResource("user-service"){Scopes={"user_fullpermission"},UserClaims={
+        new ApiResource("user-service"){Scopes={"user_fullpermission"}},
+        new ApiResource("profile")
+        {
+            UserClaims =
+            {
                 "email",
                 "given_name",
                 "family_name"
-        }},
+            }
+        }
 
     ];
 
@@ -53,15 +59,7 @@ public static class Config
                     "agent_fullpermission",
                     "user_fullpermission",
                 },
-                AlwaysIncludeUserClaimsInIdToken = true,
 
-                // Add this — tells Duende to include profile claims in access token too
-                Claims =
-                {
-                    new ClientClaim("email", "email"),
-                    new ClientClaim("given_name", "given_name"),
-                    new ClientClaim("family_name", "family_name"),
-                },
                 AccessTokenLifetime          = 3600,   
                 AbsoluteRefreshTokenLifetime = 604800, 
 
@@ -69,7 +67,7 @@ public static class Config
                 RefreshTokenUsage      = TokenUsage.ReUse,
                 RefreshTokenExpiration = TokenExpiration.Sliding,
 
-                AlwaysSendClientClaims = true
+                AlwaysIncludeUserClaimsInIdToken = true
             }
         ];
 }

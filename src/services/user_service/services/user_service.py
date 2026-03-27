@@ -41,7 +41,7 @@ class UserService:
         if "email" in data:
             existing_user = await self.user_repository.get_user_by_email(data["email"])
             if existing_user and existing_user.id != user_id:
-                logger.warning(f"Duplicate email detected: email={data["email"]}")
+                logger.warning(f"Duplicate email detected: email={data['email']}")
                 raise FileExistsError("User with this email already exists")
             
         user = await self.user_repository.update_user(user_id, data)
