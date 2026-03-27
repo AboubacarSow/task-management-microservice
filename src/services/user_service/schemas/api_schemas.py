@@ -42,7 +42,7 @@ class UserActive(BaseModel):
     is_active: bool
     
 class UserAuth(BaseModel):
-    email: EmailStr
+    username: EmailStr
     password: str
     
 class UserAuthed(BaseModel):

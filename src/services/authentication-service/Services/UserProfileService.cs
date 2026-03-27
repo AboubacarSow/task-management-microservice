@@ -23,7 +23,7 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
 
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{sub}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:8000/api/users/{sub}");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);
@@ -52,13 +52,18 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
                     return;
                 }
 
-                context.IssuedClaims.AddRange(
-                [
-                    new Claim("email",              user.Email),
-                    new Claim("preferred_username", user.Username),
-                    new Claim("given_name",         user.FirstName),
-                    new Claim("family_name",        user.LastName)
-                ]);
+                var claims = new List<Claim>
+                {
+                    new Claim("given_name", user.FirstName),
+                    new Claim("family_name", user.LastName),
+                    new Claim("email", user.Email)
+                };
+
+                claims = claims
+                    .Where(claim => context.RequestedClaimTypes.Contains(claim.Type))
+                    .ToList();
+
+                context.IssuedClaims.AddRange(claims);
             }
             
             catch (HttpRequestException ex)
@@ -103,7 +108,7 @@ public class UserProfileService(HttpClient http, ILogger<UserProfileService> log
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{sub}/active");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:8000/api/users/{sub}/active");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);

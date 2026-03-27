@@ -86,11 +86,11 @@ class UserRouter:
             
         @self.router.post("/validate")
         async def authenticate_user(data: UserAuth, service: UserService = Depends(self.get_user_service))-> UserAuthed:
-            logger.info(f"Authenticate request received for email={data.email}")
-            user = await service.authenticate_user(data.email,data.password)
+            logger.info(f"Authenticate request received for email={data.username}")
+            user = await service.authenticate_user(data.username,data.password)
             
             if not user:
-                logger.warning(f"Authentication failed for email={data.email}")
+                logger.warning(f"Authentication failed for email={data.username}")
                 raise HTTPException(status_code=401, detail="Invalid email or password")
             
             logger.info(f"Authentication successful for user_id={user.id}")
