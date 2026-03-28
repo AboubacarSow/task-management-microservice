@@ -58,11 +58,35 @@
         }
       ],
       "UpstreamPathTemplate": "/users/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "UpstreamHttpMethod": [ "GET", "PUT", "PATCH", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": [ "user_fullpermission" ]
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "user-service", 
+            "Port": 5002 
+        }
+      ],
+      "UpstreamPathTemplate": "/users/",
+      "UpstreamHttpMethod": ["POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/connect/token",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "authentication-service",
+            "Port": 5004 
+        }
+      ],
+      "UpstreamPathTemplate": "/login",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {
