@@ -25,4 +25,10 @@
     <ProjectReference Include="..\..\..\src\services\dispatcher-service\dispatcher-service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\..\src\services\dispatcher-service\ocelot.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
