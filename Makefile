@@ -11,7 +11,7 @@ dev-simple:
 	docker-compose -p task-management-system \
 		-f infrastructure/docker-compose.yml \
 		-f infrastructure/docker-compose.override.yml \
-		up --build
+		up
 
 # Production — only base compose
 prod:

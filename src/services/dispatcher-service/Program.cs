@@ -1,3 +1,4 @@
+using dispatcher_service.Middlewares;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -30,8 +31,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
 
+app.UseMiddleware<CorrelationIdMiddleware>(); 
 
 await app.UseOcelot();
 

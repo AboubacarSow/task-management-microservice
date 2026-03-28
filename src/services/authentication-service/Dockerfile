@@ -28,6 +28,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_URLS=http://+:5004
 
 ENTRYPOINT ["dotnet", "authentication-service.dll"]
