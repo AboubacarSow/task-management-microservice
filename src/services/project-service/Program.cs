@@ -1,6 +1,7 @@
 using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Extensions;
+using Serilog;
 using shared.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseExceptionHandler();

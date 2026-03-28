@@ -42,6 +42,7 @@ try
             Console.Write(Summary(usage));
         });
     }
+    app.UseSerilogRequestLogging();
 
     app.Run();
 }

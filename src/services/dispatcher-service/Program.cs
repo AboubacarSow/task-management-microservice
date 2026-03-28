@@ -2,10 +2,13 @@ using dispatcher_service.Middlewares;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
+                     .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", 
+        optional: true, reloadOnChange: true);
 builder.Services.AddOcelot(builder.Configuration);
 
 builder.Services.AddAuthentication("Bearer")
@@ -19,6 +22,8 @@ builder.Services.AddAuthentication("Bearer")
         };                        
     });
 
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddOpenApi();
 
@@ -31,9 +36,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-
+app.UseSerilogRequestLogging();
 app.UseMiddleware<CorrelationIdMiddleware>(); 
-
+app.UseAuthentication();
+app.UseAuthorization();
 await app.UseOcelot();
 
 app.Run();
