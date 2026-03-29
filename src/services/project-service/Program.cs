@@ -6,8 +6,7 @@ using shared.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("serilog.json");
-builder.Host.UseCustomSerilog();
+builder.Host.UseCustomSerilog("taskmanagement");
 
 builder.Services.AddOpenApi();
 

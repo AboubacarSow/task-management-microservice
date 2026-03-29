@@ -18,7 +18,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     //builder.Configuration.AddJsonFile("serilog.json");
-    builder.Host.UseCustomSerilog();
+    builder.Host.UseCustomSerilog("identityserver");
     // Program.cs
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddHttpClient<UserProfileService>(client =>

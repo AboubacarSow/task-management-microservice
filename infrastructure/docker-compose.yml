@@ -15,6 +15,7 @@ services:
       - user-service
     networks:
       - internal
+      - public
 
   authentication-service:
     build:
@@ -143,4 +144,6 @@ volumes:
 
 networks:
   internal:
+    driver: bridge
+  public:
     driver: bridge
