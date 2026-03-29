@@ -37,7 +37,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
-app.UseMiddleware<CorrelationIdMiddleware>(); 
+app.UseMiddleware<GlobalExceptionHandler>(); 
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 await app.UseOcelot();
