@@ -3,8 +3,13 @@ using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Serilog;
+using shared.Behaviors;
+using shared.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Host.UseCustomSerilog("dispatcher");
 
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
                      .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", 
@@ -30,6 +35,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 
+app.UseMetrics();
 
 if (app.Environment.IsDevelopment())
 {

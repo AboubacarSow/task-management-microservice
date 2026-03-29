@@ -1,8 +1,10 @@
 using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Extensions;
+using Prometheus;
 using Serilog;
 using shared.Behaviors;
+using shared.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +34,7 @@ builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
 
 var app = builder.Build();
-
+app.UseMetrics();
 await app.CreateTaskIndexesAync();
 await app.CreateProjectIndexesAync();
 

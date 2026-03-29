@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "dispatcher-service"
+    static_configs:
+      - targets: ["dispatcher-service:80"]
+    metrics_path: /metrics
+
+  - job_name: "project-service"
+    static_configs:
+      - targets: ["project-service:5001"]
+    metrics_path: /metrics
+
+  - job_name: "authentication-service"
+    static_configs:
+      - targets: ["authentication-service:5004"]
+    metrics_path: /metrics
+
+  - job_name: "agent-service"
+    static_configs:
+      - targets: ["agent-service:5001"]
+    metrics_path: /metrics
+
+  - job_name: "user-service"
+    static_configs:
+      - targets: ["user-service:5002"]
+    metrics_path: /metrics
+
+  - job_name: "elasticsearch"
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+    metrics_path: /_prometheus/metrics

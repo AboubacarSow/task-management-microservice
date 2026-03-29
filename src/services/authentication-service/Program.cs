@@ -4,6 +4,7 @@ using authentication_service.Validators;
 using Duende.IdentityServer.Licensing;
 using Serilog;
 using shared.Behaviors;
+using shared.Metrics;
 using System.Globalization;
 using System.Text;
 
@@ -33,6 +34,8 @@ try
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
+    
+    app.UseMetrics();
 
     if (app.Environment.IsDevelopment())
     {

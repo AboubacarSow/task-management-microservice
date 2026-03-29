@@ -14,12 +14,13 @@ public static class Config
         [
             new ApiScope("project_fullpermission", "Full permission for project operations"),
             new ApiScope("agent_fullpermission", "Agent Service Access"),
-            new ApiScope("user_fullpermission", "User Service Access")
+            new ApiScope("user_fullpermission", "User Service Access"),
+            new ApiScope("project.read", "Read project for task")
         ];
     
     public static IEnumerable<ApiResource> ApiResources =>
     [
-        new ApiResource("project-service"){Scopes={"project_fullpermission"}},
+        new ApiResource("project-service"){Scopes={"project_fullpermission","project_read"}},
         new ApiResource("agent-service"){Scopes={"agent_fullpermission"}},
         new ApiResource("user-service"){Scopes={"user_fullpermission"}},
         new ApiResource("profile")
