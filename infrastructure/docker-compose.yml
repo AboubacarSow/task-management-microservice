@@ -15,6 +15,7 @@ services:
       - user-service
     networks:
       - internal
+      - public
 
   authentication-service:
     build:
@@ -135,12 +136,69 @@ services:
       - internal
     depends_on:
       - elasticsearch
+  
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - internal
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+      - elasticsearch
+    networks:
+      - internal
+  
+  influxdb:
+    image: influxdb:1.8
+    environment:
+      - INFLUXDB_DB=k6
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    networks:
+      - internal
+  
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - ./k6/scripts:/scripts
+    networks:
+      - internal
+    depends_on:
+      - influxdb
+      - dispatcher-service
+    profiles:
+      - testing   
 
 volumes:
   mongodb_data:
   elasticsearch_data:
   ollama_data:
+  prometheus_data: 
+  grafana_data:
+  influxdb_data:
+
+
 
 networks:
   internal:
+    driver: bridge
+  public:
     driver: bridge

@@ -1,12 +1,14 @@
 using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Extensions;
+using Prometheus;
+using Serilog;
 using shared.Behaviors;
+using shared.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("serilog.json");
-builder.Host.UseCustomSerilog();
+builder.Host.UseCustomSerilog("taskmanagement");
 
 builder.Services.AddOpenApi();
 
@@ -32,7 +34,7 @@ builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
 
 var app = builder.Build();
-
+app.UseMetrics();
 await app.CreateTaskIndexesAync();
 await app.CreateProjectIndexesAync();
 
@@ -43,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseExceptionHandler();

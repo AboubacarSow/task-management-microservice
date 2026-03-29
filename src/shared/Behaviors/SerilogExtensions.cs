@@ -6,7 +6,7 @@ namespace shared.Behaviors;
 
 public static class SerilogExtensions
 {
-    public static IHostBuilder UseCustomSerilog(this IHostBuilder hostBuilder)
+    public static IHostBuilder UseCustomSerilog(this IHostBuilder hostBuilder,string indexFormat)
     {
         return hostBuilder.UseSerilog((context, configuration) =>
         {
@@ -25,7 +25,7 @@ public static class SerilogExtensions
                 {
                     configuration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
                     {
-                        IndexFormat = "taskmanagement-logs-{0:yyyy-MM}",
+                        IndexFormat = $"{indexFormat}-logs-{0:yyyy-MM}",
                         AutoRegisterTemplate = true,
                         NumberOfReplicas = 1,
                         NumberOfShards = 2,

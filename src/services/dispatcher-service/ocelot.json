@@ -65,7 +65,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/users/",
+      "DownstreamPathTemplate": "/api/users/", 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         { 
@@ -85,7 +85,7 @@
             "Port": 5004 
         }
       ],
-      "UpstreamPathTemplate": "/login",
+      "UpstreamPathTemplate": "/login", 
       "UpstreamHttpMethod": [ "POST" ]
     }
   ],

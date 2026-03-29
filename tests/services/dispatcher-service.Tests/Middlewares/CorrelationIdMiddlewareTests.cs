@@ -12,7 +12,7 @@ public class CorrelationIdMiddlewareTests
     {
         // Arrange
         var context    = ContextHelper.BuildHttpContext();
-        var middleware = MiddelewareHelper.BuildMiddleware();
+        var middleware = MiddelewareHelper.BuildCorrelationMiddleware();
 
         // Act
         await middleware.InvokeAsync(context);
@@ -31,7 +31,7 @@ public class CorrelationIdMiddlewareTests
         // Arrange
         var existingId = Guid.NewGuid().ToString();
         var context    = ContextHelper.BuildHttpContext(correlationId: existingId);
-        var middleware = MiddelewareHelper.BuildMiddleware();
+        var middleware = MiddelewareHelper.BuildCorrelationMiddleware();
 
         // Act
         await middleware.InvokeAsync(context);
@@ -46,7 +46,7 @@ public class CorrelationIdMiddlewareTests
     {
         // Arrange
         var context    = ContextHelper.BuildHttpContext();
-        var middleware = MiddelewareHelper.BuildMiddleware();
+        var middleware = MiddelewareHelper.BuildCorrelationMiddleware();
 
         // Act
         await middleware.InvokeAsync(context);
@@ -62,7 +62,7 @@ public class CorrelationIdMiddlewareTests
         // Arrange
         var nextCalled = false;
         var context    = ContextHelper.BuildHttpContext();
-        var middleware = MiddelewareHelper.BuildMiddleware(next: _ =>
+        var middleware = MiddelewareHelper.BuildCorrelationMiddleware(next: _ =>
         {
             nextCalled = true;
             return Task.CompletedTask;
@@ -80,7 +80,7 @@ public class CorrelationIdMiddlewareTests
     {
         // Arrange
         var context    = ContextHelper.BuildHttpContext();
-        var middleware = MiddelewareHelper.BuildMiddleware();
+        var middleware = MiddelewareHelper.BuildCorrelationMiddleware();
 
         // Act
         await middleware.InvokeAsync(context);

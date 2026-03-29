@@ -4,6 +4,7 @@ using authentication_service.Validators;
 using Duende.IdentityServer.Licensing;
 using Serilog;
 using shared.Behaviors;
+using shared.Metrics;
 using System.Globalization;
 using System.Text;
 
@@ -18,7 +19,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     //builder.Configuration.AddJsonFile("serilog.json");
-    builder.Host.UseCustomSerilog();
+    builder.Host.UseCustomSerilog("identityserver");
     // Program.cs
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddHttpClient<UserProfileService>(client =>
@@ -33,6 +34,8 @@ try
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
+    
+    app.UseMetrics();
 
     if (app.Environment.IsDevelopment())
     {
@@ -42,6 +45,7 @@ try
             Console.Write(Summary(usage));
         });
     }
+    app.UseSerilogRequestLogging();
 
     app.Run();
 }
