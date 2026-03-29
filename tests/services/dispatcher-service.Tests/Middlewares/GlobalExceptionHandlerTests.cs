@@ -146,8 +146,17 @@ public async Task InvokeAsync_HttpRequestException_Returns502()
     // Act
     await middleware.InvokeAsync(context);
 
+    context.Response.Body.Seek(0, SeekOrigin.Begin);
+    var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+    var json = JsonDocument.Parse(body);
+
+    json.RootElement.TryGetProperty("error", out var error).Should().BeTrue();
+    error.GetString().Should().Contain("unavailable");
+
     // Assert
     context.Response.StatusCode.Should().Be((int)HttpStatusCode.BadGateway);
+
+
 }
 
 
@@ -168,6 +177,6 @@ public async Task InvokeAsync_HttpRequestException_ResponseContainsBadGatewayMes
     var json = JsonDocument.Parse(body);
 
     json.RootElement.TryGetProperty("error", out var error).Should().BeTrue();
-    error.GetString().Should().Contain("unvailable");
+    error.GetString().Should().Contain("unavailable");
 }
 }
