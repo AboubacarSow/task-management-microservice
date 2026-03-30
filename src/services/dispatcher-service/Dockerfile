@@ -15,6 +15,7 @@ COPY src/shared/shared.csproj                                            ./src/s
 
 # Restore dependencies
 RUN dotnet restore src/services/dispatcher-service/dispatcher-service.csproj
+COPY src/shared/                             ./src/shared/
 
 # Copy full source
 COPY src/services/dispatcher-service/ ./src/services/dispatcher-service/
