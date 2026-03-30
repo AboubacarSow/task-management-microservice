@@ -24,7 +24,7 @@ public class UserProfileService(IHttpClientFactory factory, ILogger<UserProfileS
 
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://user-service:5002/api/users/profile/{sub}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/profile/{sub}");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);
@@ -108,7 +108,7 @@ public class UserProfileService(IHttpClientFactory factory, ILogger<UserProfileS
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://user-service:5002/api/users/{sub}/active");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"/api/users/{sub}/active");
                 request.Headers.Add("X-Correlation-ID", correlationId);
 
                 var response = await _http.SendAsync(request);
