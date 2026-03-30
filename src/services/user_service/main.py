@@ -14,6 +14,10 @@ app = FastAPI()
 user_router = UserRouter()
 app.include_router(user_router.router)
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 if __name__ == "__main__":
