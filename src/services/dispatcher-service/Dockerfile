@@ -19,6 +19,8 @@ COPY src/shared/                             ./src/shared/
 
 # Copy full source
 COPY src/services/dispatcher-service/ ./src/services/dispatcher-service/
+COPY src/shared/                             ./src/shared/
+
 
 # Build + publish
 RUN dotnet publish src/services/dispatcher-service/dispatcher-service.csproj \
