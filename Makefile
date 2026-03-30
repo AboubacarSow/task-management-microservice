@@ -25,7 +25,7 @@ down:
 		-f infrastructure/docker-compose.yml \
 		down
 
-pron:
+prune:
 	docker system prune -f 
 
 # Stop containers and remove volumes

@@ -31,9 +31,9 @@ export function setup() {
     grant_type:    'password',
     client_id:     'postman-client',
     client_secret: 'postman-secret',
-    username:      'user@example.com',
-    password:      'your_password',
-    scope:         'openid profile project_fullpermission offline_access',
+    username:      'johndoe@gmail.com',
+    password:      '123456',
+    scope:         'openid profile project_fullpermission user_fullpermission offline_access',
   }, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   });

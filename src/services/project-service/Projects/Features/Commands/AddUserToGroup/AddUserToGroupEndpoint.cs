@@ -14,11 +14,11 @@ public class AddUserToGroupEndpoint : ICarterModule
             Guid id,
             [FromBody]AddUserToGroupRequest request,
             [FromServices]ISender sender,
-            [FromServices]IUserContext userContext
+            [FromServices]ClaimsPrincipal claims
             ) =>
         {
             // Will be used later on to check if user is authorize to perform such operation
-            var userId = userContext.GetUserId();
+            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
 
             var command = new AddUserToGroupCommand(request.TargetUserId,id);
 

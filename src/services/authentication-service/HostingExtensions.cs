@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 using authentication_service.Services;
 using authentication_service.Validators;
 using Microsoft.Extensions.Options;
@@ -15,7 +16,11 @@ internal static class HostingExtensions
     {
         // uncomment if you want to add a UI
         //builder.Services.AddRazorPages();
+          
+    var cert = X509CertificateLoader
+                    .LoadPkcs12FromFile("/app/keys/identityserver.pfx", builder.Configuration["Certificate:Password"]!); 
 
+            
         builder.Services.AddIdentityServer(options =>
         {
             options.Events.RaiseErrorEvents = true;
@@ -23,7 +28,8 @@ internal static class HostingExtensions
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseSuccessEvents = true;
 
-        }).AddInMemoryIdentityResources(Config.IdentityResources)
+        }).AddSigningCredential(cert)
+        .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiResources(Config.ApiResources)

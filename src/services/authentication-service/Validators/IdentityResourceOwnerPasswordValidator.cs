@@ -5,10 +5,10 @@ using Duende.IdentityServer.Validation;
 
 namespace authentication_service.Validators;
 
-public class IdentityResourceOwnerPasswordValidator(HttpClient http, ILogger<IdentityResourceOwnerPasswordValidator> logger)
+public class IdentityResourceOwnerPasswordValidator(IHttpClientFactory factory, ILogger<IdentityResourceOwnerPasswordValidator> logger)
 : IResourceOwnerPasswordValidator
 {
-    private readonly HttpClient _http = http;
+    private readonly HttpClient _http = factory.CreateClient("UserService");
     private readonly ILogger<IdentityResourceOwnerPasswordValidator> _logger = logger;
     public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
     {

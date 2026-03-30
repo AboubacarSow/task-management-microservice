@@ -12,7 +12,7 @@ public class CreateTaskItemEndpoint : ICarterModule
             async (
                 [FromBody]CreateTaskItemRequest request,
                 [FromServices]ISender sender,
-                ClaimsPrincipal claims) =>
+                [FromServices]ClaimsPrincipal claims) =>
             {
 
                 var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);

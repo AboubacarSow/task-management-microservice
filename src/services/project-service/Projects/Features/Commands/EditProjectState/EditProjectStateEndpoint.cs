@@ -11,11 +11,12 @@ public class EditProjectStateEndpoint : ICarterModule
                 Guid id,
                 [FromBody]EditProjectStateRequest request,
                 [FromServices]ISender sender,
-                [FromServices]IUserContext userContext) =>
+                [FromServices]ClaimsPrincipal claims) =>
         {
+            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
             var command = new EditProjectStateCommand(
                 id,
-                userContext.GetUserId(),
+                userId,
                 request.Status
             );
 

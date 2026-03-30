@@ -13,7 +13,7 @@ public class EditTaskEndpoint : ICarterModule{
                 Guid taskId,
                 [FromBody]EditTaskRequest req,
                 [FromServices]ISender sender,
-                ClaimsPrincipal claimsPrincipal) =>
+                [FromServices]ClaimsPrincipal claimsPrincipal) =>
         {
             var currentUserId =Guid.Parse(claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value!);
             var result = await sender.Send(new EditTaskCommand(

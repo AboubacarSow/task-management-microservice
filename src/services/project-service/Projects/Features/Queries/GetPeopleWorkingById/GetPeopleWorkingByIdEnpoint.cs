@@ -6,10 +6,10 @@ public class GetPeopleWorkingByIdEnpoint : ICarterModule
     {
         app.MapGet("/api/projects/{projectId}/people",
         async ([FromRoute]Guid projectId, [FromServices]ISender sender, 
-        [FromServices]IUserContext userContext) =>
+        [FromServices]ClaimsPrincipal claims) =>
         {
 
-            var currentUserId = userContext.GetUserId();
+            var currentUserId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
             var result = await sender.Send(new GetPeopleWorkingByIdQuery(currentUserId,projectId));
 
 

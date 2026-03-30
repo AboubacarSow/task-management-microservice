@@ -6,10 +6,10 @@ public class GetProjectByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/{id:guid}", 
                 async ([FromRoute]Guid id, [FromServices]ISender sender,
-                [FromServices]IUserContext userContext) =>
+                [FromServices]ClaimsPrincipal claims) =>
         {
-            var currentUserId = userContext.GetUserId();
-            var query = new GetProjectByIdQuery(currentUserId,id);
+            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
+            var query = new GetProjectByIdQuery(userId,id);
             var result = await sender.Send(query);
 
             return Results.Ok(result);

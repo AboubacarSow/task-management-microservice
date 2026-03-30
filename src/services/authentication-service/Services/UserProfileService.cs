@@ -8,10 +8,10 @@ using Serilog.Context;
 
 namespace authentication_service.Services;
 
-public class UserProfileService(HttpClient http, ILogger<UserProfileService> logger,
+public class UserProfileService(IHttpClientFactory factory, ILogger<UserProfileService> logger,
     IHttpContextAccessor httpContextAccessor) :IProfileService
 {
-    private readonly HttpClient _http = http;
+    private readonly HttpClient _http = factory.CreateClient("UserService");
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILogger<UserProfileService> _logger=logger;
 

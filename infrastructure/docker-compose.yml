@@ -8,6 +8,7 @@ services:
     image: dispatcher-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - IdentityServer__Authority=http://authentication-service:5004
     depends_on:
       - authentication-service
       - project-service
@@ -26,8 +27,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - UserService__BaseUrl=http://user-service:5002
       - Elasticsearch__Uri=http://elasticsearch:9200
+      - Certificate__Password=password
     depends_on:
       - elasticsearch
+    volumes:
+    - ./keys:/app/keys:rw
     networks:
       - internal
 
@@ -38,6 +42,7 @@ services:
     image: project-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - IdentityServer__Authority=http://authentication-service:5004
       - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
       - DatabaseSettings__Database=TaskManagementDb
       - DatabaseSettings__ProjectCollection=Projects
@@ -194,6 +199,7 @@ volumes:
   prometheus_data: 
   grafana_data:
   influxdb_data:
+  identity-keys:
 
 
 

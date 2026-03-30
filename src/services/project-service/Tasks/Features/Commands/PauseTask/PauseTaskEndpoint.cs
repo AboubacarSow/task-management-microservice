@@ -8,7 +8,8 @@ public class PauseTaskEndpoint : ICarterModule
     {
         app.MapPatch("/api/tasks/{id}/pause",
             async (Guid id, [FromBody]PauseTaskRequest request,
-                [FromServices]ISender sender,ClaimsPrincipal claims) =>
+                [FromServices]ISender sender,
+                [FromServices]ClaimsPrincipal claims) =>
             {
                 var currentUserId =Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)?.Value!);
 

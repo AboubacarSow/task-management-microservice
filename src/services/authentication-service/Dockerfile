@@ -1,6 +1,12 @@
 # Stage 1 — Runtime base
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
+
+USER root
+
+RUN mkdir -p ./keys \
+&& chmod 777 ./keys 
+
 USER $APP_UID
 
 # Stage 2 — Build

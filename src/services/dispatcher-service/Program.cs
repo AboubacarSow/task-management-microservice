@@ -19,8 +19,8 @@ builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "http://authentication-service:5000"; 
-        options.RequireHttpsMetadata = false;                     
+        options.Authority = builder.Configuration["IdentityServer:Authority"];
+        options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

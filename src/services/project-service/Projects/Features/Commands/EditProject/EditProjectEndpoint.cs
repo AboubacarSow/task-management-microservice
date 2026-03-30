@@ -9,11 +9,12 @@ public class EditProjectEndpoint : ICarterModule
             Guid id,
             [FromBody]EditProjectRequest request,
             [FromServices]ISender sender,
-            [FromServices]IUserContext userContext) =>
+            [FromServices]ClaimsPrincipal claims) =>
         {
+            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
             var command = new EditProjectCommand(
                 id,
-                userContext.GetUserId(),
+                userId,
                 request.Description,
                 request.DueAt
             );

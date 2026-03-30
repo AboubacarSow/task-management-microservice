@@ -6,7 +6,7 @@ public class GetAllByProjectIdEndpoint: ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/tasks/project_id={projectId:guid}",
-            async (Guid projectId, ISender sender, ClaimsPrincipal claims) =>
+            async (Guid projectId, ISender sender, [FromServices]ClaimsPrincipal claims) =>
             {
                 var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
 

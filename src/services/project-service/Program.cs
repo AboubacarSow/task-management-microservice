@@ -15,7 +15,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
-           options.Authority = "http://authentication-service:5000"; 
+           options.Authority = builder.Configuration["IdentityServer:Authority"];
+           options.RequireHttpsMetadata = false; 
            options.Audience = "project-service";
       
             options.TokenValidationParameters = new TokenValidationParameters()

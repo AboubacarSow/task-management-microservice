@@ -1,11 +1,10 @@
 using authentication_service;
-using authentication_service.Services;
-using authentication_service.Validators;
 using Duende.IdentityServer.Licensing;
 using Serilog;
 using shared.Behaviors;
 using shared.Metrics;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 Log.Logger = new LoggerConfiguration()
@@ -22,15 +21,14 @@ try
     builder.Host.UseCustomSerilog("identityserver");
     // Program.cs
     builder.Services.AddHttpContextAccessor();
-    builder.Services.AddHttpClient<UserProfileService>(client =>
-    {
-        client.BaseAddress = new Uri(builder.Configuration["UserService:BaseUrl"]!);
-    });
-    builder.Services.AddHttpClient<IdentityResourceOwnerPasswordValidator>(client =>
+    builder.Services.AddHttpClient("UserService", client =>
     {
         client.BaseAddress = new Uri(builder.Configuration["UserService:BaseUrl"]!);
     });
 
+
+ 
+  
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
@@ -58,6 +56,10 @@ finally
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
 }
+
+
+
+
 
 static string Summary(LicenseUsageSummary usage)
 {

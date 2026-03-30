@@ -6,9 +6,9 @@ public class GetProjectsByOwnerIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/me", async (
             [FromServices]ISender sender,
-            [FromServices]IUserContext userContext) =>
+            [FromServices]ClaimsPrincipal claims) =>
         {
-            var ownerId = userContext.GetUserId();
+            var ownerId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
             var query = new GetProjectsByOwnerIdQuery(ownerId);
             var result = await sender.Send(query);
             return Results.Ok(result);
