@@ -11,12 +11,15 @@ WORKDIR /app
 # Copy solution + project files
 COPY *.sln .
 COPY src/services/dispatcher-service/dispatcher-service.csproj ./src/services/dispatcher-service/
+COPY src/shared/shared.csproj                                            ./src/shared/
 
 # Restore dependencies
 RUN dotnet restore src/services/dispatcher-service/dispatcher-service.csproj
 
 # Copy full source
 COPY src/services/dispatcher-service/ ./src/services/dispatcher-service/
+COPY src/shared/                             ./src/shared/
+
 
 # Build + publish
 RUN dotnet publish src/services/dispatcher-service/dispatcher-service.csproj \
