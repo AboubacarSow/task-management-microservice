@@ -25,7 +25,9 @@ try
     {
         client.BaseAddress = new Uri(builder.Configuration["UserService:BaseUrl"]!);
     });
-    builder.Services.AddIdentityServer().AddDeveloperSigningCredential();
+    
+    builder.Services.AddIdentityServer()
+                    .AddDeveloperSigningCredential(false);
 
 
  

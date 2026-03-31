@@ -174,7 +174,7 @@
   ],
   "refresh": "10s",
   "schemaVersion": 38,
-  "tags": ["prometheus", "dotnet", "microservices"],
+  "tags": ["prometheus", "dotnet", "microservices" ,"fastapi"],
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",

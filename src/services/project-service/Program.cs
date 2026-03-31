@@ -1,7 +1,6 @@
-using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Extensions;
-using Prometheus;
+using project_service.Projects.Grpc.Server;
 using Serilog;
 using shared.Behaviors;
 using shared.Metrics;
@@ -11,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseCustomSerilog("taskmanagement");
 
 builder.Services.AddOpenApi();
+builder.Services.AddGrpc();
 
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
@@ -25,8 +25,6 @@ builder.Services.AddAuthentication("Bearer")
            
             };
         });
-
-
 builder.Services.AddAuthorization();
 builder.Services
        .Configure<DatabaseSettings>(builder.Configuration
@@ -35,8 +33,10 @@ builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
 
 var app = builder.Build();
+
+app.MapGrpcService<ProjectsGrpcService>();
+
 app.UseMetrics();
-await app.CreateTaskIndexesAync();
 await app.CreateProjectIndexesAync();
 
 app.MapCarter();

@@ -13,7 +13,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using project_service.Commons.Exceptions;
 global using project_service.Data.Utilities;
 global using project_service.Projects.Models;
-global using project_service.Tasks.Models;
 global using System.Net;
 global using System.Net.Http.Headers;
 global using project_service.Projects.Dtos;
@@ -22,5 +21,4 @@ global using FluentValidation.TestHelper;
 global using FluentValidation;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
 global using project_service.Commons.Behaviors;
-global using project_service.Tasks.Exceptions;
 

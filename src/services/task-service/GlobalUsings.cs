@@ -1,0 +1,13 @@
+global using task_service.Tasks.Models;
+global using task_service.Tasks.Dtos;
+global using System.Security.Claims;
+global using Carter;
+global using MediatR;
+global using System.IdentityModel.Tokens.Jwt;
+global using Microsoft.AspNetCore.Mvc;
+global using MongoDB.Driver;
+global using Mapster;
+global using task_service.Data.Repositories;
+global using FluentValidation;
+global using task_service.Commons.Exceptions;
+global using task_service.Tasks.Exceptions;

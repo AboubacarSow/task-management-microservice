@@ -1,18 +1,11 @@
 {
-  "__inputs": [],
-  "__requires": [],
   "annotations": { "list": [] },
   "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": null,
-  "links": [],
   "panels": [
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -25,12 +18,11 @@
       },
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "id": 1,
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "title": "Average Response Time (ms)",
+      "title": "Avg Response Time per Service (ms)",
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter GROUP BY \"service\"",
           "refId": "A"
         }
       ]
@@ -39,7 +31,6 @@
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -52,56 +43,46 @@
       },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "id": 2,
-      "title": "Error Rate",
+      "title": "Error Rate per Service",
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter",
+          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter GROUP BY \"service\"",
           "refId": "A"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "fieldConfig": {
-        "defaults": { "color": { "mode": "palette-classic" } }
-      },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
       "id": 3,
-      "title": "Response Time Over Time (ms)",
+      "title": "Response Time (avg / p95 / p99) per Service",
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT mean(\"value\"), percentile(\"value\", 95), percentile(\"value\", 99) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval)",
-          "refId": "A",
-          "alias": "avg / p95 / p99"
-        }
-      ]
-    },
-    {
-      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "fieldConfig": {
-        "defaults": { "color": { "mode": "palette-classic" } }
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
-      "id": 4,
-      "title": "Requests per Second",
-      "type": "timeseries",
-      "targets": [
-        {
-          "query": "SELECT mean(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval)",
+          "query": "SELECT mean(\"value\"), percentile(\"value\", 95), percentile(\"value\", 99) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
           "refId": "A"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "fieldConfig": {
-        "defaults": { "color": { "mode": "palette-classic" } }
-      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 4,
+      "title": "Requests per Second (RPS)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "query": "SELECT derivative(mean(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "id": 5,
-      "title": "Virtual Users Over Time",
+      "title": "Virtual Users",
       "type": "timeseries",
       "targets": [
         {
@@ -112,18 +93,14 @@
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "fieldConfig": {
-        "defaults": { "color": { "mode": "palette-classic" } }
-      },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
       "id": 6,
-      "title": "Response Time by Concurrent Users",
-      "type": "barchart",
+      "title": "p95 Response Time per Service",
+      "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT percentile(\"value\", 95) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval)",
-          "refId": "A",
-          "alias": "p95 response time"
+          "query": "SELECT percentile(\"value\", 95) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
+          "refId": "A"
         }
       ]
     }
@@ -132,9 +109,7 @@
   "schemaVersion": 38,
   "tags": ["k6", "load-testing"],
   "time": { "from": "now-1h", "to": "now" },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "k6 Load Test Results",
-  "uid": "k6-load-test",
+  "title": "k6 Load Test Results (Improved)",
+  "uid": "k6-load-test-updated",
   "version": 1
 }

@@ -4,7 +4,6 @@ global using project_service.Data.Utilities;
 global using project_service.Commons.Exceptions;
 global using project_service.Data.Repositories;
 global using project_service.Projects.Models;
-global using project_service.Tasks.Models;
 global using FluentValidation;
 global using Mapster;
 global using project_service.Projects.Dtos;

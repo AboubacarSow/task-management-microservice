@@ -2,7 +2,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using project_service.Commons.Exceptions;
-using project_service.Tasks.Exceptions;
 using System.Diagnostics;
 using System.Xml.Linq;
 
@@ -26,12 +25,6 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
                 context.Response.StatusCode = StatusCodes.Status400BadRequest
             ),
             DomainException =>
-            (
-                exception.Message,
-                exception.GetType().Name,
-                context.Response.StatusCode = StatusCodes.Status400BadRequest
-            ),
-            TaskInvalidOperationException =>
             (
                 exception.Message,
                 exception.GetType().Name,

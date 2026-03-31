@@ -7,8 +7,6 @@ using project_service.Commons.Behaviors;
 using project_service.Data.Repositories;
 using project_service.Data.Utilities;
 using project_service.Middlewares;
-using project_service.Projects.Models;
-using TaskItem = project_service.Tasks.Models.TaskItem;
 namespace project_service.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -24,14 +22,7 @@ public static class ServiceCollectionExtensions
             return database.GetCollection<Project>(settings.ProjectCollection);
         });
 
-        services.AddSingleton<IMongoCollection<TaskItem>>(scope =>
-        {
-            var settings = scope.GetRequiredService<IOptions<DatabaseSettings>>().Value;
-
-            var client = new MongoClient(settings.ConnectionStrings);
-            var database = client.GetDatabase(settings.Database);
-            return database.GetCollection<TaskItem>(settings.TaskCollection);
-        });
+        
 
         services.AddValidatorsFromAssembly(typeof(AsssemblyReference).Assembly);
         services.AddMediatR(configuration =>
@@ -47,7 +38,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ConfigureServices(this IServiceCollection services)
     {
         services.AddScoped<IProjectRepository,ProjectRepository>();
-        services.AddScoped<ITaskRepository,TaskRepository>();
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
         return services;
