@@ -18,7 +18,7 @@ builder.Services.AddAuthentication("Bearer")
             };
         });
 builder.Services
-            .AddMassTransitWitAssembly(builder.Configuration,
+            .AddMassTransitWithAssembly(builder.Configuration,
             typeof(Program).Assembly);
 //Grpc config
 builder.Services.AddScoped<AuthenticationInterceptor>();

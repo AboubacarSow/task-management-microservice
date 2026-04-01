@@ -30,7 +30,7 @@ builder.Services.AddAuthentication("Bearer")
             };
         });
 builder.Services
-    .AddMassTransitWitAssembly(builder.Configuration,typeof(Program).Assembly);
+    .AddMassTransitWithAssembly(builder.Configuration,typeof(Program).Assembly);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthenticationInterceptor>();

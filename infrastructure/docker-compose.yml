@@ -42,16 +42,6 @@ services:
     image: project-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - IdentityServer__Authority=http://authentication-service:5004
-      - GrpcServer__Host=http://task-service:5003
-      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
-      - DatabaseSettings__Database=ProjectsDb
-      - DatabaseSettings__ProjectCollection=Projects
-      - DatabaseSettings__TaskCollection=Tasks
-      - Elasticsearch__Uri=http://elasticsearch:9200
-      - RabbitMq__Host=rabbitmq://rabbitmq
-      - RabbitMq__Username=guest
-      - RabbitMq__Password=guest
     depends_on:
       - mongodb
       - elasticsearch
@@ -66,15 +56,6 @@ services:
     image: task-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - IdentityServer__Authority=http://authentication-service:5004
-      - GrpcServer__Host=http://project-service:5000
-      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
-      - DatabaseSettings__Database=TasksDb
-      - DatabaseSettings__TaskCollection=Tasks
-      - Elasticsearch__Uri=http://elasticsearch:9200
-      - RabbitMq__Host=rabbitmq://rabbitmq
-      - RabbitMq__Username=guest
-      - RabbitMq__Password=guest
     depends_on:
       - mongodb
       - elasticsearch
