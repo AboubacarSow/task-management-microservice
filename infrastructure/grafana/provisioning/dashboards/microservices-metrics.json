@@ -21,7 +21,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "sum by (job) (rate(http_requests_received_total[1m]))",
+          "expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m]))",
           "refId": "A",
           "legendFormat": "{{job}}"
         }
@@ -41,7 +41,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "sum by (job) (rate(http_request_duration_seconds_sum[1m])) / sum by (job) (rate(http_request_duration_seconds_count[1m])) * 1000",
+          "expr": "(sum by (job) (rate(http_request_duration_seconds_sum{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m])) / sum by (job) (rate(http_request_duration_seconds_count{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m]))) * 1000",
           "refId": "A",
           "legendFormat": "{{job}}"
         }
@@ -61,7 +61,26 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum by (le, job) (rate(http_request_duration_seconds_bucket[1m]))) * 1000",
+          "expr": "histogram_quantile(0.95, sum by (le, job) (rate(http_request_duration_seconds_bucket{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m]))) * 1000",
+          "refId": "A",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 4 },
+      "id": 8,
+      "title": "Scrape Target Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "up{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}",
           "refId": "A",
           "legendFormat": "{{job}}"
         }
@@ -72,13 +91,13 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
       "id": 4,
       "title": "HTTP Request Rate — All Services",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "sum by (job) (rate(http_requests_received_total[1m]))",
+          "expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m]))",
           "refId": "A",
           "legendFormat": "{{job}}"
         }
@@ -92,13 +111,13 @@
           "color": { "mode": "palette-classic" }
         }
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
       "id": 5,
       "title": "Response Time p95 — All Services",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum by (le, job) (rate(http_request_duration_seconds_bucket[1m]))) * 1000",
+          "expr": "histogram_quantile(0.95, sum by (le, job) (rate(http_request_duration_seconds_bucket{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}[1m]))) * 1000",
           "refId": "A",
           "legendFormat": "p95 {{job}}"
         }
@@ -109,13 +128,13 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
       "id": 6,
       "title": "HTTP 5xx Error Rate",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "sum by (job) (rate(http_requests_received_total{code=~\"5..\"}[1m]))",
+          "expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\", code=~\"5..\"}[1m]))",
           "refId": "A",
           "legendFormat": "5xx {{job}}"
         }
@@ -126,13 +145,30 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
       "id": 7,
       "title": "Active HTTP Requests",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "http_requests_in_progress",
+          "expr": "sum by (job) (http_requests_in_progress{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"})",
+          "refId": "A",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" } }
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 },
+      "id": 9,
+      "title": "All Targets Up / Down",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "up{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"}",
           "refId": "A",
           "legendFormat": "{{job}}"
         }
@@ -141,10 +177,10 @@
   ],
   "refresh": "10s",
   "schemaVersion": 38,
-  "tags": ["prometheus", "dotnet", "microservices" ,"fastapi"],
+  "tags": ["prometheus", "dotnet", "microservices", "fastapi"],
   "time": { "from": "now-1h", "to": "now" },
   "timezone": "browser",
   "title": "Services Metrics",
   "uid": "services-metrics",
-  "version": 1
+  "version": 2
 }
