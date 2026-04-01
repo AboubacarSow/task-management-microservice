@@ -56,10 +56,10 @@ builder.Services.AddGrpcClient<TaskInfo.TaskInfoClient>(o =>
 }).AddInterceptor<AuthenticationInterceptor>();
 
 var app = builder.Build();
+app.UseMetrics();
 
 app.MapGrpcService<ProjectsGrpcService>();
 
-app.UseMetrics();
 await app.CreateProjectIndexesAync();
 
 app.MapCarter();

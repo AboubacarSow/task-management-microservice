@@ -7,7 +7,7 @@ public static class MetricsExtensions
 {
     public static void UseMetrics(this WebApplication app)
     {
-        app.UseMetricServer();
+        app.MapMetrics();
         app.UseHttpMetrics();
     }
 }
