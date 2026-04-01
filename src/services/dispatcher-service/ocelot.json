@@ -17,22 +17,6 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/tasks/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {   
-            "Host": "project-service", 
-            "Port": 5000 
-        }
-      ],
-      "UpstreamPathTemplate": "/tasks/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [ "project_fullpermission" ]
-      }
-    },
-    {
       "DownstreamPathTemplate": "/api/agent/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -75,6 +59,22 @@
       ],
       "UpstreamPathTemplate": "/users/",
       "UpstreamHttpMethod": ["POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {   
+            "Host": "task-service", 
+            "Port": 5003 
+        }
+      ],
+      "UpstreamPathTemplate": "/tasks/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "task_fullpermission" ]
+      }
     },
     {
       "DownstreamPathTemplate": "/connect/token",

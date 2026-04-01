@@ -2,16 +2,30 @@ using Duende.IdentityModel.Client;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
-using project_grpc_server;
+using task_grpc_server;
 
-namespace task_service.Tasks.Grpc.Client;
+namespace project_service.Projects.Grpc.Client;
 
-public class ProjectClient(
-    ProjectInfo.ProjectInfoClient client,
+public class TaskItemClient(TaskInfo.TaskInfoClient client,
     IConfiguration configuration,
     IHttpClientFactory httpClientFactory,
     IMemoryCache cache)
 {
+    
+    private readonly TaskInfo.TaskInfoClient _client = client ;
+
+    public async Task<TaskModel> GetTasksStatusAsync(string projectId)
+    {
+        var token = await GetTokenAsync();
+        var headers = new Metadata { { "Authorization", $"Bearer {token}" } };
+        return  await _client.GetTaskByIdAsync(
+            new GetTaskRequest 
+            { 
+                ProjectId = projectId
+            },headers);
+    }
+
+    
     private async Task<string> GetTokenAsync()
     {
         if (cache.TryGetValue("grpc_access_token", out string? cached))
@@ -25,9 +39,9 @@ public class ProjectClient(
             new ClientCredentialsTokenRequest
             {
                 Address = disco.TokenEndpoint,
-                ClientId = "task-service",
-                ClientSecret = "secret",
-                Scope = "project_read"
+                ClientId = "project-service",
+                ClientSecret = "project-secret",
+                Scope = "task_fullpermission"
             });
 
         if (tokenResponse.IsError)
@@ -37,14 +51,5 @@ public class ProjectClient(
             TimeSpan.FromSeconds(tokenResponse.ExpiresIn - 30));
 
         return tokenResponse.AccessToken!;
-    }
-
-    public async Task<ProjectModel> GetProjectAsync(string projectId)
-    {
-        var token = await GetTokenAsync();
-        var headers = new Metadata { { "Authorization", $"Bearer {token}" } };
-
-        return await client.GetProjectByIdAsync(
-            new GetProjectRequest { ProjectId = projectId }, headers);
     }
 }

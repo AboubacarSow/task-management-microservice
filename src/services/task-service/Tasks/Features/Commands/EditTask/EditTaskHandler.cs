@@ -1,3 +1,5 @@
+using task_service.Tasks.Grpc.Client;
+
 namespace task_service.Tasks.Features.Commands.EditTask;
 
 
@@ -15,12 +17,12 @@ public class EditTaskCommandValidator: AbstractValidator<EditTaskCommand>
         RuleFor(c => c.DueAt).NotNull().WithMessage("Please Prove a date for DueDate");
     }
 }
-public class EditTaskHandler(ITaskRepository taskRepository,//IProjectRepository projectRepository, 
+public class EditTaskHandler(ITaskRepository taskRepository, ProjectClient projectClient, 
 ILogger<EditTaskHandler> logger)
 : IRequestHandler<EditTaskCommand, TaskItemDto>
 {
     private readonly ITaskRepository _taskRepository = taskRepository;
-    //private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly ProjectClient _projectClient = projectClient;
     private readonly ILogger<EditTaskHandler> _logger = logger;
 
     public async Task<TaskItemDto> Handle(EditTaskCommand command, CancellationToken none)
@@ -36,18 +38,18 @@ ILogger<EditTaskHandler> logger)
                 command.TaskId.ToString());
         }
 
-        //var project = await _projectRepository.GetByIdAsync(task.ProjectId);
-        //if(project == null)
-        //{
-         //   _logger.LogWarning(
-        //        "Project with Id:{ProjectId} NOT_FOUND for Task with Id : {TaskId}",
-        //        task.ProjectId,task.Id);
+        var projectModel = await _projectClient.GetProjectAsync(task.ProjectId.ToString());
+        if(projectModel == null)
+        {
+           _logger.LogWarning(
+                "Project with Id:{ProjectId} NOT_FOUND for Task with Id : {TaskId}",
+                task.ProjectId,task.Id);
 
-         //   throw new NotFoundException(nameof(Project),task.ProjectId.ToString());
-        //}
-
-        if (task.CreatedByUser !=  command.CurrentUserId)
-            // &&!project.IsInGroup(command.CurrentUserId))
+           throw new NotFoundException("Project",task.ProjectId.ToString());
+        }
+        var isMember = projectModel.Group
+            .Any(g => Guid.Parse(g) == command.CurrentUserId);
+        if (task.CreatedByUser != command.CurrentUserId && !isMember)
         {
             _logger.LogWarning(
                 "User {UserId} not authorized to perform this operation :{Operation}",

@@ -3,7 +3,11 @@ using project_service.Extensions;
 using project_service.Projects.Grpc.Server;
 using Serilog;
 using shared.Behaviors;
+using shared.Interceptors;
 using shared.Metrics;
+using task_grpc_server;
+using project_service;
+using shared.messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,12 +29,29 @@ builder.Services.AddAuthentication("Bearer")
            
             };
         });
-builder.Services.AddAuthorization();
+builder.Services
+    .AddMassTransitWitAssembly(builder.Configuration,typeof(Program).Assembly);
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthorization(options =>
+{
+     options.AddPolicy("project_read", policy =>
+     {
+          policy.RequireClaim("scope", "project-service");
+     });
+    
+});
+    
 builder.Services
        .Configure<DatabaseSettings>(builder.Configuration
        .GetSection(nameof(DatabaseSettings)));
 builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
+builder.Services.AddGrpcClient<TaskInfo.TaskInfoClient>(o =>
+{
+    o.Address = new Uri(builder.Configuration["GrpcServer:Host"]!);
+}).AddInterceptor<AuthenticationInterceptor>();
 
 var app = builder.Build();
 

@@ -1,8 +1,10 @@
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using project_grpc_server;
 
 namespace project_service.Projects.Grpc.Server;    
 
+[Authorize(Policy = "project_read")]
 public class ProjectsGrpcService (IProjectRepository projectRepository,
  ILogger<ProjectsGrpcService> logger) : ProjectInfo.ProjectInfoBase
 {

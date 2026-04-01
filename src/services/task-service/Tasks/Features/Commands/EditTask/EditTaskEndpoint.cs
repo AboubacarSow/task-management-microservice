@@ -1,6 +1,4 @@
-
-
-namespace project_service.Tasks.Features.Commands.EditTask;
+namespace task_service.Tasks.Features.Commands.EditTask;
 
 public record EditTaskRequest(string Title,DateTime DueAt,string Description);
 public class EditTaskEndpoint : ICarterModule{

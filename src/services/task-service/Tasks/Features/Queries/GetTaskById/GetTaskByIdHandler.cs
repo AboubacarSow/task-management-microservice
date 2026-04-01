@@ -1,4 +1,5 @@
 using task_service.Commons.Exceptions;
+using task_service.Tasks.Grpc.Client;
 
 namespace task_service.Tasks.Features.Queries.GetTaskById;
 
@@ -16,11 +17,11 @@ public class GetTaskByIdQueryValidator: AbstractValidator<GetTaskByIdQuery>
             .WithMessage("User is required");
     }
 }
-public class GetTaskByIdHandler(ITaskRepository taskRepository, //IProjectRepository projectRepository,
+public class GetTaskByIdHandler(ITaskRepository taskRepository, ProjectClient projectClient,
  ILogger<GetTaskByIdHandler> logger): IRequestHandler<GetTaskByIdQuery, TaskItemDto>
 {
     private readonly ITaskRepository _taskRepository = taskRepository;
-    //private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly ProjectClient _projectClient = projectClient;
     private readonly ILogger<GetTaskByIdHandler> _logger = logger;
 
     
@@ -35,22 +36,24 @@ public class GetTaskByIdHandler(ITaskRepository taskRepository, //IProjectReposi
             throw new NotFoundException(nameof(Task), query.TaskId.ToString());
         }
 
-        //var project = await _projectRepository.GetByIdAsync(task.ProjectId);
+        var projectModel = await _projectClient
+                            .GetProjectAsync(task.ProjectId.ToString());
 
-        /* if (project == null)
+        if (projectModel == null)
         {
             _logger.LogWarning("No project found for Task with Id:{TaskId}", query.TaskId);
-            throw new NotFoundException(nameof(Project), task.ProjectId.ToString());
+            throw new NotFoundException("Project", task.ProjectId.ToString());
         }
-        */
-        //var isInPeople = project.IsInPeopleWorking(query.CurrentUserId);
-        //if (!isInPeople)
-        //{
-        //    _logger.LogWarning(
-        //        "User {UserId} not allowed to access to this resource",
-        //        query.CurrentUserId);
-        //    throw new ForbiddenException(query.CurrentUserId.ToString(), "READ_TASK");
-        //}
+        
+        var isInPeople = projectModel.PeopleWorking
+            .Any(g => Guid.Parse(g) == query.CurrentUserId);
+        if (!isInPeople)
+        {
+            _logger.LogWarning(
+                "User {UserId} not allowed to access to this resource",
+                query.CurrentUserId);
+            throw new ForbiddenException(query.CurrentUserId.ToString(), "READ_TASK");
+        }
 
         return task.Adapt<TaskItemDto>();
     }

@@ -1,4 +1,7 @@
-﻿namespace task_service.Tasks.Features.Commands.CancelTask;
+﻿using System.Linq;
+using task_service.Tasks.Grpc.Client;
+
+namespace task_service.Tasks.Features.Commands.CancelTask;
 
 public record CancelTaskCommand(Guid CurrentUserId, Guid TaskId):IRequest<Unit>;
 public class CancelTaskCommandValidator: AbstractValidator<CancelTaskCommand>
@@ -10,11 +13,11 @@ public class CancelTaskCommandValidator: AbstractValidator<CancelTaskCommand>
     }
 }
 
-public class CancelTaskHandler(ITaskRepository taskRepo,//IProjectRepository projectRepo,
+public class CancelTaskHandler(ITaskRepository taskRepo, ProjectClient projectClient,
 ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
 {
    private readonly ITaskRepository _taskRepository = taskRepo;
-   //private readonly IProjectRepository _projectRepository = projectRepo;
+   private readonly ProjectClient _projectClient = projectClient;
    private readonly ILogger<CancelTaskHandler> _logger = logger;
 
     public async Task<Unit> Handle(CancelTaskCommand command, CancellationToken none)
@@ -30,18 +33,20 @@ ILogger<CancelTaskHandler> logger) : IRequestHandler<CancelTaskCommand,Unit>
                 command.TaskId.ToString());
         }
 
-        //var project = await _projectRepository.GetByIdAsync(task.ProjectId);
-        //if(project == null)
-        //{
-         //   _logger.LogWarning(
-         //       "Project with Id:{ProjectId} NOT_FOUND for Task with Id : {TaskId}",
-         //       task.ProjectId,task.Id);
+        var projectModel = await _projectClient
+            .GetProjectAsync(task.ProjectId.ToString());
+        if(projectModel == null)
+        {
+            _logger.LogWarning(
+                "Project with Id:{ProjectId} NOT_FOUND for Task with Id : {TaskId}",
+                task.ProjectId,task.Id);
 
-         //   throw new NotFoundException(nameof(Project),task.ProjectId.ToString());
-        //}
+            throw new NotFoundException("Project",task.ProjectId.ToString());
+        }
+        var isMember = projectModel.Group
+            .Any(g => Guid.Parse(g) == command.CurrentUserId);
 
-        if (task.CreatedByUser !=  command.CurrentUserId )
-            // &&!project.IsInGroup(command.CurrentUserId))
+        if (task.CreatedByUser !=  command.CurrentUserId && !isMember)
         {
             _logger.LogWarning(
                 "User {UserId} not authorized to perform this operation :{Operation}",

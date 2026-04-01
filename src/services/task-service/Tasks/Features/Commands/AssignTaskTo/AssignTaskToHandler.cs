@@ -1,4 +1,9 @@
 
+using MassTransit;
+using shared.messaging.Events;
+using System.Linq;
+using task_service.Tasks.Grpc.Client;
+
 namespace task_service.Tasks.Features.Commands.AssignTaskTo;
 
 
@@ -19,11 +24,12 @@ public class AssignTaskToCommandValidator : AbstractValidator<AssignTaskToComman
     }
 }
 
-public class AssignTaskToHandler(ITaskRepository taskRepository, //IProjectRepository projectRepository, 
+public class AssignTaskToHandler(ITaskRepository taskRepository,
+ ProjectClient projectClient, IPublishEndpoint publishEndpoint,
 ILogger<AssignTaskToHandler> logger):IRequestHandler<AssignTaskToCommand,Unit>
 {
-    public readonly ITaskRepository _taskRepository = taskRepository;
-    //public readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly ITaskRepository _taskRepository = taskRepository;
+    private readonly ProjectClient _projectClient = projectClient;
     public readonly ILogger<AssignTaskToHandler> _logger  = logger;
 
     public async Task<Unit> Handle(AssignTaskToCommand request, CancellationToken cancellationToken)
@@ -31,30 +37,38 @@ ILogger<AssignTaskToHandler> logger):IRequestHandler<AssignTaskToCommand,Unit>
         var task = await _taskRepository.GetByIdAsync(request.TaskId)
             ?? throw new NotFoundException(nameof(TaskItem), request.TaskId.ToString());
 
-        //var project = await _projectRepository.GetByIdAsync(task.ProjectId)
-           // ?? throw new NotFoundException(nameof(Project), task.ProjectId.ToString());
+        var projectModel = await _projectClient
+            .GetProjectAsync(task.ProjectId.ToString())
+            ?? throw new NotFoundException("Project", task.ProjectId.ToString());
 
-        //if (!project.IsInGroup(request.CurrentUserId))
-        //{
-         //   _logger.LogWarning(
-        //        "User {UserId} cannot assign task {TaskId}",
-        //        request.CurrentUserId, task.Id);
-        //    throw new ForbiddenException(request.CurrentUserId.ToString(), "ASSIGN_TASK");
-        //}
+        var isMember = projectModel.Group
+            .Any(g => Guid.Parse(g) == request.CurrentUserId);
+        if (!isMember)
+        {
+           _logger.LogWarning(
+              "User {UserId} cannot assign task {TaskId}",
+               request.CurrentUserId, task.Id);
+            throw new ForbiddenException(request.CurrentUserId.ToString(), "ASSIGN_TASK");
+        }
 
         task.AssignTo(request.UserId);
 
-        //project.AddToPeopleWorking(request.UserId);
 
         await _taskRepository.EditAsync(task);
-        //await _projectRepository.EditAsync(project);
+
+        await publishEndpoint.Publish(new TaskAssignedIntegrationEvent
+        {
+            TaskId = task.Id,
+            ProjectId = task.ProjectId,
+            AssignedUserId = request.UserId,
+            AssignedAt = DateTime.UtcNow
+        }, cancellationToken);
 
         _logger.LogInformation(
             "Task {TaskId} assigned to {UserId} and added to PeopleWorking",
             task.Id, request.UserId);
 
-        // (event later)
-        // raise taskAssignedUser;
+        
 
         return Unit.Value;
     }

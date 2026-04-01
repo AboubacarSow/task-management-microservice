@@ -23,10 +23,12 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\project.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\task.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../shared/shared.csproj" />
+    <ProjectReference Include="../../shared.messaging/shared.messaging.csproj" />
   </ItemGroup>
 
 </Project>

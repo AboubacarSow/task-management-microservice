@@ -15,11 +15,15 @@ public class GetTasksByOwnerIdHandler(ITaskRepository taskRepository,
 
         if (!tasks.Any())
         {
-            _logger.LogWarning("No tasks for owner {OwnerId}", query.CurrentUserId);
+            _logger.LogWarning("No tasks for owner {OwnerId}",
+             query.CurrentUserId);
             return [];
         }
 
-        _logger.LogInformation("{Count} tasks for owner {OwnerId}", tasks.Count, query.CurrentUserId);
+        _logger.LogInformation(
+            "{Count} tasks for owner {OwnerId}",
+             tasks.Count, 
+             query.CurrentUserId);
 
         return tasks.Adapt<List<TaskItemDto>>();
     }

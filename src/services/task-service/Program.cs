@@ -1,11 +1,3 @@
-using Microsoft.IdentityModel.Tokens;
-using project_grpc_server;
-using Serilog;
-using shared.Behaviors;
-using shared.Metrics;
-using task_service.Data.Utilities;
-using task_service.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseCustomSerilog("taskmanagement");
@@ -25,19 +17,26 @@ builder.Services.AddAuthentication("Bearer")
            
             };
         });
-
+builder.Services
+            .AddMassTransitWitAssembly(builder.Configuration,
+            typeof(Program).Assembly);
+//Grpc config
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddGrpcClient<ProjectInfo.ProjectInfoClient>(o =>
+{
+    o.Address = new Uri(builder.Configuration["GrpcServer:Host"]!);
+}).AddInterceptor<AuthenticationInterceptor>();
 
 builder.Services.AddAuthorization();
+//database config
 builder.Services
        .Configure<DatabaseSettings>(builder.Configuration
        .GetSection(nameof(DatabaseSettings)));
+
 builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
 
-builder.Services.AddGrpcClient<ProjectInfo.ProjectInfoClient>(o =>
-{
-    o.Address = new Uri("http://localhost:5001"); // Docker service name
-});
+
 
 var app = builder.Build();
 app.UseMetrics();

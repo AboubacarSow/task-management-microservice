@@ -10,19 +10,33 @@ public static class Config
             new IdentityResources.Profile()
         ];
 
-    public static IEnumerable<ApiScope> ApiScopes =>
+     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("project_fullpermission", "Full permission for project operations"),
-            new ApiScope("agent_fullpermission", "Agent Service Access"),
-            new ApiScope("user_fullpermission", "User Service Access"),
-            new ApiScope("project.read", "Read project for task")
+            new ApiScope("project_fullpermission", "Full access to project service"),
+            new ApiScope("project_read", "Read access to project service"),
+            new ApiScope("task_fullpermission", "Full access to task service"),
+            new ApiScope("agent_fullpermission", "Agent service access"),
+            new ApiScope("user_fullpermission", "User service access")
         ];
     
-    public static IEnumerable<ApiResource> ApiResources =>
+public static IEnumerable<ApiResource> ApiResources =>
     [
-        new ApiResource("project-service"){Scopes={"project_fullpermission","project_read"}},
-        new ApiResource("agent-service"){Scopes={"agent_fullpermission"}},
-        new ApiResource("user-service"){Scopes={"user_fullpermission"}},
+        new ApiResource("project-service")
+        {
+            Scopes = { "project_fullpermission", "project_read" }
+        },
+        new ApiResource("task-service")
+        {
+            Scopes = { "task_fullpermission" }
+        },
+        new ApiResource("agent-service")
+        {
+            Scopes = { "agent_fullpermission" }
+        },
+        new ApiResource("user-service")
+        {
+            Scopes = { "user_fullpermission" }
+        },
         new ApiResource("profile")
         {
             UserClaims =
@@ -32,11 +46,30 @@ public static class Config
                 "family_name"
             }
         }
-
     ];
 
     public static IEnumerable<Client> Clients =>
         [
+            new Client
+            {
+                ClientId = "task-service",
+                ClientName = "Task Service Client",
+                ClientSecrets = { new Secret("task-secret".Sha256()) },
+
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+
+                AllowedScopes = { "project_read" }
+            },
+            new Client
+            {
+                ClientId = "project-service",
+                ClientName = "Project Service Client",
+                ClientSecrets = { new Secret("project-secret".Sha256()) },
+
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+
+                AllowedScopes = { "task_fullpermission" }
+            },
             new Client
             {
                 ClientId   = "postman-client",

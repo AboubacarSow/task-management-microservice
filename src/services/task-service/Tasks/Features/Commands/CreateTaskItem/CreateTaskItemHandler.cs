@@ -1,5 +1,7 @@
 
 
+using task_service.Tasks.Grpc.Client;
+
 namespace project_service.Tasks.Features.Commands.CreateTaskItem;
 
 
@@ -23,11 +25,11 @@ public class CreateTaskItemCommandValidator : AbstractValidator<CreateTaskItemCo
 
 public class CreateTaskItemHandler(
     ITaskRepository taskRepo,
-    //IProjectRepository projectRepo,
+    ProjectClient projectClient,
     ILogger<CreateTaskItemHandler> logger) : IRequestHandler<CreateTaskItemCommand, Guid>
 {
     private readonly ITaskRepository _taskRepo = taskRepo;
-    //private readonly IProjectRepository _projectRepo = projectRepo;
+    private readonly ProjectClient _projectClient = projectClient;
     private readonly ILogger<CreateTaskItemHandler> _logger = logger;
 
     public async Task<Guid> Handle(CreateTaskItemCommand request, CancellationToken cancellationToken)
@@ -37,29 +39,24 @@ public class CreateTaskItemHandler(
             "User {UserId} creating task in Project {ProjectId}",
             request.CurrentUserId, request.ProjectId);
 
-        //var project = await _projectRepo.GetByIdAsync(request.ProjectId);
+        var projectModel = await _projectClient
+            .GetProjectAsync(request.ProjectId.ToString());
 
-        //if (project is null)
-        //{
-        //    _logger.LogWarning("Project {ProjectId} not found", request.ProjectId);
-        //    throw new NotFoundException(nameof(Project), request.ProjectId.ToString());
-        //}
-
-        //if (!project.IsInGroup(request.CurrentUserId))
-        //{
-        //    _logger.LogWarning(
-        //        "User {UserId} is not allowed to create task in Project {ProjectId}",
-        //        request.CurrentUserId, request.ProjectId);
-        //}
-        //    throw new ForbiddenException(request.CurrentUserId.ToString(), "CREATE_TASK");
-        //if (!project.IsInGroup(request.CurrentUserId))
-        //{
-        //    _logger.LogWarning(
-        //        "User {UserId} is not allowed to create task in Project {ProjectId}",
-        //        request.CurrentUserId, request.ProjectId);
-
-        //    throw new ForbiddenException(request.CurrentUserId.ToString(), "CREATE_TASK");
-        //}
+        if (projectModel is null)
+        {
+            _logger.LogWarning("Project {ProjectId} not found", request.ProjectId);
+            throw new NotFoundException("Project", request.ProjectId.ToString());
+        }
+         var isMember = projectModel.Group
+            .Any(g => Guid.Parse(g) == request.CurrentUserId);
+        if (!isMember)
+        {
+            _logger.LogWarning(
+                "User {UserId} is not allowed to create task in Project {ProjectId}",
+                request.CurrentUserId, request.ProjectId);
+            throw new ForbiddenException(request.CurrentUserId.ToString(), "CREATE_TASK");
+        }
+        
 
         var task = new TaskItem(request.Title, request.ProjectId, request.CurrentUserId);
 
@@ -69,8 +66,6 @@ public class CreateTaskItemHandler(
             "Task {TaskId} created successfully in Project {ProjectId}",
             task.Id, task.ProjectId);
 
-        // ToDo
-        //Raise TaskCreatedEvent()
 
         return task.Id;
     }

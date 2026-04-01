@@ -1,3 +1,5 @@
+using project_service.Projects.Grpc.Client;
+
 namespace project_service.Projects.Features.Commands.EditProjectState;
 
 
@@ -29,12 +31,12 @@ public class EditProjectStateCommandValidator : AbstractValidator<EditProjectSta
 
 public sealed class EditProjectStateHandler(
     IProjectRepository projectRepository,
-    //ITaskRepository taskRepository,
+    TaskItemClient taskItemClient,
     ILogger<EditProjectStateHandler> logger)
         : IRequestHandler<EditProjectStateCommand>
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
-    //private readonly ITaskRepository _taskRepository = taskRepository;
+    private readonly TaskItemClient _taskItemClient = taskItemClient;
     private readonly ILogger<EditProjectStateHandler> _logger = logger;
 
     public async Task Handle(
@@ -64,17 +66,19 @@ public sealed class EditProjectStateHandler(
 
         if (request.Status == ProjectStatus.Completed)
         {
-            //var allTasksCompleted = await _taskRepository
-            //    .AreAllTasksCompletedForProjectIdAsync(project.Id);
+            var taskModel = await _taskItemClient
+            .GetTasksStatusAsync(request.ProjectId.ToString());
+          
 
-            //if (!allTasksCompleted)
-            //{
-           //     _logger.LogWarning(
-            //        "Project {ProjectId} CAN_NOT_BE_MARKED_AS_COMPLETED because tasks are incomplete",
-           //         project.Id);
 
-            //    throw new DomainException("All tasks must be completed before completing the project");
-           // }
+            if (!taskModel.AllCompleted)
+            {
+                _logger.LogWarning(
+                    "Project {ProjectId} CAN_NOT_BE_MARKED_AS_COMPLETED because tasks are incomplete",
+                    project.Id);
+
+                throw new DomainException("All tasks must be completed before completing the project");
+            }
         }
 
         switch (request.Status)

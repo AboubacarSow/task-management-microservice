@@ -1,12 +1,14 @@
 using Carter;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using project_service.Commons.Behaviors;
 using project_service.Data.Repositories;
 using project_service.Data.Utilities;
 using project_service.Middlewares;
+using project_service.Projects.Grpc.Client;
 namespace project_service.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -40,6 +42,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectRepository,ProjectRepository>();
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
+        services.AddTransient<TaskItemClient>();
         return services;
     }
 }

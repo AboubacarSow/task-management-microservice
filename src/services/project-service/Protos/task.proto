@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "task_grpc_server";
+
+package task;
+
+service TaskInfo {
+  rpc GetTaskById (GetTaskRequest) returns (TaskModel);
+}
+
+message GetTaskRequest {
+  string projectId = 1;
+}
+
+message TaskModel {
+  bool allCompleted = 1;
+}

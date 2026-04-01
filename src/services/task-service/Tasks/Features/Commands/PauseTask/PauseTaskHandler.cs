@@ -24,7 +24,7 @@ public class PauseTaskHandler(ITaskRepository taskRepository,
         if(task == null)
         {
             _logger.LogWarning(
-                "Task with Id:{TaskId} NOT_FOUND",
+                "*Task with Id:{TaskId} NOT_FOUND*",
                 command.TaskId);
             throw new NotFoundException(nameof(TaskItem),
                 command.TaskId.ToString());
@@ -33,7 +33,7 @@ public class PauseTaskHandler(ITaskRepository taskRepository,
         if (task.AssignedToUser != command.UserId)
         {
             _logger.LogWarning(
-                "*only assigned user is allowed perform this operation:{operation}",
+                "*only assigned user is allowed perform this operation:{operation}*",
                 "PAUSE_TASK");
             throw new ForbiddenException(command.UserId.ToString(),"PAUSE_TASK");
         }

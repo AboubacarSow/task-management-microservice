@@ -7,6 +7,7 @@ using task_service.Commons.Behaviors;
 using task_service.Data.Repositories;
 using task_service.Data.Utilities;
 using task_service.Middlewares;
+using task_service.Tasks.Grpc.Client;
 namespace task_service.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITaskRepository,TaskRepository>();
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
+        services.AddTransient<ProjectClient>();
         return services;
     }
 }
