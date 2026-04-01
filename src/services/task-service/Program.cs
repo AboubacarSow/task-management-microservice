@@ -21,6 +21,8 @@ builder.Services
             .AddMassTransitWitAssembly(builder.Configuration,
             typeof(Program).Assembly);
 //Grpc config
+builder.Services.AddScoped<AuthenticationInterceptor>();
+builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddGrpcClient<ProjectInfo.ProjectInfoClient>(o =>
 {

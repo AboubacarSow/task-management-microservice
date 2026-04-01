@@ -1,11 +1,5 @@
-using Carter;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 using task_service.Commons.Behaviors;
-using task_service.Data.Repositories;
-using task_service.Data.Utilities;
 using task_service.Middlewares;
 using task_service.Tasks.Grpc.Client;
 namespace task_service.Extensions;

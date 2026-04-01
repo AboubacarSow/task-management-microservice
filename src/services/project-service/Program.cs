@@ -33,7 +33,8 @@ builder.Services
     .AddMassTransitWitAssembly(builder.Configuration,typeof(Program).Assembly);
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddScoped<AuthenticationInterceptor>();
+builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization(options =>
 {
      options.AddPolicy("project_read", policy =>
@@ -48,6 +49,7 @@ builder.Services
        .GetSection(nameof(DatabaseSettings)));
 builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
+
 builder.Services.AddGrpcClient<TaskInfo.TaskInfoClient>(o =>
 {
     o.Address = new Uri(builder.Configuration["GrpcServer:Host"]!);
