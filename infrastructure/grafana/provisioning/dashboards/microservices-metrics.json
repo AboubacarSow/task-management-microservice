@@ -141,10 +141,10 @@
   ],
   "refresh": "10s",
   "schemaVersion": 38,
-  "tags": ["prometheus", "dotnet", "microservices"],
+  "tags": ["prometheus", "dotnet", "microservices" ,"fastapi"],
   "time": { "from": "now-1h", "to": "now" },
   "timezone": "browser",
-  "title": "Services Metrics (Updated)",
-  "uid": "services-metrics-updated",
+  "title": "Services Metrics",
+  "uid": "services-metrics",
   "version": 1
 }
