@@ -59,10 +59,8 @@ var app = builder.Build();
 
 app.MapGrpcService<ProjectsGrpcService>();
 
-app.UseMetrics();
 await app.CreateProjectIndexesAync();
 
-app.MapCarter();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -76,6 +74,9 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMetrics(jobName:"project-service");
+
+app.MapCarter();
 
 app.Run();
 

@@ -41,7 +41,7 @@ builder.Services.ConfigureServices();
 
 
 var app = builder.Build();
-app.UseMetrics();
+app.UseMetrics(jobName:"task-service");
 await app.CreateTaskIndexesAync();
 
 app.MapCarter();

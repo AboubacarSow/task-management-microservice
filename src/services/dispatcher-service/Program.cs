@@ -35,7 +35,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 
-app.UseMetrics();
+app.UseMetrics(jobName:"dispatcher-service");
 
 if (app.Environment.IsDevelopment())
 {

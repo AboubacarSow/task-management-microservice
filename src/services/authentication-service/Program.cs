@@ -36,7 +36,7 @@ try
         .ConfigureServices()
         .ConfigurePipeline();
     
-    app.UseMetrics();
+    app.UseMetrics(jobName:"authentication-service");
 
     if (app.Environment.IsDevelopment())
     {
