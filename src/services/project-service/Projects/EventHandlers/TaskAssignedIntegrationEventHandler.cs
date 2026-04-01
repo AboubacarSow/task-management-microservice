@@ -5,7 +5,7 @@ using shared.messaging.Events;
 namespace project_service.Projects.EventHandlers;
 
 public class TaskAssignedIntegrationEventHandler(ISender sender,
-    ILogger<TaskAssignedEventConsumer> logger)
+    ILogger<TaskAssignedIntegrationEventHandler> logger)
   : IConsumer<TaskAssignedIntegrationEvent>
 {
     public async Task Consume(ConsumeContext<TaskAssignedIntegrationEvent> context)

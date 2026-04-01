@@ -11,11 +11,14 @@ WORKDIR /app
 COPY *.sln .
 COPY src/services/project-service/project-service.csproj   ./src/services/project-service/
 COPY src/shared/shared.csproj                               ./src/shared/
+COPY src/shared.messaging/shared.messaging.csproj           ./src/shared.messaging/
 
 RUN dotnet restore src/services/project-service/project-service.csproj
 
 COPY src/services/project-service/    ./src/services/project-service/
 COPY src/shared/                      ./src/shared/
+COPY src/shared.messaging/            ./src/shared.messaging/
+
 
 RUN dotnet publish src/services/project-service/project-service.csproj \
     -c $BUILD_CONFIGURATION \

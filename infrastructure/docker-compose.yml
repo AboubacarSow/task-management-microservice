@@ -144,6 +144,8 @@ services:
     restart: unless-stopped
     networks:
       - internal
+    command: >
+      sh -c "ollama serve & sleep 5 && ollama pull llama3.2 && wait"
 
   elasticsearch:
     image: elasticsearch:8.13.0
