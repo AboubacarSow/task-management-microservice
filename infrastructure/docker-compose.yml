@@ -7,7 +7,6 @@ services:
     image: dispatcher-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - IdentityServer__Authority=http://authentication-service:5004
     depends_on:
       - authentication-service
       - project-service
@@ -25,9 +24,6 @@ services:
     image: authentication-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - UserService__BaseUrl=http://user-service:5002
-      - Elasticsearch__Uri=http://elasticsearch:9200
-      - Certificate__Password=password
     depends_on:
       - elasticsearch
     volumes:
@@ -42,16 +38,6 @@ services:
     image: project-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - IdentityServer__Authority=http://authentication-service:5004
-      - GrpcServer__Host=http://task-service:5003
-      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
-      - DatabaseSettings__Database=ProjectsDb
-      - DatabaseSettings__ProjectCollection=Projects
-      - DatabaseSettings__TaskCollection=Tasks
-      - Elasticsearch__Uri=http://elasticsearch:9200
-      - RabbitMq__Host=rabbitmq://rabbitmq
-      - RabbitMq__Username=guest
-      - RabbitMq__Password=guest
     depends_on:
       - mongodb
       - elasticsearch
@@ -66,15 +52,6 @@ services:
     image: task-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - IdentityServer__Authority=http://authentication-service:5004
-      - GrpcServer__Host=http://project-service:5000
-      - DatabaseSettings__ConnectionStrings=mongodb://mongodb:27017
-      - DatabaseSettings__Database=TasksDb
-      - DatabaseSettings__TaskCollection=Tasks
-      - Elasticsearch__Uri=http://elasticsearch:9200
-      - RabbitMq__Host=rabbitmq://rabbitmq
-      - RabbitMq__Username=guest
-      - RabbitMq__Password=guest
     depends_on:
       - mongodb
       - elasticsearch
@@ -90,13 +67,6 @@ services:
       dockerfile: src/services/ai_agent_service/Dockerfile
     image: agent-service
     command: uvicorn src.services.ai_agent_service.app:app --host 0.0.0.0 --port 5001
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL=llama3.2
-      - DB_NAME=ai_agent_service
-      - LOG_COLLECTION=log
-      - AUTHORITY=http://authentication-service:5004
     depends_on:
       - mongodb
       - ollama
@@ -109,11 +79,6 @@ services:
       dockerfile: src/services/user_service/Dockerfile
     image: user-service
     command: uvicorn src.services.user_service.main:app --host 0.0.0.0 --port 5002
-    environment:
-      - MONGO_URL=mongodb://mongodb:27017
-      - DB_NAME=user_service
-      - USER_COLLECTION=users
-      - AUTHORITY=http://authentication-service:5004
     depends_on:
       - mongodb
     networks:
@@ -128,9 +93,6 @@ services:
 
   message-broker:
     image: rabbitmq:3.13-management
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -144,15 +106,24 @@ services:
     restart: unless-stopped
     networks:
       - internal
-    command: >
-      sh -c "ollama serve & sleep 5 && ollama pull llama3.2 && wait"
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        sleep 8
+        OLLAMA_HOST=http://ollama:11434 ollama pull llama3.2
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - internal
 
   elasticsearch:
     image: elasticsearch:8.13.0
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
@@ -160,8 +131,6 @@ services:
 
   kibana:
     image: kibana:8.13.0
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     networks:
       - internal
     depends_on:
@@ -195,10 +164,6 @@ services:
 
   grafana:
     image: grafana/grafana:10.4.0
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -210,9 +175,6 @@ services:
 
   influxdb:
     image: influxdb:1.8
-    environment:
-      - INFLUXDB_DB=k6
-      - INFLUXDB_HTTP_AUTH_ENABLED=false
     volumes:
       - influxdb_data:/var/lib/influxdb
     networks:
