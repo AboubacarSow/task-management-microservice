@@ -170,17 +170,17 @@ services:
       - elasticsearch
   
   filebeat:
-  build:
-    context: ./filebeat
-    dockerfile: Dockerfile
-  volumes:
-    - /var/lib/docker/containers:/var/lib/docker/containers:ro
-    - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    - /var/run/docker.sock:/var/run/docker.sock:ro 
-  networks:
-    - internal
-  depends_on:
-    - elasticsearch
+    build:
+      context: ./filebeat
+      dockerfile: Dockerfile
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+    networks:
+      - internal
+    depends_on:
+      - elasticsearch
 
 
   prometheus:
