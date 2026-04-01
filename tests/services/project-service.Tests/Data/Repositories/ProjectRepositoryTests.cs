@@ -18,7 +18,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
         //Arrange
         var userId= Guid.NewGuid(); 
         var project = new Project("Software Development", userId);
-        var projectRepository = FakeRepositories.GetProjectRepository
+        var projectRepository = FakeRepository.GetProjectRepository
             (_databaseFixture.GetProjectCollection());
 
         //Act
@@ -37,7 +37,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
     public async Task GetAllByUserId_ShouldReturnOnlyProjectsForGivenUser()
     {
         //Arrange
-        var projectRepository = FakeRepositories.GetProjectRepository
+        var projectRepository = FakeRepository.GetProjectRepository
             (_databaseFixture.GetProjectCollection());
 
         var user1 = Guid.NewGuid();
@@ -61,7 +61,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
     [Fact]
     public async Task GetAllByUserId_WhenUserHasNoProjects_ShouldReturnEmpty()
     {
-        var projectRepository = FakeRepositories.GetProjectRepository
+        var projectRepository = FakeRepository.GetProjectRepository
             (_databaseFixture.GetProjectCollection());
 
         var user1 = Guid.NewGuid();
@@ -82,7 +82,7 @@ public class ProjectRepositoryTests(DatabaseFixture fixture)
     [Fact]
     public async Task EditAsync_ShouldUpdateProjectFields()
     {
-        var projectRepository = FakeRepositories.GetProjectRepository
+        var projectRepository = FakeRepository.GetProjectRepository
             (_databaseFixture.GetProjectCollection());
 
         var project = new Project("Software Development", Guid.NewGuid());

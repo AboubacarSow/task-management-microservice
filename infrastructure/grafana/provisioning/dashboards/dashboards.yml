@@ -1,9 +1,9 @@
 apiVersion: 1
 
 providers:
-  - name: "TaskManagement"
+  - name: "Task-Management-System-Insights"
     orgId: 1
-    folder: "TaskManagement"
+    folder: "Task-Management-System-Insights"
     type: file
     disableDeletion: false
     updateIntervalSeconds: 30

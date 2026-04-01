@@ -1,7 +1,8 @@
 namespace project_service.Projects.Features.Commands.AddUserToPeople;
 
 
-public record AddUserToPeopleWorkingCommand(Guid ProjectId, Guid TargetUserId): IRequest<Unit>;
+public record AddUserToPeopleWorkingCommand(Guid ProjectId,
+    Guid TargetUserId): IRequest<Unit>;
 
 public class AddUserToPeopleWorkingCommandValidator : AbstractValidator<AddUserToPeopleWorkingCommand>
 {

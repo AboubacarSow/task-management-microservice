@@ -11,18 +11,24 @@
   <ItemGroup>
     <PackageReference Include="Carter" Version="9.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
     <PackageReference Include="Mapster" Version="10.0.1" />
     <PackageReference Include="Mapster.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
     <PackageReference Include="MongoDB.Driver" Version="3.7.0" />
- 
    
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\project.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\task.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../shared/shared.csproj" />
+    <ProjectReference Include="../../shared.messaging/shared.messaging.csproj" />
   </ItemGroup>
 
 </Project>

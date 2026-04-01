@@ -1,16 +1,20 @@
-using Carter;
 using Microsoft.IdentityModel.Tokens;
 using project_service.Extensions;
-using Prometheus;
+using project_service.Projects.Grpc.Server;
 using Serilog;
 using shared.Behaviors;
+using shared.Interceptors;
 using shared.Metrics;
+using task_grpc_server;
+using project_service;
+using shared.messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseCustomSerilog("taskmanagement");
 
 builder.Services.AddOpenApi();
+builder.Services.AddGrpc();
 
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
@@ -25,18 +29,35 @@ builder.Services.AddAuthentication("Bearer")
            
             };
         });
+builder.Services
+    .AddMassTransitWitAssembly(builder.Configuration,typeof(Program).Assembly);
 
+builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+     options.AddPolicy("project_read", policy =>
+     {
+          policy.RequireClaim("scope", "project-service");
+     });
+    
+});
+    
 builder.Services
        .Configure<DatabaseSettings>(builder.Configuration
        .GetSection(nameof(DatabaseSettings)));
 builder.Services.AddDatabaseCollections();
 builder.Services.ConfigureServices();
+builder.Services.AddGrpcClient<TaskInfo.TaskInfoClient>(o =>
+{
+    o.Address = new Uri(builder.Configuration["GrpcServer:Host"]!);
+}).AddInterceptor<AuthenticationInterceptor>();
 
 var app = builder.Build();
+
+app.MapGrpcService<ProjectsGrpcService>();
+
 app.UseMetrics();
-await app.CreateTaskIndexesAync();
 await app.CreateProjectIndexesAync();
 
 app.MapCarter();
