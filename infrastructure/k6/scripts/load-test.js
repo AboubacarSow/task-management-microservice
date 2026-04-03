@@ -35,7 +35,7 @@ export function setup() {
       client_secret: 'postman-secret',
       username: 'johndoe@gmail.com',
       password: '123456',
-      scope: 'openid profile project_fullpermission user_fullpermission offline_access',
+      scope: 'openid profile user_fullpermission offline_access agent_fullpermission project_fullpermission',
     },
     {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
