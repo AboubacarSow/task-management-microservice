@@ -6,7 +6,7 @@
 | First & Last Name | Student Number |  
 |---|---|
 | Hasibullah Mohamand  | 221307114 |
-| Aboubacar SOw | 221307117 |
+| Aboubacar Sow | 221307117 |
 
 **Date:** March 2026  
 **Repository:** https://github.com/username/task-management-system.git
@@ -196,7 +196,7 @@ sequenceDiagram
     participant MongoDB
 
     IdentityServer->>UserService: POST /auth/validate
-    UserService->>MongoDB: Find user by email
+    UserService->>MongoDB: Find user by email and by id
     MongoDB-->>UserService: User
 
     UserService-->>IdentityServer: Valid / Invalid
@@ -626,7 +626,7 @@ flowchart LR
 ### 4.1 Authentication — Token Request
 
 <p align="center">
-  <img src="images/auth-jwt-token.png" width="600"/>
+  <img src="images/auth-jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 1:</b> Postman POST /login returning JWT access token and refresh token
@@ -635,7 +635,7 @@ flowchart LR
 ### 4.2 JWT Claims — Decoded Token
 
 <p align="center">
-  <img src="images/decoded-jwt-token.png" width="600"/>
+  <img src="images/decoded-jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 2:</b> jwt.io showing decoded token with sub, email, given_name, family_name, scope claims
@@ -643,19 +643,19 @@ flowchart LR
 
 ### 4.3 Project Operations
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 3:</b> Postman POST /projects returning 201 Created
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 4:</b> Postman PATCH /projects/{id} returning 204 NoContent
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 5:</b>  Postman PATCH /projects/{id}/complete returning 204 NoContent
@@ -663,19 +663,19 @@ flowchart LR
 
 ### 4.4 Agent Operations
 <p align="center">
-  <img src="images/generate-description.png" width="600"/>
+  <img src="images/generate-description.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 6:</b> Postman POST /agent/generate_description returning 200 OK
 </p>
 <p align="center">
-  <img src="images/suggest-tasks.png" width="600"/>
+  <img src="images/suggest-tasks.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 7:</b> Postman POST /agent/suggest_tasks returning 200 OK
 </p>
 <p align="center">
-  <img src="images/refine-project-name.png" width="600"/>
+  <img src="images/refine-project-name.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 8:</b>  Postman POST /agent/refine_project_name returning 200 OK
@@ -685,7 +685,7 @@ flowchart LR
 
 #### Authentication Service — 17 Tests ✅
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 9:</b>   dotnet test output — all GREEN
@@ -693,7 +693,7 @@ flowchart LR
 
 #### Project Service — 22 Tests ✅
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 10:</b>  dotnet test output — all GREEN
@@ -701,7 +701,7 @@ flowchart LR
 
 #### Dispatcher Service — 20 Tests ✅
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 11:</b>   dotnet test output — all GREEN
@@ -709,7 +709,7 @@ flowchart LR
 
 #### User Service — 22 Tests ✅
 <p align="center">
-  <img src="images/user-test.png" width="600"/>
+  <img src="images/user-test.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 12:</b>   pytest test output — all GREEN
@@ -717,7 +717,7 @@ flowchart LR
 
 #### AI Agent Service — 6 Tests ✅
 <p align="center">
-  <img src="images/ai-agent-test.png" width="600"/>
+  <img src="images/ai-agent-test.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 13:</b>   pytest test output — all GREEN
@@ -737,7 +737,7 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
 | 200 | TBD | TBD | TBD | TBD |
 | 500 | TBD | TBD | TBD | TBD |
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 14:</b>  Grafana k6 dashboard — real-time metrics during load test
@@ -746,19 +746,19 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
 
 ### 4.6 Observability
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 15:</b>  Kibana — structured logs with X-Correlation-ID across services
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 16:</b>  Grafana — service metrics dashboard (request rate, latency, errors)
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="600"/>
+  <img src="images/jwt-token.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 17:</b>  Prometheus — targets page showing all services UP
