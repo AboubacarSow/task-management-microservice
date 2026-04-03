@@ -5,7 +5,7 @@ import { Rate, Trend } from 'k6/metrics';
 const errorRate = new Rate('error_rate');
 const responseTime = new Trend('response_time', true);
 
-const BASE_URL = 'http://dispatcher-service:8080';
+const BASE_URL = 'http://localhost:8080';
 
 export const options = {
   stages: [

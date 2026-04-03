@@ -20,8 +20,8 @@
       "title": "Request Rate — All Services",
       "type": "stat",
       "targets": [
-        {"expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|task-service|authentication-service\"}[2m]))"},
-        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]))",
+        {"expr": "sum by (job) (rate(http_requests_total{job=~\"dispatcher-service|project-service|task-service|authentication-service|agent-service|user-service\"}[2m])) + sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|task-service|authentication-service|agent-service|user-service\"}[2m]))"},
+        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]) + rate(http_requests_received_total{job=~\"agent-service|user-service\"}[2m]))",
           "refId": "A1",
           "legendFormat": "{{job}}"
         }
@@ -89,15 +89,43 @@
     {
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 5 },
+              { "color": "green", "value": 6 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 8 },
+      "id": 10,
+      "title": "Services Up",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(up{job=~\"dispatcher-service|project-service|agent-service|user-service|task-service|authentication-service\"} == 1)",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
       "id": 4,
       "title": "HTTP Request Rate — All Services",
       "type": "timeseries",
       "targets": [
-        {"expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|task-service|authentication-service\"}[2m]))"},
-        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]))",
+        {"expr": "sum by (job) (rate(http_requests_total{job=~\"dispatcher-service|project-service|task-service|authentication-service|agent-service|user-service\"}[2m])) + sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|task-service|authentication-service|agent-service|user-service\"}[2m]))"},
+        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]) + rate(http_requests_received_total{job=~\"agent-service|user-service\"}[2m]))",
 
           "refId": "A5",
           "legendFormat": "{{job}}"
@@ -112,7 +140,7 @@
           "color": { "mode": "palette-classic" }
         }
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
       "id": 5,
       "title": "Response Time p95 — All Services",
       "type": "timeseries",
@@ -129,13 +157,13 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "id": 6,
       "title": "HTTP 5xx Error Rate",
       "type": "timeseries",
       "targets": [
         {"expr": "sum by (job) (rate(http_requests_received_total{job=~\"dispatcher-service|project-service|task-service|authentication-service\", code=~\"5..\"}[2m]))"},
-        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]))",
+        { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\", status=~\"5..\"}[2m]))",
 
           "refId": "A7",
           "legendFormat": "5xx {{job}}"
@@ -147,7 +175,7 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "id": 7,
       "title": "Active HTTP Requests",
       "type": "timeseries",
@@ -164,8 +192,8 @@
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" } }
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 },
-      "id": 9,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 36 },
+      "id": 11,
       "title": "All Targets Up / Down",
       "type": "timeseries",
       "targets": [
@@ -180,7 +208,7 @@
     {
       "type": "row",
       "title": "Dispatcher Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
       "collapsed": false,
       "panels": []
     },
@@ -188,14 +216,8 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 41 },
-      "targets": [
-        {
-          "expr": "sum(rate(http_requests_received_total{job=\"dispatcher-service\"}[2m]))",
-          "refId": "A10",
-          "instant": true
-        }
-      ],
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 45 },
+      "targets": [{ "expr": "sum(rate(http_requests_received_total{job=\"dispatcher-service\"}[2m]))", "refId": "A10", "instant": true }],
       "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "decimals": 3 } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
     },
@@ -203,7 +225,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 41 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 45 },
       "targets": [
         {
           "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"dispatcher-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"dispatcher-service\"}[2m])), 0.000001))",
@@ -218,7 +240,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 41 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 45 },
       "targets": [
         {
           "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"dispatcher-service\"}[2m])))",
@@ -233,10 +255,10 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 46 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 50 },
       "targets": [
         {
-          "expr": "sum(rate(http_requests_received_total{job=\"dispatcher-service\"}[2m]))",
+          "expr": "sum(rate(http_requests_total{job=\"dispatcher-service\"}[2m]))",
           "refId": "A13",
           "legendFormat": "Request Rate"
         },
@@ -258,7 +280,7 @@
     {
       "type": "row",
       "title": "Project Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 54 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 58 },
       "collapsed": false,
       "panels": []
     },
@@ -266,8 +288,8 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 55 },
-      "targets": [{ "expr": "sum(rate(http_requests_received_total{job=\"project-service\"}[2m]))", "refId": "A", "instant": true }],
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 59 },
+      "targets": [ { "expr": "sum(rate(http_requests_received_total{job=\"project-service\"}[2m]))", "refId": "A", "instant": true } ],
       "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
     },
@@ -275,7 +297,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 55 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 59 },
       "targets": [{ "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"project-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"project-service\"}[2m])), 0.000001))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -284,7 +306,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 55 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 59 },
       "targets": [{ "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"project-service\"}[2m])))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -293,7 +315,7 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 60 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 64 },
       "targets": [
         { "expr": "sum(rate(http_requests_received_total{job=\"project-service\"}[2m]))", "refId": "A", "legendFormat": "Request Rate" },
         { "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"project-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"project-service\"}[2m])), 0.000001))", "refId": "B", "legendFormat": "Avg ms" },
@@ -306,7 +328,7 @@
     {
       "type": "row",
       "title": "Authentication Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 68 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 72 },
       "collapsed": false,
       "panels": []
     },
@@ -314,8 +336,8 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 69 },
-      "targets": [{ "expr": "sum(rate(http_requests_received_total{job=\"authentication-service\"}[2m]))", "refId": "A", "instant": true }],
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 73 },
+      "targets": [ { "expr": "sum(rate(http_requests_received_total{job=\"authentication-service\"}[2m]))", "refId": "A", "instant": true } ],
       "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
     },
@@ -323,7 +345,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 69 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 73 },
       "targets": [{ "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"authentication-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"authentication-service\"}[2m])), 0.000001))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -332,7 +354,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 69 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 73 },
       "targets": [{ "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"authentication-service\"}[2m])))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -341,7 +363,7 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 74 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 78 },
       "targets": [
         { "expr": "sum(rate(http_requests_received_total{job=\"authentication-service\"}[2m]))", "refId": "A", "legendFormat": "Request Rate" },
         { "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"authentication-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"authentication-service\"}[2m])), 0.000001))", "refId": "B", "legendFormat": "Avg ms" },
@@ -354,7 +376,7 @@
     {
       "type": "row",
       "title": "Task Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 82 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 86 },
       "collapsed": false,
       "panels": []
     },
@@ -362,8 +384,8 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 83 },
-      "targets": [{ "expr": "sum(rate(http_requests_received_total{job=\"task-service\"}[2m]))", "refId": "A", "instant": true }],
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 87 },
+      "targets": [ { "expr": "sum(rate(http_requests_received_total{job=\"task-service\"}[2m]))", "refId": "A", "instant": true } ],
       "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
     },
@@ -371,7 +393,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 83 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 87 },
       "targets": [{ "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"task-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"task-service\"}[2m])), 0.000001))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -380,7 +402,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 83 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 87 },
       "targets": [{ "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"task-service\"}[2m])))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -389,7 +411,7 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 88 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 92 },
       "targets": [
         { "expr": "sum(rate(http_requests_received_total{job=\"task-service\"}[2m]))", "refId": "A", "legendFormat": "Request Rate" },
         { "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"task-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"task-service\"}[2m])), 0.000001))", "refId": "B", "legendFormat": "Avg ms" },
@@ -402,7 +424,7 @@
     {
       "type": "row",
       "title": "Agent Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 96 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 100 },
       "collapsed": false,
       "panels": []
     },
@@ -410,7 +432,7 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 97 },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 101 },
       "targets": [{ "expr": "sum(rate(http_requests_total{job=\"agent-service\"}[2m]))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -419,7 +441,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 97 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 101 },
       "targets": [{ "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"agent-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"agent-service\"}[2m])), 0.000001))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -428,7 +450,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 97 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 101 },
       "targets": [{ "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"agent-service\"}[2m])))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -437,7 +459,7 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 102 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 106 },
       "targets": [
         { "expr": "sum(rate(http_requests_total{job=\"agent-service\"}[2m]))", "refId": "A", "legendFormat": "Request Rate" },
         { "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"agent-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"agent-service\"}[2m])), 0.000001))", "refId": "B", "legendFormat": "Avg ms" },
@@ -450,7 +472,7 @@
     {
       "type": "row",
       "title": "User Service",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 110 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 114 },
       "collapsed": false,
       "panels": []
     },
@@ -458,7 +480,7 @@
       "type": "stat",
       "title": "Request Rate",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 111 },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 115 },
       "targets": [{ "expr": "sum(rate(http_requests_total{job=\"user-service\"}[2m]))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "decimals": 3, "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -467,7 +489,7 @@
       "type": "stat",
       "title": "Avg Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 111 },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 115 },
       "targets": [{ "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"user-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"user-service\"}[2m])), 0.000001))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -476,7 +498,7 @@
       "type": "stat",
       "title": "p95 Response Time",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 111 },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 115 },
       "targets": [{ "expr": "1000 * histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"user-service\"}[2m])))", "refId": "A", "instant": true }],
       "fieldConfig": { "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } } },
       "options": { "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" }, "textMode": "value" }
@@ -485,7 +507,7 @@
       "type": "timeseries",
       "title": "Traffic & Latency",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 116 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 120 },
       "targets": [
         { "expr": "sum(rate(http_requests_total{job=\"user-service\"}[2m]))", "refId": "A", "legendFormat": "Request Rate" },
         { "expr": "1000 * (sum(rate(http_request_duration_seconds_sum{job=\"user-service\"}[2m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job=\"user-service\"}[2m])), 0.000001))", "refId": "B", "legendFormat": "Avg ms" },
@@ -498,7 +520,24 @@
   "refresh": "15s",
   "schemaVersion": 38,
   "tags": ["prometheus", "dotnet", "python", "microservices"],
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "name": "job",
+        "type": "custom",
+        "options": [
+          {"text": "All", "value": "$__all"},
+          {"text": "dispatcher-service", "value": "dispatcher-service"},
+          {"text": "project-service", "value": "project-service"},
+          {"text": "task-service", "value": "task-service"},
+          {"text": "authentication-service", "value": "authentication-service"},
+          {"text": "agent-service", "value": "agent-service"},
+          {"text": "user-service", "value": "user-service"}
+        ],
+        "current": {"value": "$__all", "text": "All"}
+      }
+    ]
+  },
   "time": { "from": "now-15m", "to": "now" },
   "timezone": "browser",
   "title": "Services Metrics Modern",

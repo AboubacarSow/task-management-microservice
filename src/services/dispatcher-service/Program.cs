@@ -47,7 +47,9 @@ app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
-await app.UseOcelot();
+
+// Skip Ocelot for /metrics
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/metrics"), app => app.UseOcelot());
 
 app.Run();
 
