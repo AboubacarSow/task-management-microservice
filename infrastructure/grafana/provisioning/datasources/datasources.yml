@@ -27,10 +27,10 @@ datasources:
     editable: false
     basicAuth: false
     jsonData:
-      version: Flux
+      version: InfluxQL
       organization: taskmanagement
-      bucket: k6
-      httpMode: POST
-      authType: none
+      dbName: k6
+      httpMode: GET
+      authType: token
     secureJsonData:
       token: supersecrettoken
