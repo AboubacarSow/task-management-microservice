@@ -32,6 +32,7 @@ public class ProjectsGrpcService (IProjectRepository projectRepository,
         {
             Id = project.Id.ToString(),
             Name = project.Name,
+            OwnerId = project.OwnerId.ToString(),
             Group = { project.Group.Select(g => g.ToString()) },
             PeopleWorking = { project.PeopleWorking.Select(p => p.ToString()) }
          };
