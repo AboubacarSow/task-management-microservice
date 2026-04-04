@@ -2,9 +2,9 @@ namespace task_service.Data.Utilities;
 
 public class DatabaseSettings
 {
-    public string ConnectionStrings { get; set; }
-    public string Database { get; set; }
-    public string TaskCollection { get; set; }
+    public string ConnectionStrings { get; set; } = default!;
+    public string Database { get; set; } = default!;
+    public string TaskCollection { get; set; }=default!;
 }
 public interface IUserContext
 {

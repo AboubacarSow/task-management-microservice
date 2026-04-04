@@ -19,12 +19,18 @@ builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = builder.Configuration["IdentityServer:Authority"];
+        options.Authority = "http://authentication-service:5004";
+        options.SaveToken = true;
+        options.MetadataAddress = "http://authentication-service:5004/.well-known/openid-configuration";
+
         options.RequireHttpsMetadata = false;
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false
-        };                        
+            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidIssuer = "http://authentication-service:5004"
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -35,7 +41,6 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 
-app.UseMetrics();
 
 if (app.Environment.IsDevelopment())
 {
@@ -45,11 +50,18 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionHandler>(); 
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMetrics(service:"dispatcher-service");
 // Skip Ocelot for /metrics
-app.UseWhen(context => !context.Request.Path.StartsWithSegments("/metrics"), app => app.UseOcelot());
+app.UseWhen(context =>
+ !context.Request.Path.StartsWithSegments("/metrics"), 
+ app => app.UseOcelot()
+ );
 
 app.Run();
 

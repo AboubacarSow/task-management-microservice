@@ -23,7 +23,7 @@ public class AddUserToGroupHandlerTests
 
         var handler = new AddUserToGroupHandler(_repoMock.Object,_loggerMock.Object);
 
-        var command = new AddUserToGroupCommand(userId, projectId);
+        var command = new AddUserToGroupCommand(userId, projectId,ownerId);
 
         // Act
         await handler.Handle(command, CancellationToken.None);
@@ -50,13 +50,32 @@ public class AddUserToGroupHandlerTests
 
         var handler = new AddUserToGroupHandler(_repoMock.Object,_loggerMock.Object);
 
-        var command = new AddUserToGroupCommand(userId, Guid.NewGuid());
+        var command = new AddUserToGroupCommand(userId, Guid.NewGuid(), Guid.NewGuid());
 
         // Act
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
         project.Group.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Handle_Should_Throw_ForbiddenException_When_User_Is_Not_Project_Owner()
+    {
+        // Arrange
+        var ownerId = Guid.NewGuid();
+        var project = FakeProjectData.BuildProject(ownerId);
+        var userId = Guid.NewGuid();
+
+        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(project);
+
+        var handler = new AddUserToGroupHandler(_repoMock.Object,_loggerMock.Object);
+
+        var command = new AddUserToGroupCommand(userId, Guid.NewGuid(), Guid.NewGuid());
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ForbiddenException>(() => handler.Handle(command, CancellationToken.None));
     }
 }
 

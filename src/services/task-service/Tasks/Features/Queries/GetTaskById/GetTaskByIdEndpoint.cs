@@ -6,9 +6,13 @@ public class GetTaskByIdEndpoint:ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
        app.MapGet("/api/tasks/{id:guid}", async (Guid id, [FromServices]ISender sender, 
-       [FromServices]ClaimsPrincipal claims) =>
+       ClaimsPrincipal claims) =>
         {
-                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+            var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
+
+
             var result = await sender.Send(new GetTaskByIdQuery(userId,id));
             return Results.Ok(result);
         }).RequireAuthorization()

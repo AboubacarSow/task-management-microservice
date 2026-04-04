@@ -1,8 +1,7 @@
 using Duende.IdentityModel.Client;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
-using project_grpc_server;
+using Microsoft.Extensions.Options;
 
 namespace task_service.Tasks.Grpc.Client;
 
@@ -18,15 +17,26 @@ public class ProjectClient(
             return cached!;
 
         var httpClient = httpClientFactory.CreateClient();
+        Console.WriteLine("AUTHORITY: " + configuration["IdentityServer:Authority"]);
         var disco = await httpClient.GetDiscoveryDocumentAsync(
-            configuration["IdentityServer:Authority"]);
+            new DiscoveryDocumentRequest
+            {
+                Address = configuration["IdentityServer:Authority"],
+                Policy =
+                {
+                    RequireHttps = false
+                }
+            });
+
+        if (disco.IsError)
+            throw new Exception($"Discovery document error: {disco.Error}");
 
         var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(
             new ClientCredentialsTokenRequest
             {
                 Address = disco.TokenEndpoint,
                 ClientId = "task-service",
-                ClientSecret = "secret",
+                ClientSecret = "task-secret",
                 Scope = "project_read"
             });
 
@@ -43,7 +53,8 @@ public class ProjectClient(
     {
         var token = await GetTokenAsync();
         var headers = new Metadata { { "Authorization", $"Bearer {token}" } };
-
+        Console.WriteLine("headers: " + string.Join(", ", headers.Select(h => $"{h.Key}: {h.Value}")));
+        Console.WriteLine($"Requesting project {projectId} with token: {token}");
         return await client.GetProjectByIdAsync(
             new GetProjectRequest { ProjectId = projectId }, headers);
     }

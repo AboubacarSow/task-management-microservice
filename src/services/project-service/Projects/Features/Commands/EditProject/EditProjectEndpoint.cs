@@ -9,9 +9,12 @@ public class EditProjectEndpoint : ICarterModule
             Guid id,
             [FromBody]EditProjectRequest request,
             [FromServices]ISender sender,
-            [FromServices]ClaimsPrincipal claims) =>
+            ClaimsPrincipal claims) =>
         {
-            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
+              var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
             var command = new EditProjectCommand(
                 id,
                 userId,

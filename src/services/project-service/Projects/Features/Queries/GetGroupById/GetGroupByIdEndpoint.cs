@@ -6,9 +6,12 @@ public class GetGroupByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/{projectId}/group",
             async ([FromRoute]Guid projectId, [FromServices]ISender sender, 
-            [FromServices]ClaimsPrincipal claims) =>
+            ClaimsPrincipal claims) =>
             {
-                var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
+                var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
 
                 var result = await sender.Send(new GetGroupByIdQuery(userId,projectId));
 

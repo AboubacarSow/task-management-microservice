@@ -1,6 +1,5 @@
 using Duende.IdentityModel.Client;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Microsoft.Extensions.Caching.Memory;
 using task_grpc_server;
 

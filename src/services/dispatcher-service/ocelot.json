@@ -87,6 +87,22 @@
       ],
       "UpstreamPathTemplate": "/login", 
       "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/connect/userinfo",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { 
+            "Host": "authentication-service",
+            "Port": 5004 
+        }
+      ],
+      "UpstreamPathTemplate": "/userinfo", 
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "openid", "profile" ]
+      }
     }
   ],
   "GlobalConfiguration": {
