@@ -11,11 +11,15 @@ public class EditTaskEndpoint : ICarterModule{
                 Guid taskId,
                 [FromBody]EditTaskRequest req,
                 [FromServices]ISender sender,
-                [FromServices]ClaimsPrincipal claimsPrincipal) =>
+                ClaimsPrincipal claimsPrincipal) =>
         {
-            var currentUserId =Guid.Parse(claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value!);
+            var currentUserId =claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
+
             var result = await sender.Send(new EditTaskCommand(
-                currentUserId,
+                userId,
                 taskId,
                 req.Title,
                 req.DueAt,

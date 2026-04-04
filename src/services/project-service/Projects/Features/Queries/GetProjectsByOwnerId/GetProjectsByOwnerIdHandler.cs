@@ -30,8 +30,11 @@ public class GetProjectsByOwnerIdHandler(IProjectRepository repository, ILogger<
 
         _logger.LogInformation("{Count} projects retrieved for owner {OwnerId}",
             projects.Count, request.OwnerId);
-
-        return projects.Adapt<List<ProjectDto>>();
+        return projects.Adapt<List<ProjectDto>>(options =>
+        {
+            options.ForType<Project, ProjectDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
     }
 }
 

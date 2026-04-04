@@ -14,6 +14,11 @@ public class ProjectsGrpcService (IProjectRepository projectRepository,
     public override async Task<ProjectModel> GetProjectById(GetProjectRequest request,
      ServerCallContext context)
     {
+        var authHeader = context.RequestHeaders
+            .FirstOrDefault(h => h.Key == "Authorization")?.Value;
+
+        Console.WriteLine($"PROJECT-SERVICE RECEIVED AUTH: '{authHeader}'");
+        
         var projectId = Guid.Parse(request.ProjectId);
         var project = await _repository.GetByIdAsync(projectId);
         if (project is null)

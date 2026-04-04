@@ -55,6 +55,10 @@ public class GetTaskByIdHandler(ITaskRepository taskRepository, ProjectClient pr
             throw new ForbiddenException(query.CurrentUserId.ToString(), "READ_TASK");
         }
 
-        return task.Adapt<TaskItemDto>();
+        return task.Adapt<TaskItemDto>(options =>
+        {
+            options.ForType<TaskItem, TaskItemDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
     }
 }

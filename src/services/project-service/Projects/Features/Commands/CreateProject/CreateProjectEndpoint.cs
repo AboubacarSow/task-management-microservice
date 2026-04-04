@@ -9,9 +9,13 @@ public class CreateProjectEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/projects", async ([FromBody]CreateProjectRequest request,
-        [FromServices]ISender sender ,[FromServices]ClaimsPrincipal claims) => 
+        ISender sender ,ClaimsPrincipal claimsPrincipal) => 
         {
-            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
+          
+            var currentUserId =claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
             var command = new CreateProjectCommand(request.Name,userId,request.Description);
             var result = await sender.Send(command);
             var response = new CreateProjectResponse(

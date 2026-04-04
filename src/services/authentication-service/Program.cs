@@ -25,18 +25,17 @@ try
     {
         client.BaseAddress = new Uri(builder.Configuration["UserService:BaseUrl"]!);
     });
-    
+
     //builder.Services.AddIdentityServer()
-                    //.AddDeveloperSigningCredential(false);
+    //.AddDeveloperSigningCredential(false);
+
+    
 
 
- 
-  
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
-    
-    app.UseMetrics();
+
 
     if (app.Environment.IsDevelopment())
     {
@@ -48,6 +47,7 @@ try
     }
     app.UseSerilogRequestLogging();
 
+    app.UseMetrics(service: "authentication-service");
     app.Run();
 }
 catch (Exception ex) when (ex is not HostAbortedException)

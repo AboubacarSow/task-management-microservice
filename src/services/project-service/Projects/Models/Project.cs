@@ -10,11 +10,11 @@ public sealed class Project :BaseEntity
     public ProjectStatus Status { get; private set; }
     [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid OwnerId { get;private set;}
-
-    private readonly List<Guid> _group = [];
+    [BsonElement("group")]
+    private List<Guid> _group = new();
     public IReadOnlyCollection<Guid> Group => _group;
-
-    private readonly List<Guid> _peopleWorking = [];
+    [BsonElement("peopleWorking")]
+    private List<Guid> _peopleWorking = new();
 
     public IReadOnlyCollection<Guid> PeopleWorking => _peopleWorking;
 
@@ -120,8 +120,8 @@ public sealed class Project :BaseEntity
     {
         if (userId == Guid.Empty)
             throw new ArgumentException("UserId cannot be empty");
-
-        return userId == OwnerId || _group.Contains(userId);
+        Console.WriteLine(_group == null); // will print TRUE
+        return userId == OwnerId || (_group != null && _group.Contains(userId));
     }
 
 

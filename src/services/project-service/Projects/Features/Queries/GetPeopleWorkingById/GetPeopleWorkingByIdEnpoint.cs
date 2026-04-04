@@ -6,11 +6,14 @@ public class GetPeopleWorkingByIdEnpoint : ICarterModule
     {
         app.MapGet("/api/projects/{projectId}/people",
         async ([FromRoute]Guid projectId, [FromServices]ISender sender, 
-        [FromServices]ClaimsPrincipal claims) =>
+        ClaimsPrincipal claims) =>
         {
 
-            var currentUserId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
-            var result = await sender.Send(new GetPeopleWorkingByIdQuery(currentUserId,projectId));
+           var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id"); 
+            var result = await sender.Send(new GetPeopleWorkingByIdQuery(userId,projectId));
 
 
             return Results.Ok(result);

@@ -7,8 +7,11 @@ public class GetTasksByOwnerIdEndpoint : ICarterModule
     {
         app.MapGet("/api/tasks/me", async (ISender sender, ClaimsPrincipal claims) =>
         {
-                var ownerId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
-            var result = await sender.Send(new GetTasksByOwnerIdQuery(ownerId));
+            var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
+
+            var result = await sender.Send(new GetTasksByOwnerIdQuery(userId));
             return Results.Ok(result);
         }).RequireAuthorization()
         .WithName("AllTasksByOwner");

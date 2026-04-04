@@ -3,7 +3,7 @@ namespace project_service.Projects.Features.Commands.EditProject;
 
 public record EditProjectCommand(Guid ProjectId,
      Guid UserId, 
-     string? Description, DateTime? DueAt): IRequest;
+     string? Description, DateTime? DueAt): IRequest<Unit>;
 
 
 
@@ -19,12 +19,12 @@ public class EditProjectCommandValidator : AbstractValidator<EditProjectCommand>
     }
 }
 public class EditProjectHandler(IProjectRepository repository,ILogger<EditProjectHandler> logger)
-: IRequestHandler<EditProjectCommand>
+: IRequestHandler<EditProjectCommand, Unit>
 {
    private readonly IProjectRepository _repository = repository;
    private readonly ILogger<EditProjectHandler> _logger = logger;
 
-    public async Task Handle(EditProjectCommand request, CancellationToken none)
+    public async Task<Unit> Handle(EditProjectCommand request, CancellationToken none)
     {
         _logger.LogInformation("Editing Project {ProjectId} by User {UserId}",
         request.ProjectId,
@@ -46,6 +46,7 @@ public class EditProjectHandler(IProjectRepository repository,ILogger<EditProjec
         await _repository.EditAsync(project);
         _logger.LogInformation("UPDATE_SUCCESSFULLY Project {ProjectId} ",request.ProjectId);
 
+        return Unit.Value;
     }
 }
 

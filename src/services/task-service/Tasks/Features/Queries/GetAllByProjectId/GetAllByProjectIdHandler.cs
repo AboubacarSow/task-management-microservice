@@ -45,6 +45,10 @@ public class GetAllByProjectIdHandler(ITaskRepository _taskRepository, ProjectCl
             "{Count} tasks for project with Id:{ProjectId}",
             tasks.Count, query.ProjectId);
 
-        return tasks.Adapt<List<TaskItemDto>>();
+        return tasks.Adapt<List<TaskItemDto>>(options =>
+        {
+            options.ForType<TaskItem, TaskItemDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
     }
 }

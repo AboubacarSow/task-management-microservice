@@ -6,10 +6,13 @@ public class GetProjectsByOwnerIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/me", async (
             [FromServices]ISender sender,
-            [FromServices]ClaimsPrincipal claims) =>
+            ClaimsPrincipal claims) =>
         {
-            var ownerId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
-            var query = new GetProjectsByOwnerIdQuery(ownerId);
+            var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
+            var query = new GetProjectsByOwnerIdQuery(userId);
             var result = await sender.Send(query);
             return Results.Ok(result);
 

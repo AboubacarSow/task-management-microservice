@@ -1,8 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using project_service.Projects.Models;
-
-namespace project_service.Projects.Dtos;
+﻿namespace project_service.Projects.Dtos;
 
 public record ProjectDto(
     Guid Id,
@@ -11,5 +7,7 @@ public record ProjectDto(
     DateTime LastUpdatedAt,
     DateTime? DueAt,
     string? Description,
-    ProjectStatus Status,
-    Guid CreatedByUser);
+    string Status,
+    Guid OwnerId,
+    IReadOnlyCollection<Guid> Group,
+    IReadOnlyCollection<Guid> PeopleWorking);

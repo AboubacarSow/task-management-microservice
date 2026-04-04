@@ -9,12 +9,14 @@ public class PauseTaskEndpoint : ICarterModule
         app.MapPatch("/api/tasks/{id}/pause",
             async (Guid id, [FromBody]PauseTaskRequest request,
                 [FromServices]ISender sender,
-                [FromServices]ClaimsPrincipal claims) =>
+                ClaimsPrincipal claims) =>
             {
-                var currentUserId =Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)?.Value!);
-
+                var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(currentUserId, out var userId))
+                    return Results.BadRequest("Invalid user id");
+                    
                 await sender.Send(
-                    new PauseTaskCommand(id, currentUserId, request.Note)
+                    new PauseTaskCommand(id, userId, request.Note)
                 );
 
                 return Results.NoContent();

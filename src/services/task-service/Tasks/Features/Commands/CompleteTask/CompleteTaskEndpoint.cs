@@ -7,10 +7,12 @@ public class CompleteTaskEndpoint : ICarterModule
         app.MapPatch("/api/tasks/{id:guid}/complete", async ([FromRoute]Guid id, 
         [FromBody]CompleteTaskRequest request, 
         [FromServices]ISender sender, 
-        [FromServices]ClaimsPrincipal claims)=>
+        ClaimsPrincipal claims)=>
         {
-            var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+            var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
             var command = new CompleteTaskCommand(id,userId,request.Notes);
             await sender.Send(command);
 
