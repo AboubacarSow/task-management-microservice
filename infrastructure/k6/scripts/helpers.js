@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export function getToken() {
-  const res = http.post('http://dispatcher-service:8080/login', {
+  const res = http.post('http://localhost:8080/login', {
     grant_type:    'password',
     client_id:     'postman-client',
     client_secret: 'postman-secret',

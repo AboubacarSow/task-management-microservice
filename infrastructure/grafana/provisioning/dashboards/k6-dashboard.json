@@ -23,7 +23,7 @@
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "query": "SELECT mean(value) FROM http_req_duration WHERE time >= now() - 15m AND time <= now()",
           "refId": "A1"
         }
       ]
@@ -49,7 +49,7 @@
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter",
+          "query": "SELECT mean(value) FROM http_req_failed WHERE time >= now() - 15m AND time <= now()",
           "refId": "A2"
         }
       ]
@@ -67,7 +67,7 @@
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT non_negative_derivative(sum(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter",
+          "query": "SELECT non_negative_derivative(sum(value), 1s) FROM http_reqs WHERE time >= now() - 15m AND time <= now() GROUP BY time(1m) fill(0)",
           "refId": "A3"
         }
       ]
@@ -80,7 +80,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") AS \"avg\", percentile(\"value\", 95) AS \"p95\", percentile(\"value\", 99) AS \"p99\" FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT mean(value) AS avg, percentile(value, 95) AS p95, percentile(value, 99) AS p99 FROM http_req_duration WHERE time >= now() - 15m AND time <= now() GROUP BY time(1m) fill(null)",
           "refId": "A4"
         }
       ]
@@ -93,7 +93,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT mean(value) FROM vus WHERE time >= now() - 15m AND time <= now() GROUP BY time(1m) fill(null)",
           "refId": "A5"
         }
       ]
@@ -106,7 +106,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT sum(value) FROM http_reqs WHERE time >= now() - 15m AND time <= now() GROUP BY time(1m) fill(null)",
           "refId": "A6"
         }
       ]
@@ -119,7 +119,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"response_time\" WHERE $timeFilter GROUP BY time($__interval), \"endpoint\" fill(null)",
+          "query": "SELECT mean(value) FROM response_time WHERE time >= now() - 15m AND time <= now() GROUP BY time(1m), endpoint fill(null)",
           "refId": "A7"
         }
       ]
