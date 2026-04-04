@@ -6,7 +6,6 @@ using shared.Behaviors;
 using shared.Interceptors;
 using shared.Metrics;
 using task_grpc_server;
-using project_service;
 using shared.messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
