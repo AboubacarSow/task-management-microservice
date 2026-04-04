@@ -5,7 +5,7 @@ import { Rate, Trend } from 'k6/metrics';
 const errorRate = new Rate('error_rate');
 const responseTime = new Trend('response_time', true);
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://dispatcher-service:80';
 
 export const options = {
   stages: [
@@ -39,7 +39,7 @@ export function setup() {
     },
     {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      tags: { endpoint: 'login', service: 'dispatcher' },
+      tags: { endpoint: 'login', service: 'dispatcher-service' },
     }
   );
 
@@ -58,7 +58,7 @@ export default function (data) {
       'Content-Type': 'application/json',
     },
     tags: {
-      service: 'dispatcher',
+      service: 'dispatcher-service',
     },
   };
 

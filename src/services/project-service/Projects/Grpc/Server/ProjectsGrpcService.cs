@@ -33,9 +33,9 @@ public class ProjectsGrpcService (IProjectRepository projectRepository,
             Id = project.Id.ToString(),
             Name = project.Name,
             OwnerId = project.OwnerId.ToString(),
-            Group = { project.Group.Select(g => g.ToString()) },
+            Group = { project.Group.Select(g => g.ToString()), project.OwnerId.ToString() },
             PeopleWorking = { project.PeopleWorking.Select(p => p.ToString()) }
-         };
+        };
         
 
         _logger.LogInformation("Project with id {ProjectId} retrieved successfully", request.ProjectId);

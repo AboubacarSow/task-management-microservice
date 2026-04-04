@@ -191,8 +191,7 @@ services:
       - influxdb
       - dispatcher-service
     command: run --out influxdb=http://influxdb:8086/k6 /scripts/load-test.js
-    profiles:
-      - test
+    
 
 volumes:
   mongodb_data:

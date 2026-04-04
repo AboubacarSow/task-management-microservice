@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export function getToken() {
-  const res = http.post('http://localhost:8080/login', {
+  const res = http.post('http://dispatcher-service:80/login', {
     grant_type:    'password',
     client_id:     'postman-client',
     client_secret: 'postman-secret',
@@ -11,7 +11,7 @@ export function getToken() {
     scope:         'openid profile project_fullpermission offline_access',
   }, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    tags: { service: 'auth-service', endpoint: 'POST /login' }
+    tags: { service: 'authentication-service', endpoint: 'POST /login' }
   });
 
   return { token: res.json('access_token') };
@@ -29,7 +29,7 @@ export function runScenario(token) {
     }
   };
 
-  const res = http.get('http://dispatcher-service:8080/projects', params);
+  const res = http.get('http://dispatcher-service:80/projects', params);
 
   check(res, {
     'status 200':             (r) => r.status === 200,
