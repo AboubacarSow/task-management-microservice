@@ -516,9 +516,8 @@ graph TD
     Services --> Task[task-service\n.NET 9 + MongoDB + gRPC]
     Services --> User[user-service\nFastAPI + MongoDB]
     Services --> Agent[agent-service\nFastAPI + Ollama]
-    Src --> Shared[shared/\nSerilog + Behaviors]
-    Src -->Shared[shared.messaging]
-
+    Src -->   Shared[shared/\nSerilog + Behaviors]
+    Src --> Shared.Messaging[shared.messaging/\nEvents + EventsHanlers + Interceptors]
     Tests --> TestServices[services/]
     TestServices --> DispatcherTests[dispatcher-service.Tests\n20 tests]
     TestServices --> AuthTests[authentication-service.Tests\n17 tests]
@@ -539,8 +538,8 @@ graph TD
 |---|---|---|---|
 | `dispatcher-service` | .NET 9 + Ocelot | API Gateway, JWT validation, routing, correlation ID, exception handling | ✅ Done |
 | `authentication-service` | .NET 9 + Duende IdentityServer | Token issuance, credential delegation to FastAPI, refresh token validation | ✅ Done |
-| `project-service` | .NET 9 + MongoDB + gRPC server | Project CRUD, state machine, ownership enforcement, gRPC server | ✅ Done |
-| `task-service` | .NET 9 + MongoDB + gRPC client | Task CRUD, project validation via gRPC, event publishing | 🔄 In Progress |
+| `project-service` | .NET 9 + MongoDB + gRPC server & client | Project CRUD, state machine, ownership enforcement, gRPC server | ✅ Done |
+| `task-service` | .NET 9 + MongoDB + gRPC client & server | Task CRUD, project validation via gRPC, event publishing | 🔄 In Progress |
 | `user-service` | FastAPI + MongoDB | User registration, credential validation, profile management | ✅ Done |
 | `ai-agent-service` | FastAPI + MongoDB + Ollama | AI-powered project description generation, task suggestion, and project name refinement via llama3.2 | ✅ Done |
 
