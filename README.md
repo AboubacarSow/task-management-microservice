@@ -660,22 +660,22 @@ flowchart LR
 
 ### 4.3 Project Operations
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/create-project.png" width="700"/>
 </p>
 <p align="center">
-  <b>Figure 3:</b> Postman POST /projects returning 201 Created
+  <b>Figure 3:</b> Postman POST /projects returning 201 Created (Create Project)
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/edit-project.png" width="700"/>
 </p>
 <p align="center">
-  <b>Figure 4:</b> Postman PATCH /projects/{id} returning 204 NoContent
+  <b>Figure 4:</b> Postman PATCH /projects/{id} returning 204 NoContent (Edit project)
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/add-user-to-project.png" width="700"/>
 </p>
 <p align="center">
-  <b>Figure 5:</b>  Postman PATCH /projects/{id}/complete returning 204 NoContent
+  <b>Figure 5:</b>  Postman POST /projects/{{projectId}}/group returning 204 NoContent (Adding a user to the project)
 </p>
 
 ### 4.4 Agent Operations
