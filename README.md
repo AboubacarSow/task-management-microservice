@@ -119,7 +119,11 @@ graph TB
         end
 
         subgraph Data Layer
-            MongoDB[(MongoDB)]
+            MongoDB-1[(MongoDB)]
+            MongoDB-2[(MongoDB)]
+            MongoDB-3[(MongoDB)]
+            MongoDB-4[(MongoDB)]
+            
         end
 
         subgraph Observability
@@ -140,14 +144,15 @@ graph TB
     Dispatcher -->|Route| User
 
     Task -->|gRPC :5006→:5005| Project
+    Project --> |gRPC :5006→:5005| Task
 
-    Project -->|Publish Events| RabbitMQ
+     RabbitMQ -->|Subscribe Events| Project 
     Task -->|Publish Events| RabbitMQ
 
-    Project --> MongoDB
-    Task --> MongoDB
-    User --> MongoDB
-    Agent --> MongoDB
+    Project --> MongoDB-1
+    Task --> MongoDB-2
+    User --> MongoDB-3
+    Agent --> MongoDB-4
 
     K6 -->|Results| InfluxDB
     InfluxDB --> Grafana
