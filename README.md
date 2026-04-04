@@ -631,6 +631,12 @@ Each service owns its own MongoDB instance. No shared databases. This enforces t
 ![RabbitMQ Management](images/rabbitmq.png)
 *RabbitMQ management interface — message rates and queue statistics*
 
+### k6 Test Results
+
+![Service Metrics](images/k6-metrics1.png)
+![Dispatcher Metrics](images/k6-metrics2.png)
+*Grafana + k6 — Real-time load testing metrics and performance dashboard*
+
 ---
 
 ## 📚 References
