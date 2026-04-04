@@ -32,8 +32,3 @@ scrape_configs:
     static_configs:
       - targets: ["authentication-service:5004"]
     metrics_path: /metrics
-
-  - job_name: "elasticsearch"
-    static_configs:
-      - targets: ["elasticsearch:9200"]
-    metrics_path: /_prometheus/metrics

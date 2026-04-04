@@ -7,7 +7,7 @@ public record TaskItemDto(
     Guid CreatedByUser,
     Guid? AssignedToUser,
     TaskPriority Priority,
-    Models.TaskStatus Status,
+    string Status,
     DateTime? DueAt,
     string? Description,
     DateTime CreatedAt,

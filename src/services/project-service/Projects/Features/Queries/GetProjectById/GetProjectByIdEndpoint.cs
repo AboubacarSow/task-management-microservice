@@ -6,9 +6,12 @@ public class GetProjectByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/projects/{id:guid}", 
                 async ([FromRoute]Guid id, [FromServices]ISender sender,
-                [FromServices]ClaimsPrincipal claims) =>
+                ClaimsPrincipal claims) =>
         {
-            var userId =Guid.Parse(claims.FindFirst("sub")?.Value!); 
+             var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(currentUserId, out var userId))
+                return Results.BadRequest("Invalid user id");
             var query = new GetProjectByIdQuery(userId,id);
             var result = await sender.Send(query);
 

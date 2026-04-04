@@ -88,6 +88,7 @@ public static IEnumerable<ApiResource> ApiResources =>
                     "profile",
                     "email",
                     "project_fullpermission",
+                    "task_fullpermission",
                     "agent_fullpermission",
                     "user_fullpermission",
                 },

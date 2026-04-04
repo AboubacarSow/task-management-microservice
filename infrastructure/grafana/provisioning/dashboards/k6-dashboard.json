@@ -6,6 +6,7 @@
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
       "fieldConfig": {
         "defaults": {
+          "unit": "ms",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -16,14 +17,14 @@
           }
         }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
       "id": 1,
-      "title": "Avg Response Time per Service (ms)",
+      "title": "Average Response Time (ms)",
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter GROUP BY \"service\"",
-          "refId": "A"
+          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "refId": "A1"
         }
       ]
     },
@@ -31,6 +32,7 @@
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
       "fieldConfig": {
         "defaults": {
+          "unit": "percentunit",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -41,75 +43,93 @@
           }
         }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
       "id": 2,
-      "title": "Error Rate per Service",
+      "title": "HTTP Error Rate",
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter GROUP BY \"service\"",
-          "refId": "A"
+          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter",
+          "refId": "A2"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
       "id": 3,
-      "title": "Response Time (avg / p95 / p99) per Service",
-      "type": "timeseries",
+      "title": "Requests per Second",
+      "type": "gauge",
       "targets": [
         {
-          "query": "SELECT mean(\"value\"), percentile(\"value\", 95), percentile(\"value\", 99) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
-          "refId": "A"
+          "query": "SELECT non_negative_derivative(sum(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter",
+          "refId": "A3"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 8 },
       "id": 4,
-      "title": "Requests per Second (RPS)",
+      "title": "Response Time Trend (avg / p95 / p99)",
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT derivative(mean(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
-          "refId": "A"
+          "query": "SELECT mean(\"value\") AS \"avg\", percentile(\"value\", 95) AS \"p95\", percentile(\"value\", 99) AS \"p99\" FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "refId": "A4"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 17 },
       "id": 5,
       "title": "Virtual Users",
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT mean(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval)",
-          "refId": "A"
+          "query": "SELECT mean(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "refId": "A5"
         }
       ]
     },
     {
       "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 17 },
       "id": 6,
-      "title": "p95 Response Time per Service",
+      "title": "HTTP Requests",
       "type": "timeseries",
       "targets": [
         {
-          "query": "SELECT percentile(\"value\", 95) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval), \"service\"",
-          "refId": "A"
+          "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "refId": "A6"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 25 },
+      "id": 7,
+      "title": "Custom Response Time by Endpoint",
+      "type": "timeseries",
+      "targets": [
+        {
+          "query": "SELECT mean(\"value\") FROM \"response_time\" WHERE $timeFilter GROUP BY time($__interval), \"endpoint\" fill(null)",
+          "refId": "A7"
         }
       ]
     }
   ],
   "refresh": "5s",
   "schemaVersion": 38,
-  "tags": ["k6", "load-testing"],
-  "time": { "from": "now-1h", "to": "now" },
-  "title": "k6 Load Test Results (Improved)",
-  "uid": "k6-load-test-updated",
+  "tags": ["k6", "load-testing", "dispatcher"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Dispatcher Load Test Results",
+  "uid": "dispatcher-load-test",
   "version": 1
 }

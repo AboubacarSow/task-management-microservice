@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using authentication_service.Services;
 using authentication_service.Validators;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Filters;
@@ -29,14 +30,19 @@ internal static class HostingExtensions
             options.Events.RaiseSuccessEvents = true;
 
         }).AddSigningCredential(cert)
-        .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiResources(Config.ApiResources)
             .AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>()
             .AddProfileService<UserProfileService>()
             .AddLicenseSummary();
+
         
+
+        builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo("/app/dataprotection"))
+        .SetApplicationName("authentication-service");
         builder.Services.AddEndpointsApiExplorer();
         return builder.Build();
     }

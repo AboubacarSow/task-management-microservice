@@ -70,7 +70,11 @@ ILogger<EditTaskHandler> logger)
         if (owner != command.CurrentUserId)
             _logger.LogInformation("User in Group updated Task :{TaskId} successfully",
                 command.TaskId);
-        return task.Adapt<TaskItemDto>();
+        return task.Adapt<TaskItemDto>(options =>
+        {
+            options.ForType<TaskItem, TaskItemDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
 
     }
 }

@@ -37,7 +37,10 @@ public class GetProjectByIdHandler(IProjectRepository repository, ILogger<GetPro
         }
 
          _logger.LogInformation("Project with ID {ProjectId} retrieved successfully", project.Id);
-        var dto = project.Adapt<ProjectDto>();
-        return dto;
+        return  project.Adapt<ProjectDto>(options =>
+        {
+            options.ForType<Project, ProjectDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
     }
 }
