@@ -23,8 +23,11 @@
       "type": "gauge",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
-          "refId": "A1"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -49,8 +52,11 @@
       "type": "gauge",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter",
-          "refId": "A2"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -67,8 +73,11 @@
       "type": "gauge",
       "targets": [
         {
-          "query": "SELECT non_negative_derivative(sum(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter",
-          "refId": "A3"
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT non_negative_derivative(sum(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter GROUP BY time(1m) fill(0)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -80,8 +89,11 @@
       "type": "timeseries",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT mean(\"value\") AS \"avg\", percentile(\"value\", 95) AS \"p95\", percentile(\"value\", 99) AS \"p99\" FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "refId": "A4"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -93,8 +105,11 @@
       "type": "timeseries",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT mean(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "refId": "A5"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -106,8 +121,11 @@
       "type": "timeseries",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "refId": "A6"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     },
@@ -119,8 +137,11 @@
       "type": "timeseries",
       "targets": [
         {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
           "query": "SELECT mean(\"value\") FROM \"response_time\" WHERE $timeFilter GROUP BY time($__interval), \"endpoint\" fill(null)",
-          "refId": "A7"
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
         }
       ]
     }

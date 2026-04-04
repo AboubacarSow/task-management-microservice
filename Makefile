@@ -37,22 +37,41 @@ clean:
 
 # Load tests
 load-test:
-	docker-compose -f infrastructure/docker-compose.yml \
-	               -f infrastructure/docker-compose.override.yml \
-	               run --rm k6 run \
-	               --out influxdb=http://influxdb:8086/k6 \
-	               /scripts/load-test.js
+	docker run --rm \
+		--network task-management-system_internal \
+		-v $(PWD)/infrastructure/k6/scripts:/scripts \
+		grafana/k6:latest run \
+		--out influxdb=http://influxdb:8086/k6 \
+		/scripts/load-test.js
 
 load-test-50:
-	docker-compose -f infrastructure/docker-compose.yml \
-	               -f infrastructure/docker-compose.override.yml \
-	               run --rm k6 run \
-	               --out influxdb=http://influxdb:8086/k6 \
-	               /scripts/scenarios/50-users.js
+	docker run --rm \
+		--network task-management-system_internal \
+		-v $(PWD)/infrastructure/k6/scripts:/scripts \
+		grafana/k6:latest run \
+		--out influxdb=http://influxdb:8086/k6 \
+		/scripts/scenarios/50-users.js
 
 load-test-100:
-	docker-compose -f infrastructure/docker-compose.yml \
-	               -f infrastructure/docker-compose.override.yml \
-	               run --rm k6 run \
-	               --out influxdb=http://influxdb:8086/k6 \
-	               /scripts/scenarios/100-users.js
+	docker run --rm \
+		--network task-management-system_internal \
+		-v $(PWD)/infrastructure/k6/scripts:/scripts \
+		grafana/k6:latest run \
+		--out influxdb=http://influxdb:8086/k6 \
+		/scripts/scenarios/100-users.js
+
+load-test-200:
+	docker run --rm \
+		--network task-management-system_internal \
+		-v $(PWD)/infrastructure/k6/scripts:/scripts \
+		grafana/k6:latest run \
+		--out influxdb=http://influxdb:8086/k6 \
+		/scripts/scenarios/200-users.js
+
+load-test-500:
+	docker run --rm \
+		--network task-management-system_internal \
+		-v $(PWD)/infrastructure/k6/scripts:/scripts \
+		grafana/k6:latest run \
+		--out influxdb=http://influxdb:8086/k6 \
+		/scripts/scenarios/500-users.js

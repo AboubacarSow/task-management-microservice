@@ -43,7 +43,7 @@ ILogger<AssignTaskToHandler> logger):IRequestHandler<AssignTaskToCommand,Unit>
 
         var isMember = projectModel.Group
             .Any(g => Guid.Parse(g) == request.CurrentUserId);
-        if (!isMember)
+        if (!isMember && Guid.Parse(projectModel.OwnerId) != request.CurrentUserId)
         {
            _logger.LogWarning(
               "User {UserId} cannot assign task {TaskId}",

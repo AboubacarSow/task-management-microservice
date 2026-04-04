@@ -24,5 +24,13 @@ datasources:
     type: influxdb
     access: proxy
     url: http://influxdb:8086
-    database: k6
     editable: false
+    basicAuth: false
+    jsonData:
+      version: InfluxQL
+      organization: taskmanagement
+      dbName: k6
+      httpMode: GET
+      authType: token
+    secureJsonData:
+      token: supersecrettoken

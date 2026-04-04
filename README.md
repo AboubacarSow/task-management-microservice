@@ -93,16 +93,22 @@ A RESTful service is a web service that follows REST (Representational State Tra
 
 ### 2.3 Microservice Architecture Overview
 
+**Communication Architecture:**
+- **Client-to-Service:** HTTP/1.1  via Dispatcher Gateway
+- **Service-to-Service:** Synchronous via gRPC (project-service :5005, task-service :5006) and asynchronous via RabbitMQ
+
 ```mermaid
 graph TB
     Client([Client])
 
     subgraph Public Network
-        Dispatcher[Dispatcher Service\nOcelot Gateway :80]
+        Dispatcher[Dispatcher Service\nOcelot Gateway :8080]
     end
 
     subgraph Internal Network
-        Project[Project Service\n.NET 9 :5000]
+        Auth[Authentication Service\nDuende IdentityServer :5004]
+        Project[Project Service\n.NET 9 :5000\ngRPC :5005]
+        Task[Task Service\n.NET 9 :5001\ngRPC :5006]
         Agent[AI Agent Service\nFastAPI :5001]
         User[User Service\nFastAPI :5002]
         Task[Task Service\n.NET 9 :5003]
@@ -113,7 +119,11 @@ graph TB
         end
 
         subgraph Data Layer
-            MongoDB[(MongoDB)]
+            MongoDB-1[(MongoDB)]
+            MongoDB-2[(MongoDB)]
+            MongoDB-3[(MongoDB)]
+            MongoDB-4[(MongoDB)]
+            
         end
 
         subgraph Observability
@@ -126,22 +136,23 @@ graph TB
         end
     end
 
-    Client -->|HTTP| Dispatcher
+    Client -->|HTTP/1.1, HTTP/2| Dispatcher
     Dispatcher -->|JWT Validation| Auth
     Dispatcher -->|Route| Project
     Dispatcher -->|Route| Task
     Dispatcher -->|Route| Agent
     Dispatcher -->|Route| User
 
-    Task -->|gRPC - validate project| Project
+    Task -->|gRPC :5006→:5005| Project
+    Project --> |gRPC :5006→:5005| Task
 
-    Project -->|Publish Events| RabbitMQ
+     RabbitMQ -->|Subscribe Events| Project 
     Task -->|Publish Events| RabbitMQ
 
-    Project --> MongoDB
-    Task --> MongoDB
-    User --> MongoDB
-    Agent --> MongoDB
+    Project --> MongoDB-1
+    Task --> MongoDB-2
+    User --> MongoDB-3
+    Agent --> MongoDB-4
 
     K6 -->|Results| InfluxDB
     InfluxDB --> Grafana
@@ -248,24 +259,28 @@ sequenceDiagram
 
 ### 2.9 gRPC Communication — Task Service → Project Service
 
-When a task is created, `task-service` validates the referenced project via **gRPC** instead of REST because:
+When a task is created, `task-service` validates the referenced project via **gRPC** instead of REST. This provides synchronous service-to-service communication:
 
 - Faster than HTTP/JSON for internal service-to-service calls
 - Strongly typed contracts via Protocol Buffers — no runtime deserialization errors
 - Built-in code generation for both client and server
 - Bidirectional streaming support for future use cases
 
+**gRPC Endpoints:**
+- **Project Service gRPC server:** port 5005
+- **Task Service gRPC client:** connects to project-service:5005
+
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Dispatcher
-    participant TaskService
-    participant ProjectService
+    participant Dispatcher as Dispatcher<br/>:8080
+    participant TaskService as Task Service<br/>HTTP :5003
+    participant ProjectService as Project Service<br/>gRPC :5005
 
-    Client->>Dispatcher: POST /tasks (JWT + projectId)
+    Client->>Dispatcher: POST /tasks (JWT + projectId)<br/>HTTP/1.1
     Dispatcher->>TaskService: Forward request
-    TaskService->>ProjectService: gRPC GetProject(projectId, userId)
-    ProjectService-->>TaskService: ProjectResponse (name, status, ownerId)
+    TaskService->>ProjectService: gRPC GetProject(projectId, userId) HTTP/2
+    ProjectService-->>TaskService: ProjectResponse (name, group, peopleworking)
     TaskService->>TaskService: Validate project exists and belongs to user
     TaskService->>TaskService: Create task in MongoDB
     TaskService-->>Dispatcher: 201 Created
@@ -279,43 +294,45 @@ syntax = "proto3";
 
 package projectservice;
 
-service ProjectGrpc {
-  rpc GetProject (GetProjectRequest) returns (GetProjectResponse);
+service ProjectInfo {
+  rpc GetProjectById (GetProjectRequest) returns (ProjectModel);
 }
 
 message GetProjectRequest {
-  string project_id = 1;
-  string user_id    = 2;
+  string projectId = 1;
 }
 
-message GetProjectResponse {
-  string project_id = 1;
-  string name       = 2;
-  string status     = 3;
-  string owner_id   = 4;
+message ProjectModel {
+  string id = 1;
+  string name = 2;
+  repeated string group = 3;
+  repeated string peopleWorking = 4;
 }
 ```
 
 ### 2.10 Event-Driven Communication via RabbitMQ
 
-Services communicate asynchronously through RabbitMQ — publishers do not need to know about consumers:
+Services communicate asynchronously through RabbitMQ for decoupled, non-blocking service-to-service messaging — publishers do not need to know about consumers:
 
 ```mermaid
 flowchart LR
     subgraph Publishers
-        Project[Project Service]
         Task[Task Service]
     end
 
     subgraph RabbitMQ
-        E1[project.created]
-        E2[project.completed]
-        E3[task.created]
+        E1[task.assignedtask]
     end
 
-    Project -->|publishes| E1
-    Project -->|publishes| E2
-    Task -->|publishes| E3
+    subgraph Consumers
+        Project[Project Service 
+        --> 
+        add user to peopleworking]
+    end
+
+    Task -->|publishes| E1
+
+    E1 -->|subscribes| Project
 ```
 
 ### 2.11 Project State Machine
@@ -504,8 +521,8 @@ graph TD
     Services --> Task[task-service\n.NET 9 + MongoDB + gRPC]
     Services --> User[user-service\nFastAPI + MongoDB]
     Services --> Agent[agent-service\nFastAPI + Ollama]
-    Src --> Shared[shared/\nSerilog + Behaviors]
-
+    Src -->   Shared[shared/\nSerilog + Behaviors]
+    Src --> Shared.Messaging[shared.messaging/\nEvents + EventsHanlers + Interceptors]
     Tests --> TestServices[services/]
     TestServices --> DispatcherTests[dispatcher-service.Tests\n20 tests]
     TestServices --> AuthTests[authentication-service.Tests\n17 tests]
@@ -526,8 +543,8 @@ graph TD
 |---|---|---|---|
 | `dispatcher-service` | .NET 9 + Ocelot | API Gateway, JWT validation, routing, correlation ID, exception handling | ✅ Done |
 | `authentication-service` | .NET 9 + Duende IdentityServer | Token issuance, credential delegation to FastAPI, refresh token validation | ✅ Done |
-| `project-service` | .NET 9 + MongoDB + gRPC server | Project CRUD, state machine, ownership enforcement, gRPC server | ✅ Done |
-| `task-service` | .NET 9 + MongoDB + gRPC client | Task CRUD, project validation via gRPC, event publishing | 🔄 In Progress |
+| `project-service` | .NET 9 + MongoDB + gRPC server & client | Project CRUD, state machine, ownership enforcement, gRPC server | ✅ Done |
+| `task-service` | .NET 9 + MongoDB + gRPC client & server | Task CRUD, project validation via gRPC, event publishing | 🔄 In Progress |
 | `user-service` | FastAPI + MongoDB | User registration, credential validation, profile management | ✅ Done |
 | `ai-agent-service` | FastAPI + MongoDB + Ollama | AI-powered project description generation, task suggestion, and project name refinement via llama3.2 | ✅ Done |
 
@@ -752,13 +769,14 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
   <b>Figure 15:</b>  Kibana — structured logs with X-Correlation-ID across services
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/service-metrics.png" width="700"/><br><br>
+  <img src="images/dispatcher-metrics.png" width="700"/>
 </p>
 <p align="center">
-  <b>Figure 16:</b>  Grafana — service metrics dashboard (request rate, latency, errors)
+  <b>Figure 16:</b> Grafana dashboards showing all-service metrics (Request Rate, Avg Response Time, p95 Response Time) and an example dispatcher-service metrics dashboard.
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/targets-page.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 17:</b>  Prometheus — targets page showing all services UP

@@ -49,7 +49,7 @@ public class CreateTaskItemHandler(
         }
          var isMember = projectModel.Group
             .Any(g => Guid.Parse(g) == request.CurrentUserId);
-        if (!isMember)
+        if (!isMember && Guid.Parse(projectModel.OwnerId) != request.CurrentUserId)
         {
             _logger.LogWarning(
                 "User {UserId} is not allowed to create task in Project {ProjectId}",

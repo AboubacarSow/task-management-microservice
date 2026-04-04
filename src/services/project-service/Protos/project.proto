@@ -15,6 +15,7 @@ message GetProjectRequest {
 message ProjectModel {
   string id = 1;
   string name = 2;
-  repeated string group = 3;
-  repeated string peopleWorking = 4;
+  string ownerId =3;
+  repeated string group = 4;
+  repeated string peopleWorking = 5;
 }

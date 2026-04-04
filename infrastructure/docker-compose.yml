@@ -123,14 +123,14 @@ services:
       - internal
 
   elasticsearch:
-    image: elasticsearch:8.13.0
+    image: elasticsearch:9.3.2
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - internal
 
   kibana:
-    image: kibana:8.13.0
+    image: kibana:9.3.2
     networks:
       - internal
     depends_on:
@@ -150,7 +150,7 @@ services:
 
 
   prometheus:
-    image: prom/prometheus:v2.51.0
+    image: prom/prometheus:latest
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
@@ -163,20 +163,21 @@ services:
       - internal
 
   grafana:
-    image: grafana/grafana:10.4.0
+    image: grafana/grafana:latest
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
       - elasticsearch
+      - influxdb
     networks:
       - internal
 
   influxdb:
     image: influxdb:1.8
     volumes:
-      - influxdb_data:/var/lib/influxdb
+      - influxdb_data:/var/lib/influxdb2
     networks:
       - internal
 
@@ -189,8 +190,8 @@ services:
     depends_on:
       - influxdb
       - dispatcher-service
-    profiles:
-      - testing
+    command: run --out influxdb=http://influxdb:8086/k6 /scripts/load-test.js
+    
 
 volumes:
   mongodb_data:

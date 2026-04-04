@@ -16,7 +16,6 @@ global using Microsoft.IdentityModel.Tokens;
 global using project_grpc_server;
 global using Serilog;
 global using shared.Behaviors;
-global using shared.Interceptors;
 global using shared.Metrics;
 global using System.Reflection;
 global using System.Reflection.Metadata;
