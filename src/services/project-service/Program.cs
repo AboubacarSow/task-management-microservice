@@ -87,7 +87,6 @@ builder.Services.AddGrpcClient<TaskInfo.TaskInfoClient>(o =>
     }).AddInterceptor<ServiceTokenInterceptor>();
 
 var app = builder.Build();
-app.UseMetrics();
 
 app.MapGrpcService<ProjectsGrpcService>();
 
