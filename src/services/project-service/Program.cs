@@ -3,7 +3,6 @@ using project_service.Extensions;
 using project_service.Projects.Grpc.Server;
 using Serilog;
 using shared.Behaviors;
-using shared.Interceptors;
 using shared.Metrics;
 using task_grpc_server;
 using shared.messaging.Extensions;
@@ -11,6 +10,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using shared.messaging.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
