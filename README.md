@@ -781,6 +781,12 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
 <p align="center">
   <b>Figure 17:</b>  Prometheus — targets page showing all services UP
 </p>
+<p align="center">
+  <img src="images/rabbitmq.png" width="700"/>
+</p>
+<p align="center">
+  <b>Figure 17:</b>  RabbitMQ management interface displaying system overview, message rates, and queue statistics.
+</p>
 
 ---
 
