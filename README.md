@@ -93,10 +93,6 @@ A RESTful service is a web service that follows REST (Representational State Tra
 
 ### 2.3 Microservice Architecture Overview
 
-**Communication Patterns:**
-- **Client-to-Service:** HTTP/1.1 and HTTP/2 via API Gateway
-- **Service-to-Service:** gRPC (high-performance inter-service calls) and RabbitMQ (async event-driven communication)
-
 ```mermaid
 graph TB
     Client([Client])
@@ -106,10 +102,10 @@ graph TB
     end
 
     subgraph Internal Network
-        Project[Project Service\n.NET 9 :5000\ngRPC :5005]
+        Project[Project Service\n.NET 9 :5000]
         Agent[AI Agent Service\nFastAPI :5001]
         User[User Service\nFastAPI :5002]
-        Task[Task Service\n.NET 9 :5003\ngRPC :5006]
+        Task[Task Service\n.NET 9 :5003]
         Auth[Authentication Service\nDuende IdentityServer :5004]
 
         subgraph Message Broker
@@ -130,14 +126,14 @@ graph TB
         end
     end
 
-    Client -->|HTTP/1.1, HTTP/2| Dispatcher
+    Client -->|HTTP| Dispatcher
     Dispatcher -->|JWT Validation| Auth
     Dispatcher -->|Route| Project
     Dispatcher -->|Route| Task
     Dispatcher -->|Route| Agent
     Dispatcher -->|Route| User
 
-    Task -->|gRPC :5005| Project
+    Task -->|gRPC - validate project| Project
 
     Project -->|Publish Events| RabbitMQ
     Task -->|Publish Events| RabbitMQ
