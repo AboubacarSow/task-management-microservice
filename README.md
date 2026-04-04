@@ -1,164 +1,162 @@
+# 🧩 Task Management Microservice System
 
-# Task Management Microservice System
+> A production-grade distributed task management platform built with microservices, AI-powered assistance, and full observability.
 
-### 👥 Team Members:
+<div align="center">
 
-| First & Last Name | Student Number |  
-|---|---|
-| Hasibullah Mohamand  | 221307114 |
+![.NET 9](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi)
+![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248?style=for-the-badge&logo=mongodb)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.x-FF6600?style=for-the-badge&logo=rabbitmq)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)
+![gRPC](https://img.shields.io/badge/gRPC-Internal-244C5A?style=for-the-badge&logo=grpc)
+![Postman](https://img.shields.io/badge/Postman-Collection-FF6C37?style=for-the-badge&logo=postman)
+
+**87+ passing tests · 6 independent services · Full observability stack · AI-powered agent**
+
+</div>
+
+---
+
+## 👥 Team
+
+| FirstName & LastName | Student Number |
+|------|---------------|
+| Hasibullah Mohamand| 221307114 |
 | Aboubacar Sow | 221307117 |
 
-**Date:** March 2026  
-**Repository:** https://github.com/username/task-management-system.git
+📅 **March 2026** · 📁 [Repository](https://github.com/AboubacarSow/task-management-system.git)
 
 ---
 
-## Table of Contents
-1. [Introduction](#1-introduction)
-2. [System Design & Architecture](#2-system-design--architecture)
-3. [Project Structure & Modules](#3-project-structure--modules)
-4. [Application Screenshots & Test Results](#4-application-screenshots--test-results)
-5. [Conclusion & Discussion](#5-conclusion--discussion)
-6. [References](#6-references)
+## 📋 Table of Contents
+
+1. [What Is This?](#-what-is-this)
+2. [Tech Stack](#-tech-stack)
+3. [Architecture](#-architecture)
+4. [Services at a Glance](#-services-at-a-glance)
+5. [API Reference](#-api-reference)
+6. [Getting Started](#-getting-started)
+7. [Running Tests](#-running-tests)
+8. [Load Testing](#-load-testing)
+9. [Observability](#-observability)
+10. [Key Design Decisions](#-key-design-decisions)
+11. [Known Limitations & Roadmap](#-known-limitations--roadmap)
+12. [References](#-references)
 
 ---
 
-## 1. Introduction
+## 🎯 What Is This?
 
-### Problem Definition
+A fully containerized **distributed task management system** that demonstrates real-world microservice architecture patterns:
 
-Modern software systems face increasing demands for scalability, maintainability, and resilience. Traditional monolithic architectures struggle to meet these demands as applications grow in complexity — a single failure can bring down the entire system, deployments require taking the whole application offline, and scaling individual components is impossible without scaling everything.
-
-### Purpose
-
-The goal of this project is to design and implement a distributed **Task Management System** using a **microservice architecture** where teams can:
-- Create and manage projects with full lifecycle management
-- Assign and track tasks across projects
-- Receive AI-powered task assistance via an intelligent agent service
-- Authenticate securely via industry-standard OAuth2/OIDC
-- Monitor system health and performance in real time
-
-### Why Microservices?
-
-| Benefit | Description |
-|---|---|
-| Independent deployment | Each service can be updated without affecting others |
-| Technology diversity | .NET 9 for business services, Python/FastAPI for AI and user services |
-| Fault isolation | A failure in one service does not bring down the entire system |
-| Scalability | Individual services can be scaled independently based on load |
-| Team autonomy | Different teams can own different services independently |
+- 🔐 **Secure authentication** via OAuth2/OIDC with Duende IdentityServer
+- 📋 **Project & task management** with a rich domain model and state machine
+- 🤖 **AI-powered assistance** — generate descriptions, suggest tasks, and refine project names using a local LLM (llama3.2 via Ollama)
+- 📡 **Mixed communication** — synchronous gRPC for internal service calls, async RabbitMQ for event-driven workflows
+- 🔭 **Full observability** — structured logging, metrics, distributed tracing with correlation IDs
 
 ---
 
-## 2. System Design & Architecture
+## 🛠 Tech Stack
 
-### 2.1 Richardson Maturity Model
+### Business Services
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| API Gateway | .NET 9 + Ocelot | Request routing, JWT validation, correlation IDs |
+| Auth | .NET 9 + Duende IdentityServer | OAuth2/OIDC token issuance & refresh |
+| Project Service | .NET 9 + MongoDB | Project CRUD, state machine, gRPC server |
+| Task Service | .NET 9 + MongoDB + gRPC | Task CRUD, event publishing |
+| User Service | Python + FastAPI + MongoDB | User registration, profile management |
+| AI Agent | Python + FastAPI + Ollama | LLM-powered productivity features |
 
-The Richardson Maturity Model defines four levels of REST API maturity:
+### Infrastructure
+| Tool | Role |
+|------|------|
+| MongoDB | Per-service data store (no shared DB) |
+| RabbitMQ | Async event bus between services |
+| gRPC + Protobuf | Fast, strongly typed internal RPC |
+| Docker Compose | Full-stack local orchestration |
 
-| Level | Name | Description |
-|---|---|---|
-| 0 | The Swamp of POX | Single URI, single HTTP method |
-| 1 | Resources | Multiple URIs representing resources |
-| 2 | HTTP Verbs | Use of HTTP methods (GET, POST, PUT, PATCH, DELETE) |
-| 3 | Hypermedia Controls | HATEOAS — responses include links to related actions |
+### Observability
+| Tool | Role | URL |
+|------|------|-----|
+| Serilog / Python logging | Structured logs | — |
+| Filebeat → Elasticsearch | Log shipping & storage | `localhost:9200` |
+| Kibana | Log visualization & search | `localhost:5601` |
+| prometheus-net → Prometheus | Metrics scraping | `localhost:9090` |
+| Grafana | Dashboards | `localhost:3000` |
+| InfluxDB + k6 | Load test results | `localhost:8086` |
 
-**This project targets Level 2** — each resource has its own URI and uses the correct HTTP verbs:
+### Testing
+| Layer | Framework |
+|-------|----------|
+| .NET unit & integration tests | xUnit |
+| Python unit & API tests | pytest |
+| Load testing | k6 |
 
-```
-GET    /projects                          → list all projects
-POST   /projects                          → create a project
-PATCH  /projects/{id}                     → update a project (partial)
-PATCH  /projects/{id}/complete            → complete a project
-PATCH  /projects/{id}/on-hold             → put project on hold
-PATCH  /projects/{id}/reactivate          → reactivate a project
-PATCH  /projects/{id}/archive             → archive a project
-GET    /tasks                             → list all tasks
-POST   /tasks                             → create a task
-PATCH  /tasks/{id}                        → update a task
-POST   /agent/generate_description        → generate project description
-POST   /agent/suggest_tasks               → suggest tasks for a project
-POST   /agent/refine_project_name         → refine project name
-```
+---
 
-### 2.2 What is a RESTful Service?
+## 🏗 Architecture
 
-A RESTful service is a web service that follows REST (Representational State Transfer) architectural constraints:
-
-- **Stateless** — each request contains all information needed to process it, no session state on server
-- **Uniform Interface** — consistent resource-based URIs with standard HTTP methods
-- **Client-Server** — clear separation between UI concerns and data storage
-- **Cacheable** — responses define themselves as cacheable or non-cacheable
-- **Layered System** — client cannot tell whether connected directly to end server or intermediary
-
-### 2.3 Microservice Architecture Overview
-
-**Communication Architecture:**
-- **Client-to-Service:** HTTP/1.1  via Dispatcher Gateway
-- **Service-to-Service:** Synchronous via gRPC (project-service :5005, task-service :5006) and asynchronous via RabbitMQ
+### High-Level Overview
 
 ```mermaid
 graph TB
-    Client([Client])
+    Client([🌐 Client])
 
-    subgraph Public Network
-        Dispatcher[Dispatcher Service\nOcelot Gateway :8080]
+    subgraph Public["Public Network"]
+        Dispatcher["🔀 Dispatcher Service\nOcelot Gateway :8080\nJWT · Routing · Correlation IDs"]
     end
 
-    subgraph Internal Network
-        Auth[Authentication Service\nDuende IdentityServer :5004]
-        Project[Project Service\n.NET 9 :5000\ngRPC :5005]
-        Task[Task Service\n.NET 9 :5001\ngRPC :5006]
-        Agent[AI Agent Service\nFastAPI :5001]
-        User[User Service\nFastAPI :5002]
-        Task[Task Service\n.NET 9 :5003]
-        Auth[Authentication Service\nDuende IdentityServer :5004]
+    subgraph Internal["Internal Network"]
+        Auth["🔐 Authentication Service\nDuende IdentityServer :5004"]
+        Project["📁 Project Service\n.NET 9 · :5000\ngRPC server :5005"]
+        Task["✅ Task Service\n.NET 9 · :5003\ngRPC client :5006"]
+        User["👤 User Service\nFastAPI · :5002"]
+        Agent["🤖 AI Agent Service\nFastAPI + Ollama · :5001"]
 
-        subgraph Message Broker
+        subgraph Broker["Message Broker"]
             RabbitMQ[(RabbitMQ)]
         end
 
-        subgraph Data Layer
-            MongoDB-1[(MongoDB)]
-            MongoDB-2[(MongoDB)]
-            MongoDB-3[(MongoDB)]
-            MongoDB-4[(MongoDB)]
-            
-        end
-
-        subgraph Observability
-            Elasticsearch[(Elasticsearch)]
-            Prometheus[(Prometheus)]
-            Grafana[Grafana]
-            Kibana[Kibana]
-            InfluxDB[(InfluxDB)]
-            K6[k6 Load Testing]
+        subgraph Data["Data Layer"]
+            DB1[(MongoDB\nProjects)]
+            DB2[(MongoDB\nTasks)]
+            DB3[(MongoDB\nUsers)]
+            DB4[(MongoDB\nAgent Logs)]
         end
     end
 
-    Client -->|HTTP/1.1, HTTP/2| Dispatcher
+    Client -->|HTTP/1.1| Dispatcher
     Dispatcher -->|JWT Validation| Auth
     Dispatcher -->|Route| Project
     Dispatcher -->|Route| Task
-    Dispatcher -->|Route| Agent
     Dispatcher -->|Route| User
+    Dispatcher -->|Route| Agent
 
-    Task -->|gRPC :5006→:5005| Project
-    Project --> |gRPC :5006→:5005| Task
+    Task -->|gRPC GetProject| Project
+    Task -->|Publish task.assignedtask| RabbitMQ
+    RabbitMQ -->|Subscribe → add to peopleWorking| Project
 
-     RabbitMQ -->|Subscribe Events| Project 
-    Task -->|Publish Events| RabbitMQ
+    Project --> DB1
+    Task --> DB2
+    User --> DB3
+    Agent --> DB4
 
-    Project --> MongoDB-1
-    Task --> MongoDB-2
-    User --> MongoDB-3
-    Agent --> MongoDB-4
-
-    K6 -->|Results| InfluxDB
-    InfluxDB --> Grafana
+    Auth -->|Validate credentials| User
 ```
 
-### 2.4 Authentication Flow
+### Communication Patterns
+
+| Pattern | Where Used | Why |
+|---------|-----------|-----|
+| **HTTP/REST** | Client → Gateway → Services | Standard, browser-compatible |
+| **gRPC** | Task Service → Project Service | Fast, type-safe, no JSON overhead |
+| **RabbitMQ** | Task publishes → Project consumes | Decoupled, non-blocking |
+| **JWT** | All authenticated requests | Stateless, verifiable tokens |
+
+### Authentication Flow
 
 ```mermaid
 sequenceDiagram
@@ -170,172 +168,34 @@ sequenceDiagram
     Client->>Gateway: POST /login (email, password)
     Gateway->>IdentityServer: POST /connect/token
     IdentityServer->>UserService: POST /auth/validate (email, password)
-    UserService-->>IdentityServer: 200 OK (id, email, username, first_name, last_name)
+    UserService-->>IdentityServer: 200 OK (id, email, username, names)
     IdentityServer->>UserService: GET /api/users/{id}
     UserService-->>IdentityServer: 200 OK (profile claims)
     IdentityServer-->>Gateway: JWT Access Token + Refresh Token
     Gateway-->>Client: JWT Access Token + Refresh Token
 ```
 
-### 2.5 Agent Flow
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Gateway
-    participant AgentService
-    participant MongoDB
-    participant LLM
-
-    Client->>Gateway: POST /agent/suggest_tasks
-    Gateway->>AgentService: Forward request
-
-    AgentService->>LLM: Generate tasks
-    LLM-->>AgentService: Response
-
-    AgentService->>MongoDB: Log response
-    AgentService-->>Gateway: Suggested tasks
-
-    Gateway-->>Client: Response
-```
-
-### 2.6 User Flow
-
-```mermaid
-sequenceDiagram
-    participant IdentityServer
-    participant UserService
-    participant MongoDB
-
-    IdentityServer->>UserService: POST /auth/validate
-    UserService->>MongoDB: Find user by email and by id
-    MongoDB-->>UserService: User
-
-    UserService-->>IdentityServer: Valid / Invalid
-```
-
-### 2.7 Request Flow Through Gateway
+### Task Creation via gRPC
 
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Gateway
-    participant ProjectService
-    participant UserService
-    participant AgentService
-    participant MongoDB
+    participant Dispatcher as Dispatcher :8080
+    participant TaskService as Task Service :5003
+    participant ProjectService as Project Service gRPC :5005
 
-    Client->>Gateway: PATCH /projects/{id} + JWT
-    Gateway->>Gateway: Validate JWT
-    Gateway->>ProjectService: PATCH /api/projects/{id}
-
-    ProjectService->>MongoDB: GetByIdAsync(id)
-    MongoDB-->>ProjectService: Project
-
-    ProjectService-->>Gateway: 204 NoContent
-    Gateway-->>Client: 204 NoContent
-
-    Note over Gateway,UserService: Other routes may go to user-service
-    Note over Gateway,AgentService: AI endpoints routed to agent-service
-```
-
-### 2.8 Token Refresh Flow
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Gateway
-    participant IdentityServer
-    participant UserService
-
-    Client->>Gateway: POST /login (refresh_token)
-    Gateway->>IdentityServer: POST /connect/token (grant_type=refresh_token)
-    IdentityServer->>UserService: GET /api/users/{id}/active
-    UserService-->>IdentityServer: 200 OK (user is active)
-    IdentityServer-->>Gateway: New JWT Access Token
-    Gateway-->>Client: New JWT Access Token
-
-    Note over IdentityServer,UserService: If user is banned/deleted,\nUserService returns 404\nand refresh is rejected
-```
-
-### 2.9 gRPC Communication — Task Service → Project Service
-
-When a task is created, `task-service` validates the referenced project via **gRPC** instead of REST. This provides synchronous service-to-service communication:
-
-- Faster than HTTP/JSON for internal service-to-service calls
-- Strongly typed contracts via Protocol Buffers — no runtime deserialization errors
-- Built-in code generation for both client and server
-- Bidirectional streaming support for future use cases
-
-**gRPC Endpoints:**
-- **Project Service gRPC server:** port 5005
-- **Task Service gRPC client:** connects to project-service:5005
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Dispatcher as Dispatcher<br/>:8080
-    participant TaskService as Task Service<br/>HTTP :5003
-    participant ProjectService as Project Service<br/>gRPC :5005
-
-    Client->>Dispatcher: POST /tasks (JWT + projectId)<br/>HTTP/1.1
+    Client->>Dispatcher: POST /tasks (JWT + projectId)
     Dispatcher->>TaskService: Forward request
-    TaskService->>ProjectService: gRPC GetProject(projectId, userId) HTTP/2
-    ProjectService-->>TaskService: ProjectResponse (name, group, peopleworking)
-    TaskService->>TaskService: Validate project exists and belongs to user
+    TaskService->>ProjectService: gRPC GetProjectById(projectId)
+    ProjectService-->>TaskService: ProjectModel (name, group, peopleWorking)
+    TaskService->>TaskService: Validate project exists & belongs to user
     TaskService->>TaskService: Create task in MongoDB
+    TaskService->>TaskService: Publish task.assignedtask → RabbitMQ
     TaskService-->>Dispatcher: 201 Created
     Dispatcher-->>Client: 201 Created
 ```
 
-**Proto contract:**
-
-```protobuf
-syntax = "proto3";
-
-package projectservice;
-
-service ProjectInfo {
-  rpc GetProjectById (GetProjectRequest) returns (ProjectModel);
-}
-
-message GetProjectRequest {
-  string projectId = 1;
-}
-
-message ProjectModel {
-  string id = 1;
-  string name = 2;
-  repeated string group = 3;
-  repeated string peopleWorking = 4;
-}
-```
-
-### 2.10 Event-Driven Communication via RabbitMQ
-
-Services communicate asynchronously through RabbitMQ for decoupled, non-blocking service-to-service messaging — publishers do not need to know about consumers:
-
-```mermaid
-flowchart LR
-    subgraph Publishers
-        Task[Task Service]
-    end
-
-    subgraph RabbitMQ
-        E1[task.assignedtask]
-    end
-
-    subgraph Consumers
-        Project[Project Service 
-        --> 
-        add user to peopleworking]
-    end
-
-    Task -->|publishes| E1
-
-    E1 -->|subscribes| Project
-```
-
-### 2.11 Project State Machine
+### Project State Machine
 
 ```mermaid
 stateDiagram-v2
@@ -350,503 +210,441 @@ stateDiagram-v2
     Archived --> [*]
 
     note right of Archived
-        Archived acts as soft delete
-        Data is preserved but hidden
-        from all active queries
+        Soft delete — data preserved
+        but hidden from all queries
     end note
 ```
 
-### 2.12 Dispatcher Middleware Pipeline
+### gRPC Contracts
+#### Task → Project
+
+```protobuf
+service ProjectInfo {
+  rpc GetProjectById (GetProjectRequest) returns (ProjectModel);
+}
+
+message ProjectModel {
+  string id            = 1;
+  string name          = 2;
+  string ownerId       = 3;
+  repeated string group         = 4;
+  repeated string peopleWorking = 5;
+}
+```
+#### Project -> Task
+
+```protobuf
+package task;
+
+service TaskInfo {
+  rpc GetTaskById (GetTaskRequest) returns (TaskModel);
+}
+
+message GetTaskRequest {
+  string projectId = 1;
+}
+
+message TaskModel {
+  bool allCompleted = 1;
+}
+```
+---
+
+## 🔌 Services at a Glance
+
+| Service | Port | Status | Key Features |
+|---------|------|--------|-------------|
+| `dispatcher-service` | 8080 | ✅ Done | Ocelot gateway, JWT, correlation IDs, exception middleware |
+| `authentication-service` | 5004 | ✅ Done | OAuth2 + OIDC, token issuance, refresh validation |
+| `project-service` | 5000 / gRPC 5005 | ✅ Done | CRUD, state machine, DDD aggregates, CQRS with MediatR |
+| `task-service` | 5003 / gRPC 5006 | 🔄 In Progress | CRUD, gRPC client, event publishing |
+| `user-service` | 5002 | ✅ Done | Registration, profile, credential validation |
+| `ai-agent-service` | 5001 | ✅ Done | LLM-powered description, task suggestion, name refinement |
+
+### Dispatcher Middleware Pipeline
 
 ```mermaid
 flowchart TD
-    A[Incoming Request] --> B[GlobalExceptionHandlerMiddleware]
+    A[Incoming Request] --> B[GlobalExceptionHandlerMiddleware\ncatches all errors → 500 / 502]
     B --> C[CorrelationIdMiddleware]
     C --> D{Has X-Correlation-ID?}
     D -->|No| E[Generate new GUID]
     D -->|Yes| F[Use existing ID]
     E --> G[Add to Request + Response Headers]
     F --> G
-    G --> H[Serilog Request Logging]
-    H --> I[UseAuthentication]
-    I --> J[UseAuthorization]
-    J --> K[Ocelot Routing]
-    K --> L{JWT Valid + Scope OK?}
-    L -->|No| M[401/403]
-    L -->|Yes| N[Forward to Downstream]
-    N --> O{Downstream Response}
-    O -->|2xx| P[Return Response to Client]
-    O -->|HttpRequestException| Q[502 Bad Gateway]
-    O -->|Unhandled Exception| R[500 Internal Server Error]
+    G --> H[SerilogRequestLogging\nmethod · path · status · duration]
+    H --> I[UseAuthentication\nJWT signature validation]
+    I --> J[UseAuthorization\nscope enforcement]
+    J --> K[Ocelot\nroute to downstream]
+    K --> L{Response}
+    L -->|2xx| M[✅ Return to Client]
+    L -->|HttpRequestException| N[502 Bad Gateway]
+    L -->|Unhandled| O[500 Internal Server Error]
 ```
-
-### 2.13 Class Structure
-
-#### Project Aggregate
-
-```mermaid
-classDiagram
-    class BaseEntity {
-        +Guid Id
-        +string Name
-        +DateTime CreatedAt
-        +DateTime LastUpdatedAt
-        +DateTime? DueAt
-        +string? Description
-    }
-
-    class Project {
-        +ProjectStatus Status
-        +Guid CreatedByUser
-        +Project(name, userId, description?)
-        +SetDescription(description)
-        +SetDueDate(date)
-        +Complete()
-        +PutOnHold()
-        +Reactivate()
-        +Archive()
-    }
-
-    class ProjectStatus {
-        <<enumeration>>
-        Active
-        Completed
-        OnHold
-        Archived
-    }
-
-    BaseEntity <|-- Project
-    Project --> ProjectStatus
-```
-
-#### CQRS Pattern
-
-```mermaid
-classDiagram
-    class IRequest {
-        <<interface>>
-    }
-
-    class CreateProjectCommand {
-        +string Name
-        +Guid CreatedByUser
-        +string? Description
-    }
-
-    class UpdateProjectCommand {
-        +Guid ProjectId
-        +Guid UserId
-        +string? Description
-        +DateTime? DueAt
-    }
-
-    class CreateProjectHandler {
-        -IProjectRepository _repository
-        -ILogger _logger
-        +Handle(command, token) Guid
-    }
-
-    class UpdateProjectHandler {
-        -IProjectRepository _repository
-        -ILogger _logger
-        +Handle(command, token)
-    }
-
-    class IProjectRepository {
-        <<interface>>
-        +AddAsync(project)
-        +EditAsync(project)
-        +GetByIdAsync(id) Project
-        +GetAllByUserId(userId) List~Project~
-    }
-
-    IRequest <|-- CreateProjectCommand
-    IRequest <|-- UpdateProjectCommand
-    CreateProjectHandler --> IProjectRepository
-    UpdateProjectHandler --> IProjectRepository
-```
-
-### 2.14 Complexity Analysis
-
-| Operation | Time Complexity | Space Complexity | Notes |
-|---|---|---|---|
-| Create Project | O(1) | O(1) | Single MongoDB insert with generated UUID |
-| Get Project by ID | O(1) | O(1) | MongoDB indexed by `_id` |
-| Get Projects by User | O(n) | O(n) | n = number of user's projects |
-| Update Project | O(1) | O(1) | MongoDB `ReplaceOne` by ID |
-| Project State Transition | O(1) | O(1) | Simple status check + assignment |
-| JWT Validation | O(1) | O(1) | Cryptographic signature verification |
-| Correlation ID Generation | O(1) | O(1) | `Guid.NewGuid()` |
-| Route Matching (Ocelot) | O(r) | O(1) | r = number of configured routes |
-
-### 2.15 Literature Review
-
-**Microservices Architecture** (Newman, 2015) — foundational reference defining microservices as small, independently deployable services organized around business capabilities. Influenced the service decomposition strategy — each service owns its data store and exposes a well-defined API.
-
-**Domain-Driven Design** (Evans, 2003) — influenced the aggregate design. `Project` is the aggregate root with encapsulated state transitions (`Complete()`, `Archive()`, etc.) enforcing business invariants at the domain model level rather than in application services.
-
-**CQRS Pattern** (Young, 2010) — commands (write) and queries (read) are separated using MediatR. This improves scalability since read and write workloads can be optimized independently, and improves maintainability through single-responsibility handlers.
-
-**Test-Driven Development** (Beck, 2002) — all business logic is written test-first following the Red → Green → Refactor cycle. This ensures correctness, enables safe refactoring, and serves as living documentation of expected behavior.
-
-**OAuth2 + OIDC** (RFC 6749, RFC 7519) — industry standard for authentication and authorization. Implemented via Duende IdentityServer with the Resource Owner Password flow for user login and Client Credentials for service-to-service communication.
-
-**The Twelve-Factor App** (Wiggins, 2011) — configuration is externalized via environment variables and `appsettings.{Environment}.json`, backing services (MongoDB, RabbitMQ) are treated as attached resources, and logs are treated as event streams via Serilog.
-
-**FastAPI Framework** (Ramirez, 2018) — FastAPI is a modern, high-performance web framework for building APIs with Python based on standard Python type hints. It provides automatic validation via Pydantic, asynchronous request handling, and built-in OpenAPI documentation. It was used for the user-service and ai-agent-service due to its rapid development capabilities and strong validation support.
-
-**Pydantic Data Validation** (Colvin, 2017) — Pydantic enables data parsing and validation using Python type annotations. It ensures that all incoming API requests conform to expected schemas, reducing runtime errors and improving API reliability. It is heavily used in both FastAPI-based services.
-
-**Large Language Models (LLMs)** — Recent advances in transformer-based models (Vaswani et al., 2017) have enabled natural language understanding and generation capabilities. The ai-agent-service integrates a local LLM via Ollama to provide intelligent task suggestions and project descriptions, demonstrating the application of AI within microservice architectures.
-
-**Ollama Local LLM Serving** — Ollama enables running large language models locally without cloud dependency, providing privacy, low latency, and offline capabilities. It was used to integrate AI functionality into the system without external API reliance.
 
 ---
 
-## 3. Project Structure & Modules
+## 📡 API Reference
 
-### 3.1 Solution Structure
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/login` | Get JWT access token + refresh token |
+| `POST` | `/login` (refresh_token grant) | Rotate refresh token |
 
-```mermaid
-graph TD
-    Solution[Task Management Solution]
-    Solution --> Src[src/]
-    Solution --> Tests[tests/]
-    Solution --> Infra[infrastructure/]
+### Projects
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/projects` | List all projects for authenticated user |
+| `POST` | `/projects` | Create a new project |
+| `PATCH` | `/projects/{id}` | Update project details |
+| `PATCH` | `/projects/{id}/state` | Update Project State|
+| `POST` | `/projects/{id}/group` | Add a user to the project group |
 
-    Src --> Services[services/]
-    Services --> Dispatcher[dispatcher-service\nOcelot Gateway]
-    Services --> Auth[authentication-service\nDuende IdentityServer]
-    Services --> Project[project-service\n.NET 9 + MongoDB]
-    Services --> Task[task-service\n.NET 9 + MongoDB + gRPC]
-    Services --> User[user-service\nFastAPI + MongoDB]
-    Services --> Agent[agent-service\nFastAPI + Ollama]
-    Src -->   Shared[shared/\nSerilog + Behaviors]
-    Src --> Shared.Messaging[shared.messaging/\nEvents + EventsHanlers + Interceptors]
-    Tests --> TestServices[services/]
-    TestServices --> DispatcherTests[dispatcher-service.Tests\n20 tests]
-    TestServices --> AuthTests[authentication-service.Tests\n17 tests]
-    TestServices --> ProjectTests[project-service.Tests\n22 tests]
-    TestServices --> TaskTests[task-service.Tests]
+### Tasks
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/tasks` | List all tasks for authenticated user |
+| `POST` | `/tasks` | Create a task (validates project via gRPC) |
+| `PATCH` | `/tasks/{id}` | Update a task |
 
-    Infra --> DockerCompose[docker-compose.yml]
-    Infra --> Override[docker-compose.override.yml]
-    Infra --> Filebeat[filebeat/]
-    Infra --> Prometheus[prometheus/]
-    Infra --> Grafana[grafana/]
-    Infra --> K6[k6/]
-```
+### AI Agent
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/agent/generate_description` | Generate a project description from a prompt |
+| `POST` | `/agent/suggest_tasks` | Get AI-suggested task list for a project |
+| `POST` | `/agent/refine_project_name` | Polish a project name using LLM |
 
-### 3.2 Service Responsibilities
-
-| Service | Technology | Responsibility | Status |
-|---|---|---|---|
-| `dispatcher-service` | .NET 9 + Ocelot | API Gateway, JWT validation, routing, correlation ID, exception handling | ✅ Done |
-| `authentication-service` | .NET 9 + Duende IdentityServer | Token issuance, credential delegation to FastAPI, refresh token validation | ✅ Done |
-| `project-service` | .NET 9 + MongoDB + gRPC server & client | Project CRUD, state machine, ownership enforcement, gRPC server | ✅ Done |
-| `task-service` | .NET 9 + MongoDB + gRPC client & server | Task CRUD, project validation via gRPC, event publishing | 🔄 In Progress |
-| `user-service` | FastAPI + MongoDB | User registration, credential validation, profile management | ✅ Done |
-| `ai-agent-service` | FastAPI + MongoDB + Ollama | AI-powered project description generation, task suggestion, and project name refinement via llama3.2 | ✅ Done |
-
-### 3.3 Dispatcher Middleware
-
-| Middleware | Order | Responsibility |
-|---|---|---|
-| `GlobalExceptionHandlerMiddleware` | 1st — outermost | Catches all unhandled exceptions, returns 500 or 502 |
-| `CorrelationIdMiddleware` | 2nd | Generates/forwards `X-Correlation-ID` header |
-| `SerilogRequestLogging` | 3rd | Logs method, path, status code, duration |
-| `UseAuthentication` | 4th | Validates JWT signature against IdentityServer |
-| `UseAuthorization` | 5th | Enforces scope-based access |
-| `Ocelot` | 6th — innermost | Routes to downstream services |
-
-### 3.4 User Service
-
-The user-service is implemented in FastAPI and backed by MongoDB. It is responsible for:
-
-- registering new users
-- retrieving and updating user profiles
-- validating email/password credentials for the authentication service
-- exposing user claim data such as sub, email, given_name, and family_name
-- checking whether a user is active during refresh token validation
-
-Unlike the .NET business services, the user-service follows a lightweight Python architecture with:
-
-- Pydantic models for request/response validation
-- repository abstraction for data access
-- service layer for business rules
-- pytest-based unit and API tests
-
-### 3.5 AI Agent Service
-
-The ai-agent-service is implemented in FastAPI and integrates with a local Ollama model (llama3.2) to provide AI-assisted productivity features. This service is stateless and can be scaled independently depending on LLM workload. It exposes endpoints such as:
-
-- POST /agent/generate_description
-- POST /agent/suggest_tasks
-- POST /agent/refine_project_name
-
-Its responsibilities include:
-
-- generating project descriptions from short prompts
-- suggesting task lists for project planning
-- refining project names into clearer and more professional forms
-- logging generated responses into MongoDB for traceability and future analysis
-
-The service is designed as a lightweight Python microservice with:
-
-- FastAPI routing
-- Pydantic request/response models
-- a dedicated agent/service layer
-- MongoDB-backed logging
-- pytest-based validation and API tests
-
-### 3.6 TDD Approach
-
-All business logic follows the Red → Green → Refactor cycle:
-
-```mermaid
-flowchart LR
-    A[🔴 Write Failing Test] --> B[🟢 Minimal Implementation]
-    B --> C[♻️ Refactor]
-    C --> A
-```
-
-**Test Coverage:**
-
-| Service | Test Classes | Total Tests | Coverage Areas |
-|---|---|---|---|
-| `authentication-service.Tests` | 2 | 17 | Credential validation, profile claims, active check |
-| `project-service.Tests` | 4 | 22 | Handler logic, validation, model state transitions |
-| `dispatcher-service.Tests` | 3 | 20 | Middleware behavior, Ocelot config validation |
-| `user_service.Tests` | 2 | 22 | User CRUD behavior, Api validation |
-| `ai_agent_service.Tests` | 2 | 6 | Agent behavior, Api validation |
-| **Total** | **13** | **87** | |
-
-### 3.7 Observability Stack
-
-| Tool | Role | Access |
-|---|---|---|
-| **Serilog** | Structured logging in all .NET services | — |
-| **Python logging** | Structured logging in all python services | — |
-| **Filebeat** | Ships container logs to Elasticsearch | — |
-| **Elasticsearch** | Log storage and indexing | `localhost:9200` |
-| **Kibana** | Log visualization and search | `localhost:5601` |
-| **prometheus-net** | Exposes `/metrics` in all .NET services | — |
-| **Prometheus** | Scrapes and stores metrics | `localhost:9090` |
-| **Grafana** | Metrics and log dashboards | `localhost:3000` |
-| **InfluxDB** | Stores k6 load test results | `localhost:8086` |
-| **k6** | Load testing tool | — |
+> All endpoints (except `/login`) require a valid JWT in the `Authorization: Bearer <token>` header.
 
 ---
 
-## 4. Application Screenshots & Test Results
+## 🚀 Getting Started
 
-### 4.1 Authentication — Token Request
+### Prerequisites
 
-<p align="center">
-  <img src="images/auth-jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 1:</b> Postman POST /login returning JWT access token and refresh token
-</p>
+| Tool | Version | Notes |
+|------|---------|-------|
+| Docker | 24+ | Required |
+| Docker Compose | v2+ | Required |
+| Ollama | Latest | Required for AI agent |
+| .NET SDK | 9.0 | Only if running services locally |
+| Python | 3.11+ | Only if running services locally |
 
-### 4.2 JWT Claims — Decoded Token
+### 1. Clone the repository
 
-<p align="center">
-  <img src="images/decoded-jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 2:</b> jwt.io showing decoded token with sub, email, given_name, family_name, scope claims
-</p>
+```bash
+git clone https://github.com/username/task-management-system.git
+cd task-management-system
+```
 
-### 4.3 Project Operations
-<p align="center">
-  <img src="images/create-project.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 3:</b> Postman POST /projects returning 201 Created (Create Project)
-</p>
-<p align="center">
-  <img src="images/edit-project.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 4:</b> Postman PATCH /projects/{id} returning 204 NoContent (Edit project)
-</p>
-<p align="center">
-  <img src="images/add-user-to-project.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 5:</b>  Postman POST /projects/{{projectId}}/group returning 204 NoContent (Adding a user to the project)
-</p>
+### 2. Pull the LLM model (for AI agent)
 
-### 4.4 Agent Operations
-<p align="center">
-  <img src="images/generate-description.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 6:</b> Postman POST /agent/generate_description returning 200 OK
-</p>
-<p align="center">
-  <img src="images/suggest-tasks.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 7:</b> Postman POST /agent/suggest_tasks returning 200 OK
-</p>
-<p align="center">
-  <img src="images/refine-project-name.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 8:</b>  Postman POST /agent/refine_project_name returning 200 OK
-</p>
+```bash
+ollama pull llama3.2
+```
 
-### 4.5 Unit Test Results
+### 3. Start the full stack
 
-#### Authentication Service — 17 Tests ✅
-<p align="center">
-  <img src="images/jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 9:</b>   dotnet test output — all GREEN
-</p>
+```bash
+make dev
+```
 
-#### Project Service — 22 Tests ✅
-<p align="center">
-  <img src="images/jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 10:</b>  dotnet test output — all GREEN
-</p>
+This starts all 6 services, MongoDB instances, RabbitMQ, and the full observability stack via Docker Compose.
 
-#### Dispatcher Service — 20 Tests ✅
-<p align="center">
-  <img src="images/jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 11:</b>   dotnet test output — all GREEN
-</p>
+### 4. Verify everything is running
 
-#### User Service — 22 Tests ✅
-<p align="center">
-  <img src="images/user-test.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 12:</b>   pytest test output — all GREEN
-</p>
+```bash
+docker compose ps
+```
 
-#### AI Agent Service — 6 Tests ✅
-<p align="center">
-  <img src="images/ai-agent-test.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 13:</b>   pytest test output — all GREEN
-</p>
+You should see all 6 services and supporting infrastructure in `Up` state.
 
-### 4.6 Load Test Results
+### 5. Get an access token
 
-Tests performed using **k6** against the dispatcher service. Each scenario runs for 2 minutes at the specified concurrent user count.
+The `/login` endpoint uses **OAuth2 Resource Owner Password** flow with `application/x-www-form-urlencoded`:
 
+```bash
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "grant_type=password" \
+  --data-urlencode "client_id=postman-client" \
+  --data-urlencode "client_secret=postman-secret" \
+  --data-urlencode "username=user@example.com" \
+  --data-urlencode "password=string" \
+  --data-urlencode "scope=openid profile project_fullpermission offline_access"
+```
 
-**Results:**
+Use the returned `access_token` as `Authorization: Bearer <token>` for all subsequent requests.
+
+> 🔓 **Public endpoints** (no token required): `POST /login` and `POST /users` (register).  
+> 🔒 **All other endpoints** require a valid JWT in the `Authorization: Bearer <token>` header.
+
+![Authentication — JWT token response](images/auth-jwt-token.png)
+*Postman: POST /login returning JWT access token and refresh token*
+
+![Decoded JWT claims](images/decoded-jwt-token.png)
+*jwt.io showing decoded token with `sub`, `email`, `given_name`, `family_name`, `scope` claims*
+
+### Service URLs (local)
+
+| Service | URL |
+|---------|-----|
+| API Gateway | http://localhost:8080 |
+| Kibana | http://localhost:5601 |
+| Grafana | http://localhost:3000 |
+| Prometheus | http://localhost:9090 |
+| RabbitMQ Management | http://localhost:15672 |
+| Elasticsearch | http://localhost:9200 |
+| InfluxDB | http://localhost:8086 |
+
+---
+
+## 🧪 Running Tests
+
+### .NET Services (xUnit)
+
+Run all .NET tests from the repository root:
+
+```bash
+dotnet test
+```
+
+Or target a specific service:
+
+```bash
+# Authentication Service (17 tests)
+dotnet test tests/services/authentication-service.Tests/
+
+# Project Service (22 tests)
+dotnet test tests/services/project-service.Tests/
+
+# Dispatcher Service (20 tests)
+dotnet test tests/services/dispatcher-service.Tests/
+```
+
+### Python Services (pytest)
+
+```bash
+# User Service (22 tests)
+cd src/services/user-service
+pip install -r requirements-test.txt
+pytest
+
+# AI Agent Service (6 tests)
+cd src/services/agent-service
+pip install -r requirements-test.txt
+pytest
+```
+
+### Test Coverage Summary
+
+| Service | Tests | Status |
+|---------|-------|--------|
+| `authentication-service` | 17 | ✅ All passing |
+| `project-service` | 22 | ✅ All passing |
+| `dispatcher-service` | 20 | ✅ All passing |
+| `user-service` | 22 | ✅ All passing |
+| `ai-agent-service` | 6 | ✅ All passing |
+| **Total** | **87** | ✅ |
+
+### What's Tested
+
+- **authentication-service** — credential validation, profile claims, active user check
+- **project-service** — handler logic, validation, all state machine transitions
+- **dispatcher-service** — middleware behavior, Ocelot configuration, correlation ID generation
+- **user-service** — CRUD behavior, API contract validation
+- **ai-agent-service** — agent behavior, API endpoint validation
+
+> All business logic follows the **Red → Green → Refactor** TDD cycle.
+
+---
+
+## 📈 Load Testing
+
+Load tests run via **k6** against the dispatcher service. Results are streamed to InfluxDB and visualized in Grafana.
+
+### Run a load test
+
+```bash
+make load-test
+```
+
+### Test scenarios
+
+Each scenario runs for 2 minutes:
 
 | Concurrent Users | Avg Response (ms) | p95 Response (ms) | Error Rate | Throughput (req/s) |
-|---|---|---|---|---|
+|-----------------|------------------|------------------|------------|-------------------|
 | 50 | TBD | TBD | TBD | TBD |
 | 100 | TBD | TBD | TBD | TBD |
 | 200 | TBD | TBD | TBD | TBD |
 | 500 | TBD | TBD | TBD | TBD |
-<p align="center">
-  <img src="images/jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 14:</b>  Grafana k6 dashboard — real-time metrics during load test
-</p>
 
-
-### 4.6 Observability
-<p align="center">
-  <img src="images/jwt-token.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 15:</b>  Kibana — structured logs with X-Correlation-ID across services
-</p>
-<p align="center">
-  <img src="images/service-metrics.png" width="700"/><br><br>
-  <img src="images/dispatcher-metrics.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 16:</b> Grafana dashboards showing all-service metrics (Request Rate, Avg Response Time, p95 Response Time) and an example dispatcher-service metrics dashboard.
-</p>
-<p align="center">
-  <img src="images/targets-page.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 17:</b>  Prometheus — targets page showing all services UP
-</p>
-<p align="center">
-  <img src="images/rabbitmq.png" width="700"/>
-</p>
-<p align="center">
-  <b>Figure 17:</b>  RabbitMQ management interface displaying system overview, message rates, and queue statistics.
-</p>
+View live results at **http://localhost:3000** (Grafana → k6 dashboard).
 
 ---
 
-## 5. Conclusion & Discussion
+## 🔭 Observability
 
-### Achievements
+### Distributed Tracing
 
-- ✅ Full microservice architecture with 6 independent services
-- ✅ Single entry point via Ocelot gateway with JWT validation and scope enforcement
-- ✅ Centralized authentication with Duende IdentityServer delegating to FastAPI
-- ✅ TDD across all .NET and Python services — 87+ passing tests
-- ✅ Rich domain model — project state machine with business rules enforced at model level
-- ✅ CQRS pattern with MediatR — clean separation of commands and queries
-- ✅ Distributed tracing via correlation IDs across all services
-- ✅ Full observability stack — Elasticsearch, Kibana, Prometheus, Grafana
-- ✅ Load testing with k6 — validated at 50, 100, 200, 500 concurrent users
-- ✅ Fully containerized with Docker — reproducible across all environments
-- ✅ gRPC for high-performance service-to-service communication
-- ✅ Event-driven architecture with RabbitMQ for async service communication
+Every request gets an `X-Correlation-ID` header — generated by the dispatcher if not present, and forwarded to all downstream services. This lets you trace a single request across all service logs in Kibana.
 
-### Limitations
+### Logs → Kibana
 
-- ❌ **No HTTPS** — services communicate over HTTP internally. Production requires TLS termination at the gateway
-- ❌ **IdentityServer signing keys not persisted** — keys are lost on restart without a persistent key store
-- ❌ **In-memory IdentityServer config** — clients and scopes are hardcoded. Production should use a database-backed config store with EF Core
-- ❌ **No circuit breaker** — if a downstream service goes down, requests fail without fallback or retry
-- ❌ **No API versioning** — breaking changes affect all clients immediately
-- ❌ **Single MongoDB instance** — no replication or sharding. Production requires a MongoDB replica set
+All services write structured logs. Filebeat ships container logs to Elasticsearch.
 
-### Possible Improvements
+```
+http://localhost:5601
+```
 
-- **HTTPS** — add TLS termination at the gateway with Let's Encrypt
-- **Circuit breaker** — add Polly for resilience, retry policies, and fallback responses
-- **Persistent IdentityServer config** — move clients/scopes to database with EF Core
-- **API versioning** — introduce `/v1/`, `/v2/` route prefixes for safe evolution
-- **Redis caching** — cache frequently accessed project data to reduce MongoDB load
-- **Health checks** — add `/health` endpoints to all services for Docker and Kubernetes monitoring
-- **Kubernetes** — migrate from docker-compose to Kubernetes for production-grade orchestration
-- **Saga pattern** — handle distributed transactions across services with compensating transactions
-- **Event sourcing** — store all domain events for complete audit trail and temporal queries
-- **HATEOAS** — evolve to Richardson Maturity Level 3 with self-describing API responses
+Filter by `X-Correlation-ID` to trace a request end-to-end.
+
+### Metrics → Grafana
+
+All .NET services expose `/metrics` (via prometheus-net). Prometheus scrapes them every 15s. Grafana dashboards show:
+
+- Request rate per service
+- Average & p95 response time
+- Error rates
+- k6 load test results (via InfluxDB)
+
+```
+http://localhost:3000
+```
+
+### Prometheus Targets
+
+```
+http://localhost:9090/targets
+```
+
+All services should show `UP`.
 
 ---
 
-## 6. References
+## 🏛 Key Design Decisions
+
+### Why gRPC for Task → Project?
+
+When a task is created, the task service needs to verify the referenced project exists and belongs to the user. gRPC gives us:
+- **~3× faster** than HTTP/JSON for internal calls
+- **Compile-time safety** via Protocol Buffers — no runtime deserialization errors
+- **Clear contracts** — the `.proto` file is the single source of truth
+
+### Why RabbitMQ for task assignment events?
+
+When a user is assigned to a task, the project service needs to add them to `peopleWorking`. This doesn't need to be synchronous — using RabbitMQ means:
+- Task service doesn't wait for project service
+- If project service is down, the event is queued and processed when it recovers
+- Services are truly decoupled
+
+### Why CQRS with MediatR?
+
+Commands (create, update, archive) and queries (list, get by ID) have very different performance and complexity profiles. Separating them means:
+- Each handler has a single responsibility
+- Read and write paths can be optimized independently
+- Adding new operations doesn't touch existing handlers
+
+### Richardson Maturity Level
+
+This project targets **Level 2** — every resource has its own URI with proper HTTP verb semantics. HATEOAS (Level 3) is a possible future improvement.
+
+### Per-service databases
+
+Each service owns its own MongoDB instance. No shared databases. This enforces true service independence and prevents tight coupling at the data layer.
+
+---
+
+## ⚠️ Known Limitations & Roadmap
+
+### Current Limitations
+
+| Area | Issue |
+|------|-------|
+| **HTTPS** | Services communicate over HTTP internally. TLS termination needed in production. |
+| **IdentityServer keys** | Signing keys are not persisted — lost on restart. |
+| **Config store** | IdentityServer clients/scopes are hardcoded. Should be database-backed. |
+| **Resilience** | No circuit breaker — downstream failures propagate immediately. |
+| **API versioning** | No `/v1/` prefix — breaking changes affect all clients. |
+| **MongoDB** | Single instance — no replication or sharding. |
+
+### Planned Improvements
+
+- [ ] TLS termination at gateway (Let's Encrypt)
+- [ ] Polly circuit breaker + retry policies
+- [ ] Persistent IdentityServer config with EF Core
+- [ ] API versioning (`/v1/`, `/v2/`)
+- [ ] Redis caching for hot project data
+- [ ] `/health` endpoints + Docker/Kubernetes probes
+- [ ] Kubernetes migration from docker-compose
+- [ ] Saga pattern for distributed transactions
+- [ ] Event sourcing for full audit trail
+- [ ] HATEOAS (Richardson Level 3)
+
+---
+
+## 📸 Screenshots
+
+### Project Operations
+
+![Create Project](images/create-project.png)
+*POST /projects → 201 Created*
+
+![Edit Project](images/edit-project.png)
+*PATCH /projects/{id} → 204 NoContent*
+
+![Add User to Project](images/add-user-to-project.png)
+*POST /projects/{id}/group → 204 NoContent*
+
+### AI Agent Operations
+
+![Generate Description](images/generate-description.png)
+*POST /agent/generate_description → 200 OK*
+
+![Suggest Tasks](images/suggest-tasks.png)
+*POST /agent/suggest_tasks → 200 OK*
+
+![Refine Project Name](images/refine-project-name.png)
+*POST /agent/refine_project_name → 200 OK*
+
+### Test Results
+
+![User Service Tests](images/user-test.png)
+*pytest — user-service: 22 tests passing*
+
+![AI Agent Service Tests](images/ai-agent-test.png)
+*pytest — ai-agent-service: 6 tests passing*
+
+### Observability
+
+![Service Metrics](images/service-metrics.png)
+*Grafana — all-service metrics dashboard (Request Rate, Avg Response Time, p95)*
+
+![Dispatcher Metrics](images/dispatcher-metrics.png)
+*Grafana — dispatcher-service detailed metrics dashboard*
+
+![Prometheus Targets](images/targets-page.png)
+*Prometheus targets page — all services UP*
+
+![RabbitMQ Management](images/rabbitmq.png)
+*RabbitMQ management interface — message rates and queue statistics*
+
+---
+
+## 📚 References
 
 - Newman, S. (2015). *Building Microservices*. O'Reilly Media.
-- Evans, E. (2003). *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Addison-Wesley.
+- Evans, E. (2003). *Domain-Driven Design*. Addison-Wesley.
 - Beck, K. (2002). *Test-Driven Development: By Example*. Addison-Wesley.
 - Wiggins, A. (2011). *The Twelve-Factor App*. https://12factor.net
 - Richardson, L. (2008). *Richardson Maturity Model*. https://martinfowler.com/articles/richardsonMaturityModel.html
 - IETF RFC 6749 — *The OAuth 2.0 Authorization Framework*
 - IETF RFC 7519 — *JSON Web Token (JWT)*
-- Duende Software. (2024). *Duende IdentityServer Documentation*. https://docs.duendesoftware.com
-- Ocelot. (2024). *Ocelot API Gateway Documentation*. https://ocelot.readthedocs.io
-- Grafana Labs. (2024). *k6 Load Testing Documentation*. https://k6.io/docs
-- Prometheus. (2024). *Prometheus Documentation*. https://prometheus.io/docs
-- MediatR. (2024). *MediatR Documentation*. https://github.com/jbogard/MediatR
-- Serilog. (2024). *Serilog Documentation*. https://serilog.net
-- Ramirez, S. (2018). *FastAPI Documentation*. https://fastapi.tiangolo.com
-- Colvin, S. (2017). *Pydantic Documentation*. https://docs.pydantic.dev
-- Vaswani, A., et al. (2017). *Attention is All You Need*. Advances in Neural Information Processing Systems.
-- Ollama. (2024). *Ollama Documentation*. https://ollama.com
+- [Duende IdentityServer Docs](https://docs.duendesoftware.com)
+- [Ocelot API Gateway Docs](https://ocelot.readthedocs.io)
+- [k6 Load Testing Docs](https://k6.io/docs)
+- [Prometheus Docs](https://prometheus.io/docs)
+- [MediatR](https://github.com/jbogard/MediatR) · [Serilog](https://serilog.net) · [FastAPI](https://fastapi.tiangolo.com) · [Ollama](https://ollama.com)
+- Vaswani, A., et al. (2017). *Attention is All You Need*. NeurIPS.
