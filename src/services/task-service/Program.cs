@@ -1,4 +1,20 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5003, o =>
+    {
+        o.Protocols = HttpProtocols.Http1;
+    });
+
+    options.ListenAnyIP(5006, o =>
+    {
+        o.Protocols = HttpProtocols.Http2;
+    });
+});
 
 builder.Host.UseCustomSerilog("taskmanagement");
 
@@ -10,24 +26,37 @@ builder.Services.AddAuthentication("Bearer")
            options.Authority = builder.Configuration["IdentityServer:Authority"];
            options.RequireHttpsMetadata = false; 
            options.Audience = "task-service";
-      
+            options.RefreshOnIssuerKeyNotFound= true;
+
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateAudience = false, 
-           
             };
+            
         });
 builder.Services
             .AddMassTransitWithAssembly(builder.Configuration,
             typeof(Program).Assembly);
 //Grpc config
-builder.Services.AddScoped<AuthenticationInterceptor>();
+builder.Services.AddScoped<ServiceTokenInterceptor>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
+
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 builder.Services.AddGrpcClient<ProjectInfo.ProjectInfoClient>(o =>
 {
+
     o.Address = new Uri(builder.Configuration["GrpcServer:Host"]!);
-}).AddInterceptor<AuthenticationInterceptor>();
+}).ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new SocketsHttpHandler
+        {
+            EnableMultipleHttp2Connections = true,
+            KeepAlivePingDelay = TimeSpan.FromSeconds(60),
+            KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+        };
+        return handler;
+    }).AddInterceptor<ServiceTokenInterceptor>();
 
 builder.Services.AddAuthorization();
 //database config
@@ -41,7 +70,6 @@ builder.Services.ConfigureServices();
 
 
 var app = builder.Build();
-app.UseMetrics(jobName:"task-service");
 await app.CreateTaskIndexesAync();
 
 app.MapCarter();
@@ -52,12 +80,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
-app.UseHttpsRedirection();
 
 app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMetrics(service:"task-service");
 
 app.Run();
 

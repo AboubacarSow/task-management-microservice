@@ -16,6 +16,7 @@ public class AddUserToGroupCommandValidatorTests
     {
         var command = new AddUserToGroupCommand(
             Guid.NewGuid(),
+            Guid.NewGuid(),
             Guid.Empty
         );
 
@@ -29,6 +30,7 @@ public class AddUserToGroupCommandValidatorTests
     {
         var command = new AddUserToGroupCommand(
             Guid.Empty,
+            Guid.NewGuid(),
             Guid.NewGuid()
         );
 
@@ -41,6 +43,7 @@ public class AddUserToGroupCommandValidatorTests
     public void Should_Not_Have_Error_When_Command_Is_Valid()
     {
         var command = new AddUserToGroupCommand(
+            Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid()
         );

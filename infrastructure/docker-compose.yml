@@ -28,6 +28,7 @@ services:
       - elasticsearch
     volumes:
       - ./keys:/app/keys:rw
+      - ./dataprotection:/app/dataprotection:rw
     networks:
       - internal
 
@@ -57,7 +58,6 @@ services:
       - elasticsearch
       - message-broker
       - project-service
-      - authentication-service
     networks:
       - internal
 

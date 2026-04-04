@@ -1,7 +1,7 @@
 namespace project_service.Projects.Features.Commands.AddUserToGroup;
 
 
-public record AddUserToGroupCommand(Guid TargetUserId, Guid ProjectId): IRequest<Unit>;
+public record AddUserToGroupCommand(Guid TargetUserId, Guid ProjectId, Guid OwnerId): IRequest<Unit>;
 public class AddUserToGroupCommandValidator: AbstractValidator<AddUserToGroupCommand>
 {
     public AddUserToGroupCommandValidator()
@@ -35,7 +35,14 @@ public class AddUserToGroupHandler(IProjectRepository projectRepository,
 
             throw new NotFoundException(nameof(Project),request.ProjectId.ToString());
         }
+        if(project.OwnerId != request.OwnerId)
+        {
+            _logger.LogWarning(
+                "User {UserId} is not the owner of the project {ProjectId}",
+                request.OwnerId, request.ProjectId);
 
+            throw new ForbiddenException(request.OwnerId.ToString(), "ADD_USER_TO_GROUP");
+        }
         var wasAlreadyInGroup = project.IsInGroup(request.TargetUserId);
 
         project.AddUserToGroup(request.TargetUserId);

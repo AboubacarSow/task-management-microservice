@@ -5,7 +5,7 @@ namespace project_service.Projects.Features.Commands.EditProjectState;
 
 public record EditProjectStateCommand(Guid ProjectId,
     Guid UserId,
-    ProjectStatus Status): IRequest;
+    ProjectStatus Status): IRequest<Unit>;
 
 public class EditProjectStateCommandValidator : AbstractValidator<EditProjectStateCommand> {
 
@@ -33,13 +33,13 @@ public sealed class EditProjectStateHandler(
     IProjectRepository projectRepository,
     TaskItemClient taskItemClient,
     ILogger<EditProjectStateHandler> logger)
-        : IRequestHandler<EditProjectStateCommand>
+        : IRequestHandler<EditProjectStateCommand, Unit>
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly TaskItemClient _taskItemClient = taskItemClient;
     private readonly ILogger<EditProjectStateHandler> _logger = logger;
 
-    public async Task Handle(
+    public async Task<Unit> Handle(
         EditProjectStateCommand request,
         CancellationToken cancellationToken)
     {
@@ -114,6 +114,7 @@ public sealed class EditProjectStateHandler(
             project.Id,
             project.Status,
             request.UserId);
+        return Unit.Value;
     }
 }
 

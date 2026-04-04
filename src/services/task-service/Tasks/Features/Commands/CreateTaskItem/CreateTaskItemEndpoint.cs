@@ -12,11 +12,16 @@ public class CreateTaskItemEndpoint : ICarterModule
             async (
                 [FromBody]CreateTaskItemRequest request,
                 [FromServices]ISender sender,
-                [FromServices]ClaimsPrincipal claims
+                ClaimsPrincipal claims
                 ) =>
             {
 
-                var userId = Guid.Parse(claims.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+                var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(currentUserId, out var userId))
+                    return Results.BadRequest("Invalid user id");
+
+
                 //var userId = Guid.NewGuid();
                 var command = new CreateTaskItemCommand(
                     userId,

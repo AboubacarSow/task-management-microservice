@@ -5,11 +5,11 @@ namespace shared.Metrics;
 
 public static class MetricsExtensions
 {
-    public static void UseMetrics(this WebApplication app,string jobName)
+    public static void UseMetrics(this WebApplication app,string service)
     {
         app.UseHttpMetrics(options =>
         {
-            options.AddCustomLabel("job", _ => jobName);
+            options.AddCustomLabel("service", _ => service);
         });
         
         app.MapMetrics();              

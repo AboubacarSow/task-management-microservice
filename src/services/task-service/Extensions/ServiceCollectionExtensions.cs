@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDatabaseCollections(this IServiceCollection services)
     {
-      
+        
 
         services.AddSingleton<IMongoCollection<TaskItem>>(scope =>
         {
