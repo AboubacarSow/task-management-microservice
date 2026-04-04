@@ -776,7 +776,7 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
   <b>Figure 16:</b> Grafana dashboards showing all-service metrics (Request Rate, Avg Response Time, p95 Response Time) and an example dispatcher-service metrics dashboard.
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/targets-page.png" width="700"/>
 </p>
 <p align="center">
   <b>Figure 17:</b>  Prometheus — targets page showing all services UP
