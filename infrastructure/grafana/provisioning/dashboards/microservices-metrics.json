@@ -20,7 +20,7 @@
       "title": "Request Rate — All Services",
       "type": "stat",
       "targets": [
-        {"expr": "sum by (job) (rate(microsoft_aspnetcore_hosting_requests_per_second_total{job=~\"dispatcher-service|project-service|task-service|authentication-service|\"}[2m]))",
+        {"expr": "sum by (job) (rate(microsoft_aspnetcore_hosting_total_requests{job=~\"dispatcher-service|project-service|task-service|authentication-service|\"}[2m]))",
           "refId": "A11",
           "legendFormat": "{{job}}"},
         { "expr": "sum by (job) (rate(http_requests_total{job=~\"agent-service|user-service\"}[2m]))",
@@ -111,7 +111,7 @@
       "gridPos": { "h": 5, "w": 8, "x": 0, "y": 5 },
       "targets": [
         {
-          "expr": "sum(microsoft_aspnetcore_hosting_requests_per_second_total{job=\"dispatcher-service\"})",
+          "expr": "rate(microsoft_aspnetcore_hosting_total_requests{job=\"dispatcher-service\"}[2m])",
           "refId": "A",
           "instant": true
         }
@@ -189,7 +189,7 @@
       "gridPos": { "h": 5, "w": 8, "x": 0, "y": 19 },
       "targets": [
         {
-          "expr": "sum(microsoft_aspnetcore_hosting_requests_per_second_total{job=\"project-service\"})",
+          "expr": "rate(microsoft_aspnetcore_hosting_total_requests{job=\"project-service\"}[2m])",
           "refId": "A",
           "instant": true
         }
@@ -267,7 +267,7 @@
       "gridPos": { "h": 5, "w": 8, "x": 0, "y": 33 },
       "targets": [
         {
-          "expr": "sum(microsoft_aspnetcore_hosting_requests_per_second_total{job=\"authentication-service\"})",
+          "expr": "rate(microsoft_aspnetcore_hosting_total_requests{job=\"authentication-service\"}[2m])",
           "refId": "A",
           "instant": true
         }
@@ -345,7 +345,7 @@
       "gridPos": { "h": 5, "w": 8, "x": 0, "y": 47 },
       "targets": [
         {
-          "expr": "sum(microsoft_aspnetcore_hosting_requests_per_second_total{job=\"task-service\"})",
+          "expr": "rate(microsoft_aspnetcore_hosting_total_requests{job=\"task-service\"}[2m])",
           "refId": "A",
           "instant": true
         }

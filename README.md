@@ -769,10 +769,10 @@ Tests performed using **k6** against the dispatcher service. Each scenario runs 
   <b>Figure 15:</b>  Kibana — structured logs with X-Correlation-ID across services
 </p>
 <p align="center">
-  <img src="images/jwt-token.png" width="700"/>
+  <img src="images/service-metrics.png" width="700"/>
 </p>
 <p align="center">
-  <b>Figure 16:</b>  Grafana — service metrics dashboard (request rate, latency, errors)
+  <b>Figure 16:</b>  Grafana — service metrics dashboard (Request Rate, Avg Response Time, p95 Response Time)
 </p>
 <p align="center">
   <img src="images/jwt-token.png" width="700"/>
