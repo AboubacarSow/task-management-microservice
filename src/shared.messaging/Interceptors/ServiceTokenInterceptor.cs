@@ -3,9 +3,10 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Http;
 
 
-namespace shared.Interceptors;
+namespace shared.messaging.Interceptors;
 
 public class ServiceTokenInterceptor(IMemoryCache cache,
     IHttpClientFactory httpClientFactory,
@@ -30,8 +31,7 @@ public class ServiceTokenInterceptor(IMemoryCache cache,
     {
         var token = await GetTokenAsync();
 
-        Console.WriteLine($"FULL TOKEN: '{token}'");
-        Console.WriteLine($"TOKEN PARTS: {token?.Split('.').Length}");
+
         
         var headers = new Metadata(); 
 

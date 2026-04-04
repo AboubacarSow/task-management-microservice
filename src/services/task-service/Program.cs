@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using shared.messaging.Interceptors;
 
 
 var builder = WebApplication.CreateBuilder(args);
