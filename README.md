@@ -416,7 +416,7 @@ Or target a specific service:
 # Authentication Service (15 tests)
 dotnet test tests/services/authentication-service.Tests/
 
-# Project Service (22 tests)
+# Project Service (157 tests)
 dotnet test tests/services/project-service.Tests/
 
 # Dispatcher Service (25 tests)
@@ -618,6 +618,9 @@ Each service owns its own MongoDB instance. No shared databases. This enforces t
 
 ![Dispatcher Service Tests](images/dispatchertestresult.png)
 *dotnet — authentication-service: 25 tests passing*
+
+![Project Service Tests](images/projecttestresult.png)
+*dotnet — authentication-service: 157 tests passing*
 
 ![User Service Tests](images/user-test.png)
 *pytest — user-service: 22 tests passing*
