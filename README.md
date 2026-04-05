@@ -413,7 +413,7 @@ dotnet test
 Or target a specific service:
 
 ```bash
-# Authentication Service (17 tests)
+# Authentication Service (15 tests)
 dotnet test tests/services/authentication-service.Tests/
 
 # Project Service (22 tests)
@@ -612,6 +612,9 @@ Each service owns its own MongoDB instance. No shared databases. This enforces t
 *POST /agent/refine_project_name → 200 OK*
 
 ### Test Results
+
+![Authentication Service Tests](images/authenticationtestresult.png)
+*dotnet — authentication-service: 15 tests passing*
 
 ![User Service Tests](images/user-test.png)
 *pytest — user-service: 22 tests passing*
