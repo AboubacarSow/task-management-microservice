@@ -616,7 +616,7 @@ Each service owns its own MongoDB instance. No shared databases. This enforces t
 ![Authentication Service Tests](images/authenticationtestresult.png)
 *dotnet — authentication-service: 15 tests passing*
 
-![Authentication Service Tests](images/dispatchertestresult.png)
+![Dispatcher Service Tests](images/dispatchertestresult.png)
 *dotnet — authentication-service: 25 tests passing*
 
 ![User Service Tests](images/user-test.png)
