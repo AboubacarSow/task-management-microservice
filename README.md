@@ -12,7 +12,7 @@
 ![gRPC](https://img.shields.io/badge/gRPC-Internal-244C5A?style=for-the-badge&logo=grpc)
 ![Postman](https://img.shields.io/badge/Postman-Collection-FF6C37?style=for-the-badge&logo=postman)
 
-**87+ passing tests · 6 independent services · Full observability stack · AI-powered agent**
+**348+ passing tests - Unit & Integration Tests · 6 independent services · Full observability stack · AI-powered agent**
 
 </div>
 
@@ -441,17 +441,19 @@ pytest
 
 | Service | Tests | Status |
 |---------|-------|--------|
-| `authentication-service` | 17 | ✅ All passing |
-| `project-service` | 22 | ✅ All passing |
-| `dispatcher-service` | 20 | ✅ All passing |
+| `authentication-service` | 15 | ✅ All passing |
+| `project-service` | 157 | ✅ All passing |
+| `task-service` | 151 | ✅ All passing |
+| `dispatcher-service` | 25 | ✅ All passing |
 | `user-service` | 22 | ✅ All passing |
 | `ai-agent-service` | 6 | ✅ All passing |
-| **Total** | **87** | ✅ |
+| **Total** | **376** | ✅ |
 
 ### What's Tested
 
 - **authentication-service** — credential validation, profile claims, active user check
 - **project-service** — handler logic, validation, all state machine transitions
+- **task-service** — handler logic, validation, all state machine transitions
 - **dispatcher-service** — middleware behavior, Ocelot configuration, correlation ID generation
 - **user-service** — CRUD behavior, API contract validation
 - **ai-agent-service** — agent behavior, API endpoint validation
