@@ -419,6 +419,9 @@ dotnet test tests/services/authentication-service.Tests/
 # Project Service (157 tests)
 dotnet test tests/services/project-service.Tests/
 
+# Project Service (151 tests)
+dotnet test tests/services/task-service.Tests/
+
 # Dispatcher Service (25 tests)
 dotnet test tests/services/dispatcher-service.Tests/
 ```
@@ -617,10 +620,13 @@ Each service owns its own MongoDB instance. No shared databases. This enforces t
 *dotnet — authentication-service: 15 tests passing*
 
 ![Dispatcher Service Tests](images/dispatchertestresult.png)
-*dotnet — authentication-service: 25 tests passing*
+*dotnet — dispatcher-service: 25 tests passing*
 
 ![Project Service Tests](images/projecttestresult.png)
-*dotnet — authentication-service: 157 tests passing*
+*dotnet — project-service: 157 tests passing*
+
+![Task Service Tests](images/tasktestresult.png)
+*dotnet — task-service: 151 tests passing*
 
 ![User Service Tests](images/user-test.png)
 *pytest — user-service: 22 tests passing*
