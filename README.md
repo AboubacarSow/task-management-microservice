@@ -475,19 +475,6 @@ Load tests run via **k6** against the dispatcher service. Results are streamed t
 make load-test
 ```
 
-### Test scenarios
-
-Each scenario runs for 2 minutes:
-
-| Concurrent Users | Avg Response (ms) | p95 Response (ms) | Error Rate | Throughput (req/s) |
-|-----------------|------------------|------------------|------------|-------------------|
-| 50 | TBD | TBD | TBD | TBD |
-| 100 | TBD | TBD | TBD | TBD |
-| 200 | TBD | TBD | TBD | TBD |
-| 500 | TBD | TBD | TBD | TBD |
-
-View live results at **http://localhost:3000** (Grafana → k6 dashboard).
-
 ---
 
 ## 🔭 Observability
