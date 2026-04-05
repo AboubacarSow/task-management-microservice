@@ -413,13 +413,16 @@ dotnet test
 Or target a specific service:
 
 ```bash
-# Authentication Service (17 tests)
+# Authentication Service (15 tests)
 dotnet test tests/services/authentication-service.Tests/
 
-# Project Service (22 tests)
+# Project Service (157 tests)
 dotnet test tests/services/project-service.Tests/
 
-# Dispatcher Service (20 tests)
+# Task Service (151 tests)
+dotnet test tests/services/task-service.Tests/
+
+# Dispatcher Service (25 tests)
 dotnet test tests/services/dispatcher-service.Tests/
 ```
 
