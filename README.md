@@ -60,15 +60,15 @@ A fully containerized **distributed task management system** that demonstrates r
 
 ## 🛠 Tech Stack
 
-### Business Services
+###  Services
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | API Gateway | .NET 9 + Ocelot | Request routing, JWT validation, correlation IDs |
 | Auth | .NET 9 + Duende IdentityServer | OAuth2/OIDC token issuance & refresh |
-| Project Service | .NET 9 + MongoDB | Project CRUD, state machine, gRPC server |
+| Project Service | .NET 9 + MongoDB + gRPC  | Project CRUD, state machine, gRPC server |
 | Task Service | .NET 9 + MongoDB + gRPC | Task CRUD, event publishing |
 | User Service | Python + FastAPI + MongoDB | User registration, profile management |
-| AI Agent | Python + FastAPI + Ollama | LLM-powered productivity features |
+| AI Agent | Python + FastAPI + Ollama + MongoDB | LLM-powered productivity features |
 
 ### Infrastructure
 | Tool | Role |
@@ -257,7 +257,7 @@ message TaskModel {
 | `dispatcher-service` | 8080 | ✅ Done | Ocelot gateway, JWT, correlation IDs, exception middleware |
 | `authentication-service` | 5004 | ✅ Done | OAuth2 + OIDC, token issuance, refresh validation |
 | `project-service` | 5000 / gRPC 5005 | ✅ Done | CRUD, state machine, DDD aggregates, CQRS with MediatR |
-| `task-service` | 5003 / gRPC 5006 | 🔄 In Progress | CRUD, gRPC client, event publishing |
+| `task-service` | 5003 / gRPC 5006 | ✅ Done | CRUD, gRPC client, event publishing |
 | `user-service` | 5002 | ✅ Done | Registration, profile, credential validation |
 | `ai-agent-service` | 5001 | ✅ Done | LLM-powered description, task suggestion, name refinement |
 
@@ -447,7 +447,7 @@ pytest
 | `dispatcher-service` | 25 | ✅ All passing |
 | `user-service` | 22 | ✅ All passing |
 | `ai-agent-service` | 6 | ✅ All passing |
-| **Total** | **376** | ✅ |
+| **Total** | **376** | ✅ All passing |
 
 ### What's Tested
 
