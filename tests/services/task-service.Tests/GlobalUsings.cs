@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-global using MongoDB.Bson;
-global using MongoDB.Bson.Serialization;
-global using MongoDB.Bson.Serialization.Serializers;
-global using MongoDB.Driver;
-global using task_service.Tasks.Models;
-global using System.Net;
-global using System.Net.Http.Headers;
-global using System.Net.Http.Json;
-global using FluentAssertions;
-global using MediatR;
-global using Microsoft.AspNetCore.Authentication;
-global using Microsoft.AspNetCore.Mvc.Testing;
-global using Microsoft.AspNetCore.TestHost;
-global using Microsoft.Extensions.DependencyInjection;
-global using Moq;
-global using task_service.Data.Utilities;
-global using task_service.Tasks.Features.Commands.AssignTaskTo;
-global using task_service.Tests.Helpers;
-=======
 global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization;
 global using MongoDB.Bson.Serialization.Serializers;
@@ -47,4 +27,3 @@ global using task_service.Tasks.Dtos;
 global using task_service.Commons.Exceptions;
 global using task_service.Tasks.Exceptions;
 
->>>>>>> 05b451b (new_update)

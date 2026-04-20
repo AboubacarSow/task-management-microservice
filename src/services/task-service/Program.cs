@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-<<<<<<< HEAD
-using shared.messaging.Interceptors;
-=======
 using shared.Configurations;
 using shared.Extensions;
 using shared.messaging.Interceptors;
 using task_service.Tasks.Grpc.Client;
->>>>>>> 05b451b (new_update)
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +19,7 @@ builder.WebHost.ConfigureKestrel(options =>
         o.Protocols = HttpProtocols.Http2;
     });
 });
-<<<<<<< HEAD
-=======
 MongoConfiguration.Configure();
->>>>>>> 05b451b (new_update)
 
 builder.Host.UseCustomSerilog("taskmanagement");
 
@@ -46,22 +39,14 @@ builder.Services.AddAuthentication("Bearer")
             };
             
         });
-<<<<<<< HEAD
-builder.Services
-            .AddMassTransitWithAssembly(builder.Configuration,
-=======
 builder.Services.AddMassTransitWithAssembly(builder.Configuration,
->>>>>>> 05b451b (new_update)
             typeof(Program).Assembly);
 //Grpc config
 builder.Services.AddScoped<ServiceTokenInterceptor>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
-<<<<<<< HEAD
-=======
 builder.Services.AddSharedServices();
 
->>>>>>> 05b451b (new_update)
 
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 builder.Services.AddGrpcClient<ProjectInfo.ProjectInfoClient>(o =>

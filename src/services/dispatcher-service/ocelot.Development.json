@@ -1,14 +1,6 @@
-<<<<<<< HEAD
 {
   "Routes": [],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:80"
   }
-=======
-{
-  "Routes": [],
-  "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:80"
-  }
->>>>>>> 05b451b (new_update)
 }

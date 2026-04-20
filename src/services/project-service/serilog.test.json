@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "Serilog": {
     "Using": [ "Serilog.Sinks.Console" ],
@@ -11,18 +10,4 @@
       }
     ]
   }
-=======
-{
-  "Serilog": {
-    "Using": [ "Serilog.Sinks.Console" ],
-    "MinimumLevel": {
-      "Default": "Warning"
-    },
-    "WriteTo": [
-      {
-        "Name": "Console"
-      }
-    ]
-  }
->>>>>>> 05b451b (new_update)
 }

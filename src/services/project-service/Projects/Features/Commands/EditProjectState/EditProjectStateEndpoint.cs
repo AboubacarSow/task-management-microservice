@@ -1,40 +1,3 @@
-<<<<<<< HEAD
-namespace project_service.Projects.Features.Commands.EditProjectState;
-
-
-public record EditProjectStateRequest(ProjectStatus Status);
-
-public class EditProjectStateEndpoint : ICarterModule
-{
-    public void AddRoutes(IEndpointRouteBuilder app)
-    {
-        app.MapPut("/api/projects/{id:guid}/state", async (
-                Guid id,
-                [FromBody]EditProjectStateRequest request,
-                [FromServices]ISender sender,
-                ClaimsPrincipal claims) =>
-        {
-            var currentUserId =claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (!Guid.TryParse(currentUserId, out var userId))
-                return Results.BadRequest("Invalid user id");
-            var command = new EditProjectStateCommand(
-                id,
-                userId,
-                request.Status
-            );
-
-            await sender.Send(command);
-
-            return Results.NoContent();
-        }).RequireAuthorization()
-            .WithName("UpdateStatus")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status400BadRequest)   // caught by pipeline
-            .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status404NotFound);
-    }
-=======
 using shared.Utilities;
 
 namespace project_service.Projects.Features.Commands.EditProjectState;
@@ -69,5 +32,4 @@ public class EditProjectStateEndpoint : ICarterModule
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
     }
->>>>>>> 05b451b (new_update)
 }
