@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "project_grpc_server";
+
+package project;
+
+service ProjectInfo {
+  rpc GetProjectById (GetProjectRequest) returns (ProjectModel);
+}
+
+message GetProjectRequest {
+  string projectId = 1;
+}
+
+message ProjectModel {
+  string id = 1;
+  string name = 2;
+  string ownerId =3;
+  repeated string group = 4;
+  repeated string peopleWorking = 5;
+}
