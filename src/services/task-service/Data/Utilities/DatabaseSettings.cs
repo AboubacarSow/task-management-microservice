@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace task_service.Data.Utilities;
 
 public class DatabaseSettings
@@ -22,3 +23,14 @@ public class HttpUserContext(IHttpContextAccessor httpContextAccessor) : IUserCo
         return Guid.Parse(id!);
     }
 }
+=======
+namespace task_service.Data.Utilities;
+
+public class DatabaseSettings
+{
+    public string ConnectionStrings { get; set; } = default!;
+    public string Database { get; set; } = default!;
+    public string TaskCollection { get; set; }=default!;
+}
+
+>>>>>>> 05b451b (new_update)

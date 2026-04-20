@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace project_service.Projects.Features.Queries.GetProjectById;
 
 
@@ -44,3 +45,51 @@ public class GetProjectByIdHandler(IProjectRepository repository, ILogger<GetPro
         });
     }
 }
+=======
+namespace project_service.Projects.Features.Queries.GetProjectById;
+
+
+public record GetProjectByIdQuery(Guid CurrentUserId,Guid ProjectId):IRequest<ProjectDto>;
+public class GetProjectByIdQueryValidator : AbstractValidator<GetProjectByIdQuery> 
+{ 
+    public GetProjectByIdQueryValidator()
+    {
+        RuleFor(p => p.ProjectId).NotEmpty()
+            .WithMessage("ProjectId field is required");
+
+        RuleFor(p => p.CurrentUserId).NotEmpty()
+            .WithMessage("CurrentUserId field is required");
+    }
+}
+
+public class GetProjectByIdHandler(IProjectRepository repository, ILogger<GetProjectByIdHandler> logger) : IRequestHandler<GetProjectByIdQuery,ProjectDto>
+{
+    private readonly IProjectRepository _repository = repository;
+    private readonly ILogger<GetProjectByIdHandler> _logger = logger;
+
+    public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
+    {
+        var project = await _repository.GetByIdAsync(request.ProjectId);
+
+        if (project == null) {
+            _logger.LogWarning("Project with ID {ProjectId} was not found",
+                request.ProjectId);
+            throw new NotFoundException(nameof(Project),request.ProjectId.ToString());
+        }
+
+        if (!project.IsInPeopleWorking(request.CurrentUserId))
+        {
+            _logger.LogWarning("UNAUTHORIZED_USER to read Project with {ProjectId}",
+                request.ProjectId);
+            throw new ForbiddenException(request.CurrentUserId.ToString(), "READ_PROJECT");
+        }
+
+         _logger.LogInformation("Project with ID {ProjectId} retrieved successfully", project.Id);
+        return  project.Adapt<ProjectDto>(options =>
+        {
+            options.ForType<Project, ProjectDto>()
+                .Map(dest => dest.Status, src => src.Status.ToString());
+        });
+    }
+}
+>>>>>>> 05b451b (new_update)

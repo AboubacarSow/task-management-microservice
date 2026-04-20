@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "profiles": {
     "SelfHost": {
@@ -9,4 +10,17 @@
       "applicationUrl": "http://localhost:5001"
     }
   }
+=======
+{
+  "profiles": {
+    "SelfHost": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5001"
+    }
+  }
+>>>>>>> 05b451b (new_update)
 }

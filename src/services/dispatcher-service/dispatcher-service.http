@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 @dispatcher_service_HostAddress = http://localhost:5286
 
 GET {{dispatcher_service_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+=======
+@dispatcher_service_HostAddress = http://localhost:5286
+
+GET {{dispatcher_service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+>>>>>>> 05b451b (new_update)

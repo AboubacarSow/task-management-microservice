@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 global using Microsoft.Extensions.Logging;
 global using Moq;
 global using project_service.Data.Repositories;
@@ -22,3 +23,29 @@ global using FluentValidation;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
 global using project_service.Commons.Behaviors;
 
+=======
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using project_service.Data.Repositories;
+global using project_service.Tests.Helpers;
+global using FluentAssertions;
+global using MediatR;
+global using Microsoft.AspNetCore.Authentication;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.AspNetCore.TestHost;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using project_service.Commons.Exceptions;
+global using project_service.Data.Utilities;
+global using project_service.Projects.Models;
+global using System.Net;
+global using System.Net.Http.Headers;
+global using project_service.Projects.Dtos;
+global using System.Net.Http.Json;
+global using FluentValidation.TestHelper;
+global using FluentValidation;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using project_service.Commons.Behaviors;
+
+>>>>>>> 05b451b (new_update)

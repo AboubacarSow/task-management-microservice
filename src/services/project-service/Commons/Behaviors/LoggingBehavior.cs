@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 using MediatR;
+=======
+>>>>>>> 05b451b (new_update)
 using System.Diagnostics;
 
 namespace project_service.Commons.Behaviors;

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 apiVersion: 1
 
 providers:
@@ -8,4 +9,16 @@ providers:
     disableDeletion: false
     updateIntervalSeconds: 15
     options:
+=======
+apiVersion: 1
+
+providers:
+  - name: "Task-Management-System-Insights"
+    orgId: 1
+    folder: "Task-Management-System-Insights"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 15
+    options:
+>>>>>>> 05b451b (new_update)
       path: /etc/grafana/provisioning/dashboards

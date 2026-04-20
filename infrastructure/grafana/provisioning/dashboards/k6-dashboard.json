@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "annotations": { "list": [] },
   "editable": true,
@@ -153,4 +154,161 @@
   "title": "Dispatcher Load Test Results",
   "uid": "dispatcher-load-test",
   "version": 1
+=======
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 2000 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Average Response Time (ms)",
+      "type": "gauge",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.05 },
+              { "color": "red", "value": 0.1 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "title": "HTTP Error Rate",
+      "type": "gauge",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT mean(\"value\") FROM \"http_req_failed\" WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "title": "Requests per Second",
+      "type": "gauge",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT non_negative_derivative(sum(\"value\"), 1s) FROM \"http_reqs\" WHERE $timeFilter GROUP BY time(1m) fill(0)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 8 },
+      "id": 4,
+      "title": "Response Time Trend (avg / p95 / p99)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT mean(\"value\") AS \"avg\", percentile(\"value\", 95) AS \"p95\", percentile(\"value\", 99) AS \"p99\" FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 17 },
+      "id": 5,
+      "title": "Virtual Users",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT mean(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 17 },
+      "id": 6,
+      "title": "HTTP Requests",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 25 },
+      "id": 7,
+      "title": "Custom Response Time by Endpoint",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "InfluxDB-k6" },
+          "query": "SELECT mean(\"value\") FROM \"response_time\" WHERE $timeFilter GROUP BY time($__interval), \"endpoint\" fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "tags": ["k6", "load-testing", "dispatcher"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Dispatcher Load Test Results",
+  "uid": "dispatcher-load-test",
+  "version": 1
+>>>>>>> 05b451b (new_update)
 }

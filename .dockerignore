@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Build output
 **/bin/
 **/obj/
@@ -29,4 +30,37 @@ docker-compose*.yml
 **/.env
 
 # Readme
+=======
+# Build output
+**/bin/
+**/obj/
+
+# Test projects — never go into production image
+tests/
+
+# IDE folders
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Git
+.git/
+.gitignore
+
+# Docker files themselves
+**/Dockerfile
+docker-compose*.yml
+
+# Logs
+**/logs/
+**/diagnostics/
+*.log
+
+# Environment files — never bake secrets into image
+.env
+**/.env
+
+# Readme
+>>>>>>> 05b451b (new_update)
 *.md

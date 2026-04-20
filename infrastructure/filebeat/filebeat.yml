@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 filebeat.inputs:
   - type: container
     paths:
@@ -20,3 +21,30 @@ setup.kibana:
 setup.ilm.enabled: false
 setup.template.name: "taskmanagement-logs"
 setup.template.pattern: "taskmanagement-logs-*"
+=======
+filebeat.inputs:
+  - type: filestream
+    id: docker-logs
+    paths:
+      - /var/lib/docker/containers/*/*.log
+
+    parsers:
+      - container: ~
+
+    processors:
+      - add_docker_metadata:
+          host: "unix:///var/run/docker.sock"
+
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "taskmanagement-logs-%{+yyyy.MM}"
+
+setup.kibana:
+  host: "http://kibana:5601"
+
+setup.ilm.enabled: false
+setup.template.name: "taskmanagement-logs"
+setup.template.pattern: "taskmanagement-logs-*"
+
+>>>>>>> 05b451b (new_update)

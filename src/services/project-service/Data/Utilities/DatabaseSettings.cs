@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace project_service.Data.Utilities;
 
 public class DatabaseSettings
@@ -22,3 +23,13 @@ public class HttpUserContext(IHttpContextAccessor httpContextAccessor) : IUserCo
         return Guid.Parse(id!);
     }
 }
+=======
+namespace project_service.Data.Utilities;
+
+public class DatabaseSettings
+{
+    public string ConnectionStrings { get; set; }=default!;
+    public string Database { get; set; } = default!;
+    public string ProjectCollection { get; set; }= default!;
+}
+>>>>>>> 05b451b (new_update)
