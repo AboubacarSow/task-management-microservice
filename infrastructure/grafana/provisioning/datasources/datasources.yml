@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 apiVersion: 1
 
 datasources:
@@ -34,41 +33,4 @@ datasources:
       httpMode: GET
       authType: token
     secureJsonData:
-=======
-apiVersion: 1
-
-datasources:
-  - name: Prometheus
-    type: prometheus
-    access: proxy
-    url: http://prometheus:9090
-    isDefault: true
-    editable: false
-
-  - name: Elasticsearch
-    type: elasticsearch
-    access: proxy
-    url: http://elasticsearch:9200
-    database: "taskmanagement-logs-*"
-    jsonData:
-      esVersion: "8.0.0"
-      timeField: "@timestamp"
-      logMessageField: "message"
-      logLevelField: "log.level"
-    editable: false
-  
-  - name: InfluxDB-k6
-    type: influxdb
-    access: proxy
-    url: http://influxdb:8086
-    editable: false
-    basicAuth: false
-    jsonData:
-      version: InfluxQL
-      organization: taskmanagement
-      dbName: k6
-      httpMode: GET
-      authType: token
-    secureJsonData:
->>>>>>> 05b451b (new_update)
       token: supersecrettoken
